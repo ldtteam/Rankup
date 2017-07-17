@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Luck Rankup.iml" filepath="$PROJECT_DIR$/Luck Rankup.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Luck_Rankup_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Luck_Rankup_main.iml" group="Luck Rankup" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Luck_Rankup_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Luck_Rankup_test.iml" group="Luck Rankup" />
+    </modules>
+  </component>
+</project>
