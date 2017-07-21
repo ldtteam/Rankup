@@ -11,6 +11,15 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.reverseOrder;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+
 public class Commands
 {
     private static Luckrankup plugin;
@@ -101,6 +110,18 @@ public class Commands
                               })
                               .build();
 
+        CommandSpec topList = CommandSpec.builder()
+                            .description(Text.of("Display list of top 10 most played players."))
+                            .permission("luckrankup.top")
+                            .executor((src, args) ->
+                            {
+                                {
+                                    sendTopList(src);
+                                    return CommandResult.success();
+                                }
+                            })
+                            .build();
+
         CommandSpec reload = CommandSpec.builder()
                                .description(Text.of("Reload rankupper."))
                                .permission("luckrankup.reload")
@@ -186,6 +207,7 @@ public class Commands
                             .child(playerInfo, "player-info", "info")
                             .child(saveall, "save-all", "save")
                             .child(loadall, "load-all", "load")
+                            .child(topList, "top")
                             .build();
 
         return lru;
@@ -211,15 +233,46 @@ public class Commands
         final String group = plugin.perms.getPlayerGroupWithMostParents(player);
         int timeToNextGroup = plugin.cfgs.checkRankup(player);
         source.sendMessage(top);
-        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, playerTime, " minutes"));
+        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, playerTime, TextColors.WHITE, " minutes"));
         source.sendMessage(Text.of(middle, "Current Player Group: ", TextColors.DARK_RED, group));
         if (timeToNextGroup != -1)
         {
-            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, timeToNextGroup, " minutes"));
+            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, timeToNextGroup, TextColors.WHITE, " minutes"));
         }
         else
         {
             source.sendMessage(Text.of(middle, "You are not able to RankUp any further"));
+        }
+        source.sendMessage(bottom);
+    }
+
+    private static void sendTopList(CommandSource source)
+    {
+        final List<String> players = new ArrayList<>();
+
+        HashMap<String, Integer> stats = new HashMap<>();
+
+        for (Object uuid : plugin.cfgs.stats().getChildrenMap().keySet())
+        {
+            if (plugin.cfgs.getPlayerTime(uuid.toString()) > 0){
+                stats.put(uuid.toString(), plugin.cfgs.getPlayerTime(uuid.toString()));
+            }
+        }
+
+        List<String> sorted = stats.entrySet().stream()
+                                .sorted(reverseOrder(comparing(Map.Entry::getValue)))
+                                .map(Map.Entry::getKey)
+                                .collect(toList());
+
+
+        int index = 0;
+        source.sendMessage(top);
+        for (String uuid : sorted)
+        {
+            index++;
+            final int time = plugin.cfgs.getPlayerTime(uuid);
+            final String player = plugin.cfgs.getStatString(uuid,"PlayerName");
+            source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, time, TextColors.WHITE, " minutes"));
         }
         source.sendMessage(bottom);
     }
@@ -235,6 +288,7 @@ public class Commands
         source.sendMessage(Text.of(middle, TextColors.DARK_GREEN, "/lru info <player>", " - shows a player's stats"));
         source.sendMessage(Text.of(middle, TextColors.DARK_GREEN, "/lru save-all", " - saves player-stats file"));
         source.sendMessage(Text.of(middle, TextColors.DARK_GREEN, "/lru load-all", " - loads player-stats file"));
+        source.sendMessage(Text.of(middle, TextColors.DARK_GREEN, "/lru top", " - show's top 10 players"));
         source.sendMessage(bottom);
     }
 
@@ -252,7 +306,7 @@ public class Commands
         source.sendMessage(Text.of(middle, "Last known player name: ", TextColors.DARK_PURPLE, name));
         source.sendMessage(Text.of(middle, "Date of first join: ", TextColors.DARK_BLUE, firstJoin));
         source.sendMessage(Text.of(middle, "Date of last join: ", TextColors.GRAY, lastJoin));
-        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, timePlayed, " minutes"));
+        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, timePlayed, TextColors.WHITE," minutes"));
         source.sendMessage(bottom);
     }
 }
