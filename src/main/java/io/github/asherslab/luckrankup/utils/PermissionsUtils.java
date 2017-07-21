@@ -22,15 +22,6 @@ public class PermissionsUtils
         this.permissionService = game.getServiceManager().getRegistration(PermissionService.class).get().getProvider();
     }
 
-    /*
-    public String getPlayersHighestPerm(Player player)
-    {
-        List<String> groups = getPlayerGroupIdentifiers(player);
-        List<String> permgroups = plugin.cfgs.getStringList("ranked-groups","groups");
-        getPlayerGroups(player).forEach(Subject::getParents);
-    }
-    */
-
     public SubjectCollection getGroups()
     {
         return permissionService.getGroupSubjects();

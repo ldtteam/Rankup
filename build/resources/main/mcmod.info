@@ -2,7 +2,7 @@
     {
         "modid": "luckrankup",
         "name": "Luckrankup",
-        "version": "1.0-SNAPSHOT",
+        "version": "1.0",
         "description": "An addition for the Luckperms plugin that enables Auto-Ranking",
         "authorList": [
             "Asherslab"

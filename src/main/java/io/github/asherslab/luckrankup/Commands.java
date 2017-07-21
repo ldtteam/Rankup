@@ -6,16 +6,10 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.entity.projectile.EnderPearl;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-
-import java.awt.event.ItemEvent;
 
 public class Commands
 {
@@ -145,32 +139,33 @@ public class Commands
                                    .build();
 
         CommandSpec saveall = CommandSpec.builder()
-                                    .description(Text.of("Saves all player stats to file"))
-                                    .permission("luckrankup.saveall")
-                                    .executor((src, args) -> {
-                                        {
-                                            plugin.cfgs.savePlayerStats();
-                                            src.sendMessage(Text.of("Saved all stats"));
-                                            return CommandResult.success();
-                                        }
-                                    })
-                                    .build();
+                                .description(Text.of("Saves all player stats to file"))
+                                .permission("luckrankup.saveall")
+                                .executor((src, args) ->
+                                {
+                                    {
+                                        plugin.cfgs.savePlayerStats();
+                                        src.sendMessage(Text.of("Saved all stats"));
+                                        return CommandResult.success();
+                                    }
+                                })
+                                .build();
 
         CommandSpec loadall = CommandSpec.builder()
-                                    .description(Text.of("Loads all player stats from file"))
-                                    .permission("luckrankup.loadall")
-                                    .executor((src, args) ->
+                                .description(Text.of("Loads all player stats from file"))
+                                .permission("luckrankup.loadall")
+                                .executor((src, args) ->
+                                {
                                     {
-                                        {
-                                            plugin.loadall();
-                                            src.sendMessage(Text.of("Loaded all stats"));
-                                            return CommandResult.success();
-                                        }
-                                    })
-                                    .build();
+                                        plugin.loadall();
+                                        src.sendMessage(Text.of("Loaded all stats"));
+                                        return CommandResult.success();
+                                    }
+                                })
+                                .build();
 
         CommandSpec lru = CommandSpec.builder()
-                            .description(Text.of("Main command for rankupper."))
+                            .description(Text.of("Main command for luck-rankupper."))
                             .executor((src, args) ->
                             {
                                 {
@@ -188,9 +183,9 @@ public class Commands
                             .child(add, "add")
                             .child(set, "set")
                             .child(check, "check")
-                            .child(playerInfo, "player-info","info")
-                            .child(saveall,"save-all","save")
-                            .child(loadall, "load-all","load")
+                            .child(playerInfo, "player-info", "info")
+                            .child(saveall, "save-all", "save")
+                            .child(loadall, "load-all", "load")
                             .build();
 
         return lru;
@@ -216,11 +211,11 @@ public class Commands
         final String group = plugin.perms.getPlayerGroupWithMostParents(player);
         int timeToNextGroup = plugin.cfgs.checkRankup(player);
         source.sendMessage(top);
-        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, playerTime));
+        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, playerTime, " minutes"));
         source.sendMessage(Text.of(middle, "Current Player Group: ", TextColors.DARK_RED, group));
         if (timeToNextGroup != -1)
         {
-            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, timeToNextGroup));
+            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, timeToNextGroup, " minutes"));
         }
         else
         {
@@ -257,7 +252,7 @@ public class Commands
         source.sendMessage(Text.of(middle, "Last known player name: ", TextColors.DARK_PURPLE, name));
         source.sendMessage(Text.of(middle, "Date of first join: ", TextColors.DARK_BLUE, firstJoin));
         source.sendMessage(Text.of(middle, "Date of last join: ", TextColors.GRAY, lastJoin));
-        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, timePlayed));
+        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, timePlayed, " minutes"));
         source.sendMessage(bottom);
     }
 }

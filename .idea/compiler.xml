@@ -2,6 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="Luck-Rankup_main" target="1.8" />
+      <module name="Luck-Rankup_test" target="1.8" />
       <module name="Luck_Rankup_main" target="1.8" />
       <module name="Luck_Rankup_test" target="1.8" />
     </bytecodeTargetLevel>

@@ -22,8 +22,6 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -88,10 +86,6 @@ public class Luckrankup
         logger.info("Init commands module...");
         Commands.init(this);
 
-        // Hey! The server has started!
-        this.logger.info("Hello world!");
-        // Try loading some configuration settings for a welcome message to players
-        // when they join!
         logger.info("Init permissions module...");
         perms = new PermissionsUtils(this, game);
 
@@ -145,27 +139,19 @@ public class Luckrankup
         {
             task.cancel();
         }
-        cfgs = new ConfigUtils(this,configDir,defConfig);
+        cfgs = new ConfigUtils(this, configDir, defConfig);
         playerCounterHandler();
     }
 
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player)
     {
-
         if (cfgs.getPlayerKey(player) == null)
         {
             cfgs.addPlayer(player);
         }
 
-        this.logger.info("Player groups: " + perms.getPlayerGroupIdentifiers(player));
-
-        this.logger.info("Group with most parents: " + perms.getPlayerGroupWithMostParents(player));
-
-        //cfgs.getPlayerTime(player.getUniqueId().toString());
-
-        // The text message could be configurable, check the docs on how to do so!
-        player.sendMessage(Text.of(TextColors.AQUA, TextStyles.BOLD, "Hi " + cfgs.getPlayerTime(player.getUniqueId().toString())));
+        player.sendMessage(Text.of("Your current group: " + perms.getPlayerGroupWithMostParents(player)));
     }
 
     @Listener
