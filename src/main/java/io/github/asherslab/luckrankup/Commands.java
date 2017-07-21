@@ -248,8 +248,6 @@ public class Commands
 
     private static void sendTopList(CommandSource source)
     {
-        final List<String> players = new ArrayList<>();
-
         HashMap<String, Integer> stats = new HashMap<>();
 
         for (Object uuid : plugin.cfgs.stats().getChildrenMap().keySet())
@@ -273,6 +271,10 @@ public class Commands
             final int time = plugin.cfgs.getPlayerTime(uuid);
             final String player = plugin.cfgs.getStatString(uuid,"PlayerName");
             source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, time, TextColors.WHITE, " minutes"));
+            if (index == 10)
+            {
+                break;
+            }
         }
         source.sendMessage(bottom);
     }
