@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
@@ -229,15 +230,28 @@ public class Commands
             return;
         }
 
-        final int playerTime = plugin.cfgs.getPlayerTime(player.getUniqueId().toString());
+        int playerTime = plugin.cfgs.getPlayerTime(player.getUniqueId().toString());
         final String group = plugin.perms.getPlayerGroupWithMostParents(player);
         int timeToNextGroup = plugin.cfgs.checkRankup(player);
+
+        final long days = TimeUnit.MINUTES.toDays(playerTime);
+        playerTime -= TimeUnit.DAYS.toMinutes(days);
+
+        final long daysGroup = TimeUnit.MINUTES.toDays(playerTime);
+        timeToNextGroup -= TimeUnit.DAYS.toMinutes(daysGroup);
+
+        final long hours = TimeUnit.MINUTES.toHours(playerTime);
+        playerTime -= TimeUnit.HOURS.toMinutes(hours);
+
+        final long hoursGroup = TimeUnit.MINUTES.toHours(playerTime);
+        timeToNextGroup -= TimeUnit.HOURS.toMinutes(hoursGroup);
+
         source.sendMessage(top);
-        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, playerTime, TextColors.WHITE, " minutes"));
+        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA,  days + " days " + hours + " hours and " + playerTime + " minutes"));
         source.sendMessage(Text.of(middle, "Current Player Group: ", TextColors.DARK_RED, group));
         if (timeToNextGroup != -1)
         {
-            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, timeToNextGroup, TextColors.WHITE, " minutes"));
+            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, daysGroup + " days " + hoursGroup + " hours and " + timeToNextGroup + " minutes"));
         }
         else
         {
@@ -268,9 +282,16 @@ public class Commands
         for (String uuid : sorted)
         {
             index++;
-            final int time = plugin.cfgs.getPlayerTime(uuid);
+            int time = plugin.cfgs.getPlayerTime(uuid);
             final String player = plugin.cfgs.getStatString(uuid,"PlayerName");
-            source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, time, TextColors.WHITE, " minutes"));
+
+            final long days = TimeUnit.MINUTES.toDays(time);
+            time -= TimeUnit.DAYS.toMinutes(days);
+
+            final long hours = TimeUnit.MINUTES.toHours(time);
+            time -= TimeUnit.HOURS.toMinutes(hours);
+
+            source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, days + " days " + hours + " hours and " + time + " minutes"));
             if (index == 10)
             {
                 break;
@@ -300,15 +321,20 @@ public class Commands
 
         final String name = plugin.cfgs.getStatString(player, "PlayerName");
         final String firstJoin = plugin.cfgs.getStatString(player, "JoinDate");
-        final String timePlayed = Integer.toString(plugin.cfgs.getPlayerTime(player));
+        long timePlayed = plugin.cfgs.getPlayerTime(player);
         final String lastJoin = plugin.cfgs.getStatString(player, "LastVisit");
 
+        final long days = TimeUnit.MINUTES.toDays(timePlayed);
+        timePlayed -= TimeUnit.DAYS.toMinutes(days);
+
+        final long hours = TimeUnit.MINUTES.toHours(timePlayed);
+        timePlayed -= TimeUnit.HOURS.toMinutes(hours);
 
         source.sendMessage(top);
         source.sendMessage(Text.of(middle, "Last known player name: ", TextColors.DARK_PURPLE, name));
         source.sendMessage(Text.of(middle, "Date of first join: ", TextColors.DARK_BLUE, firstJoin));
         source.sendMessage(Text.of(middle, "Date of last join: ", TextColors.GRAY, lastJoin));
-        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, timePlayed, TextColors.WHITE," minutes"));
+        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, days + " days " + hours + " hours and " + timePlayed + " sminutes"));
         source.sendMessage(bottom);
     }
 }
