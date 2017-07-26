@@ -218,6 +218,11 @@ public class ConfigUtils
         savePlayerStats();
     }
 
+    public void updatePlayerName(Player player)
+    {
+        stats.getNode(player.getUniqueId(), "PlayerName").setValue(player.getName());
+    }
+
     public int getStatInt(String... key)
     {
         return stats.getNode(key).getInt();

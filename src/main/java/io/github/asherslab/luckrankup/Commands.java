@@ -237,13 +237,13 @@ public class Commands
         final long days = TimeUnit.MINUTES.toDays(playerTime);
         playerTime -= TimeUnit.DAYS.toMinutes(days);
 
-        final long daysGroup = TimeUnit.MINUTES.toDays(playerTime);
+        final long daysGroup = TimeUnit.MINUTES.toDays(timeToNextGroup);
         timeToNextGroup -= TimeUnit.DAYS.toMinutes(daysGroup);
 
         final long hours = TimeUnit.MINUTES.toHours(playerTime);
         playerTime -= TimeUnit.HOURS.toMinutes(hours);
 
-        final long hoursGroup = TimeUnit.MINUTES.toHours(playerTime);
+        final long hoursGroup = TimeUnit.MINUTES.toHours(timeToNextGroup);
         timeToNextGroup -= TimeUnit.HOURS.toMinutes(hoursGroup);
 
         source.sendMessage(top);
@@ -334,7 +334,7 @@ public class Commands
         source.sendMessage(Text.of(middle, "Last known player name: ", TextColors.DARK_PURPLE, name));
         source.sendMessage(Text.of(middle, "Date of first join: ", TextColors.DARK_BLUE, firstJoin));
         source.sendMessage(Text.of(middle, "Date of last join: ", TextColors.GRAY, lastJoin));
-        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, days + " days " + hours + " hours and " + timePlayed + " sminutes"));
+        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, days + " days " + hours + " hours and " + timePlayed + " minutes"));
         source.sendMessage(bottom);
     }
 }

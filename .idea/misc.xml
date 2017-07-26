@@ -5,6 +5,11 @@
       <item index="0" class="java.lang.String" itemvalue="org.spongepowered.api.event.Listener" />
       <item index="1" class="java.lang.String" itemvalue="org.spongepowered.api.plugin.Plugin" />
     </list>
+    <writeAnnotations>
+      <writeAnnotation name="org.spongepowered.api.config.ConfigDir" />
+      <writeAnnotation name="org.spongepowered.api.config.DefaultConfig" />
+      <writeAnnotation name="com.google.inject.Inject" />
+    </writeAnnotations>
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">

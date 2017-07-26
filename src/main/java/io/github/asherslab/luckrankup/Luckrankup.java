@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
   name = "Luckrankup",
   description = "An addition for the Luckperms plugin that enables Auto-Ranking",
   authors = {"Asherslab"},
-  dependencies = @Dependency(id = "luckperms", optional = false))
+  dependencies = @Dependency(id = "luckperms"))
 public class Luckrankup
 {
     public Game             game;
@@ -93,11 +93,7 @@ public class Luckrankup
 
         Iterator<String> groups_iterator = groups.iterator();
 
-        while (groups_iterator.hasNext())
-        {
-            String group = groups_iterator.next();
-            ourGroupsAndTimes.put(group, cfgs.getInt("ranked-groups", group, "time"));
-        }
+        groups_iterator.forEachRemaining( group -> ourGroupsAndTimes.put(group, cfgs.getInt("ranked-groups", group, "time")));
 
         this.logger.info("Group list: " + ourGroupsAndTimes);
 
@@ -113,13 +109,7 @@ public class Luckrankup
     {
         this.logger.info("Updating player times every " + cfgs.getInt("update-player-time-minutes") + " minute(s)!");
 
-        Sponge.getScheduler().createSyncExecutor(this).scheduleWithFixedDelay(new Runnable()
-        {
-            public void run()
-            {
-                cfgs.addPlayerTimes();
-            }
-        }, cfgs.getInt("update-player-time-minutes"), cfgs.getInt("update-player-time-minutes"), TimeUnit.MINUTES);
+        Sponge.getScheduler().createSyncExecutor(this).scheduleWithFixedDelay(() -> cfgs.addPlayerTimes(), cfgs.getInt("update-player-time-minutes"), cfgs.getInt("update-player-time-minutes"), TimeUnit.MINUTES);
     }
 
     public void reload()
@@ -149,6 +139,11 @@ public class Luckrankup
         if (cfgs.getPlayerKey(player) == null)
         {
             cfgs.addPlayer(player);
+        }
+
+        if (!cfgs.getStatString(player.getUniqueId().toString(),"PlayerName").equals(player.getName()))
+        {
+            cfgs.updatePlayerName(player);
         }
 
         player.sendMessage(Text.of("Your current group: " + perms.getPlayerGroupWithMostParents(player)));
