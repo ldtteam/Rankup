@@ -642,10 +642,10 @@
         <option value="$PROJECT_DIR$/OLD/RUCommands.java" />
         <option value="$PROJECT_DIR$/OLD/RUUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/PermissionsUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/Luckrankup.java" />
         <option value="$PROJECT_DIR$/gradle.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/ConfigUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/Commands.java" />
+        <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/ConfigUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/Luckrankup.java" />
       </list>
     </option>
   </component>
@@ -1360,14 +1360,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/PermissionsUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/CommonUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -1435,7 +1427,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/ConfigUtils.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/PermissionsUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
           <caret line="220" column="32" lean-forward="false" selection-start-line="220" selection-start-column="32" selection-end-line="220" selection-end-column="32" />
@@ -1470,6 +1462,25 @@
             <element signature="e#7900#7906#0" expanded="true" />
             <marker date="1501062021000" expanded="true" signature="16689:16742" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/utils/ConfigUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="220" column="32" lean-forward="false" selection-start-line="220" selection-start-column="16" selection-end-line="220" selection-end-column="32" />
+          <folding>
+            <element signature="e#7325#7326#0" expanded="true" />
+            <element signature="e#7417#7418#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/asherslab/luckrankup/Luckrankup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-78">
+          <caret line="74" column="5" lean-forward="true" selection-start-line="74" selection-start-column="5" selection-end-line="74" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
