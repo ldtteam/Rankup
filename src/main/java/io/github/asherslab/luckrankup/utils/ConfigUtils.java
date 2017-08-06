@@ -302,8 +302,7 @@ public class ConfigUtils
             {
                 if (excl.equalsIgnoreCase(g))
                 {
-                    plugin.getLogger().info("Invalid Player");
-                    return -1;
+                    return -2;
                 }
             }
         }

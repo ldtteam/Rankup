@@ -232,26 +232,32 @@ public class Commands
 
         int playerTime = plugin.cfgs.getPlayerTime(player.getUniqueId().toString());
         final String group = plugin.perms.getPlayerGroupWithMostParents(player);
-        int timeToNextGroup = plugin.cfgs.checkRankup(player);
+        final int timeToNextGroup = plugin.cfgs.checkRankup(player);
+
+        int timeToNextGroup2 = timeToNextGroup;
 
         final long days = TimeUnit.MINUTES.toDays(playerTime);
         playerTime -= TimeUnit.DAYS.toMinutes(days);
 
         final long daysGroup = TimeUnit.MINUTES.toDays(playerTime);
-        timeToNextGroup -= TimeUnit.DAYS.toMinutes(daysGroup);
+        timeToNextGroup2 -= TimeUnit.DAYS.toMinutes(daysGroup);
 
         final long hours = TimeUnit.MINUTES.toHours(playerTime);
         playerTime -= TimeUnit.HOURS.toMinutes(hours);
 
         final long hoursGroup = TimeUnit.MINUTES.toHours(playerTime);
-        timeToNextGroup -= TimeUnit.HOURS.toMinutes(hoursGroup);
+        timeToNextGroup2 -= TimeUnit.HOURS.toMinutes(hoursGroup);
 
         source.sendMessage(top);
         source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA,  days + " days " + hours + " hours and " + playerTime + " minutes"));
         source.sendMessage(Text.of(middle, "Current Player Group: ", TextColors.DARK_RED, group));
-        if (timeToNextGroup != -1)
+        if (timeToNextGroup >= 0)
         {
-            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, daysGroup + " days " + hoursGroup + " hours and " + timeToNextGroup + " minutes"));
+            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, daysGroup + " days " + hoursGroup + " hours and " + timeToNextGroup2 + " minutes"));
+        }
+        else if (timeToNextGroup == -2)
+        {
+            source.sendMessage(Text.of(middle, "You are in an Excluded group!"));
         }
         else
         {
