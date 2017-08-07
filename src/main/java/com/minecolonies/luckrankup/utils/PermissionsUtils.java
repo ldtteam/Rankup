@@ -1,6 +1,6 @@
-package io.github.asherslab.luckrankup.utils;
+package com.minecolonies.luckrankup.utils;
 
-import io.github.asherslab.luckrankup.Luckrankup;
+import com.minecolonies.luckrankup.Luckrankup;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.permission.PermissionService;
@@ -34,7 +34,7 @@ public class PermissionsUtils
 
     public List<String> getPlayerGroupIdentifiers(Player player)
     {
-        List<String> identifiers = new ArrayList<String>();
+        List<String> identifiers = new ArrayList<>();
         List<Subject> groups = getPlayerGroups(player);
         groups.forEach(group -> identifiers.add(group.getIdentifier()));
         return identifiers;

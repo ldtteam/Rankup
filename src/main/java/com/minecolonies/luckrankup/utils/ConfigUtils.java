@@ -1,7 +1,7 @@
-package io.github.asherslab.luckrankup.utils;
+package com.minecolonies.luckrankup.utils;
 
 import com.google.common.reflect.TypeToken;
-import io.github.asherslab.luckrankup.Luckrankup;
+import com.minecolonies.luckrankup.Luckrankup;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -51,6 +51,12 @@ public class ConfigUtils
 
             config.getNode("date-format").setValue(config.getNode("date-format").getString("dd/MM/yyyy"))
               .setComment("Date format to save data info of players.");
+
+            config.getNode("login-message").setValue(config.getNode("Login-Message").getString("welcome {player} to the server, your current group is {prefix}"))
+              .setComment("The message to display for a player in chat when they login to the server");
+
+            config.getNode("prefix-fallback").setValue(config.getNode("prefix-fallback").getString("Default"))
+              .setComment("This is the prefix that will be put in place if a player has no prefix, leave \"\" to have no prefix fall-back");
 
             config.getNode("luck-track").setValue(config.getNode("luck-track").getString("member"))
               .setComment("The track we are using for LuckPerms");

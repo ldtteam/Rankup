@@ -1,6 +1,5 @@
-package io.github.asherslab.luckrankup.utils;
+package com.minecolonies.luckrankup.utils;
 
-import io.github.asherslab.luckrankup.Luckrankup;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.text.DateFormat;
@@ -11,14 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 public class CommonUtils
 {
-    private static Luckrankup plugin;
-
     public static String DateNow()
     {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Date today = Calendar.getInstance().getTime();
-        String now = df.format(today);
-        return now;
+        return df.format(today);
     }
 
     public static String timeDescript(int timeNeeded)
@@ -27,6 +23,7 @@ public class CommonUtils
         long hours = TimeUnit.MINUTES.toHours(timeNeeded - TimeUnit.DAYS.toMinutes(day));
         long minutes = TimeUnit.MINUTES.toMinutes((timeNeeded - TimeUnit.DAYS.toMinutes(day)) - TimeUnit.HOURS.toMinutes(hours));
         StringBuilder msg = new StringBuilder();
+
         if (day > 0)
         {
             msg.append(day).append(" day(s), ");

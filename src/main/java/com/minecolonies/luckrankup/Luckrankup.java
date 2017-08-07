@@ -1,8 +1,8 @@
-package io.github.asherslab.luckrankup;
+package com.minecolonies.luckrankup;
 
 import com.google.inject.Inject;
-import io.github.asherslab.luckrankup.utils.ConfigUtils;
-import io.github.asherslab.luckrankup.utils.PermissionsUtils;
+import com.minecolonies.luckrankup.utils.ConfigUtils;
+import com.minecolonies.luckrankup.utils.PermissionsUtils;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -21,7 +21,7 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -151,7 +151,11 @@ public class Luckrankup
             cfgs.addPlayer(player);
         }
 
-        player.sendMessage(Text.of("Your current group: " + perms.getPlayerGroupWithMostParents(player)));
+        final String fallBackPrefix = cfgs.getString("prefix-fallback");
+
+        final String loginMessage = cfgs.getString("login-message").replace("{player}", player.getName()).replace("{prefix}", player.getOption("prefix").orElse(fallBackPrefix));
+
+        player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(loginMessage));
     }
 
     @Listener

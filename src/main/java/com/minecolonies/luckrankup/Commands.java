@@ -1,5 +1,6 @@
-package io.github.asherslab.luckrankup;
+package com.minecolonies.luckrankup;
 
+import com.minecolonies.luckrankup.utils.CommonUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandResult;
@@ -10,12 +11,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
@@ -230,30 +230,19 @@ public class Commands
             return;
         }
 
-        int playerTime = plugin.cfgs.getPlayerTime(player.getUniqueId().toString());
-        final String group = plugin.perms.getPlayerGroupWithMostParents(player);
+        final int playerTime = plugin.cfgs.getPlayerTime(player.getUniqueId().toString());
         final int timeToNextGroup = plugin.cfgs.checkRankup(player);
 
-        int timeToNextGroup2 = timeToNextGroup;
+        final String fallBackPrefix = plugin.cfgs.getString("prefix-fallback");
+        final String playerPrefix = player.getOption("prefix").orElse(fallBackPrefix);
 
-        final long days = TimeUnit.MINUTES.toDays(playerTime);
-        playerTime -= TimeUnit.DAYS.toMinutes(days);
-
-        final long daysGroup = TimeUnit.MINUTES.toDays(playerTime);
-        timeToNextGroup2 -= TimeUnit.DAYS.toMinutes(daysGroup);
-
-        final long hours = TimeUnit.MINUTES.toHours(playerTime);
-        playerTime -= TimeUnit.HOURS.toMinutes(hours);
-
-        final long hoursGroup = TimeUnit.MINUTES.toHours(playerTime);
-        timeToNextGroup2 -= TimeUnit.HOURS.toMinutes(hoursGroup);
 
         source.sendMessage(top);
-        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA,  days + " days " + hours + " hours and " + playerTime + " minutes"));
-        source.sendMessage(Text.of(middle, "Current Player Group: ", TextColors.DARK_RED, group));
+        source.sendMessage(Text.of(middle, "Current Player Time: ", TextColors.AQUA, CommonUtils.toText(CommonUtils.timeDescript(playerTime))));
+        source.sendMessage(Text.of(middle, "Current Player Group: ", TextSerializers.FORMATTING_CODE.deserialize(playerPrefix)));
         if (timeToNextGroup >= 0)
         {
-            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, daysGroup + " days " + hoursGroup + " hours and " + timeToNextGroup2 + " minutes"));
+            source.sendMessage(Text.of(middle, "Time to Next Group: ", TextColors.GOLD, CommonUtils.toText(CommonUtils.timeDescript(timeToNextGroup))));
         }
         else if (timeToNextGroup == -2)
         {
@@ -291,13 +280,7 @@ public class Commands
             int time = plugin.cfgs.getPlayerTime(uuid);
             final String player = plugin.cfgs.getStatString(uuid,"PlayerName");
 
-            final long days = TimeUnit.MINUTES.toDays(time);
-            time -= TimeUnit.DAYS.toMinutes(days);
-
-            final long hours = TimeUnit.MINUTES.toHours(time);
-            time -= TimeUnit.HOURS.toMinutes(hours);
-
-            source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, days + " days " + hours + " hours and " + time + " minutes"));
+            source.sendMessage(Text.of(middle, index + ". Player name: ", TextColors.BLUE, player,TextColors.WHITE ," With time played at: ", TextColors.GOLD, CommonUtils.toText(CommonUtils.timeDescript(time))));
             if (index == 10)
             {
                 break;
@@ -327,20 +310,14 @@ public class Commands
 
         final String name = plugin.cfgs.getStatString(player, "PlayerName");
         final String firstJoin = plugin.cfgs.getStatString(player, "JoinDate");
-        long timePlayed = plugin.cfgs.getPlayerTime(player);
+        int timePlayed = plugin.cfgs.getPlayerTime(player);
         final String lastJoin = plugin.cfgs.getStatString(player, "LastVisit");
-
-        final long days = TimeUnit.MINUTES.toDays(timePlayed);
-        timePlayed -= TimeUnit.DAYS.toMinutes(days);
-
-        final long hours = TimeUnit.MINUTES.toHours(timePlayed);
-        timePlayed -= TimeUnit.HOURS.toMinutes(hours);
 
         source.sendMessage(top);
         source.sendMessage(Text.of(middle, "Last known player name: ", TextColors.DARK_PURPLE, name));
         source.sendMessage(Text.of(middle, "Date of first join: ", TextColors.DARK_BLUE, firstJoin));
         source.sendMessage(Text.of(middle, "Date of last join: ", TextColors.GRAY, lastJoin));
-        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, days + " days " + hours + " hours and " + timePlayed + " sminutes"));
+        source.sendMessage(Text.of(middle, "Time played: ", TextColors.DARK_AQUA, CommonUtils.toText(CommonUtils.timeDescript(timePlayed))));
         source.sendMessage(bottom);
     }
 }
