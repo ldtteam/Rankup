@@ -1,3 +1,7 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0.1'
+}
+
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
 }
@@ -10,7 +14,3 @@ dependencies {
 }
 
 sponge.plugin.id = pluginId
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.0.1'
-}
