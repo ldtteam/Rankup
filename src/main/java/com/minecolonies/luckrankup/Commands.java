@@ -194,7 +194,7 @@ public class Commands
                                     //no args
                                     src.sendMessage(top);
                                     src.sendMessage(Text.of(middle, plugin.get().getName()));
-                                    src.sendMessage(Text.of(middle, "Developed by " + plugin.get().getAuthors().get(0) + "."));
+                                    src.sendMessage(Text.of(middle, "Developed by Asherslab."));
                                     src.sendMessage(Text.of(middle, "For more information about the commands, type /lru help"));
                                     src.sendMessage(bottom);
                                     return CommandResult.success();
