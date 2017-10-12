@@ -1,6 +1,6 @@
-package com.minecolonies.luckrankup2.internal.listener;
+package com.minecolonies.rankup.internal.listener;
 
-import com.minecolonies.luckrankup2.Luckrankup2;
+import com.minecolonies.rankup.Rankup;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,9 +17,9 @@ public @interface ConditionalListener
 {
 
     /**
-     * The {@link Predicate} that contains the {@link Luckrankup2} plugin. <strong>Must have a NO-ARGS constructor.</strong>
+     * The {@link Predicate} that contains the {@link Rankup} plugin. <strong>Must have a NO-ARGS constructor.</strong>
      *
      * @return The class with the predicate in.
      */
-    Class<? extends Predicate<Luckrankup2>> value();
+    Class<? extends Predicate<Rankup>> value();
 }

@@ -1,14 +1,14 @@
-package com.minecolonies.luckrankup2.qsml.modulespec;
+package com.minecolonies.rankup.qsml.modulespec;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.minecolonies.luckrankup2.Luckrankup2;
-import com.minecolonies.luckrankup2.internal.Reloadable;
-import com.minecolonies.luckrankup2.internal.command.LuckrankupCommand;
-import com.minecolonies.luckrankup2.internal.command.LuckrankupSubcommand;
-import com.minecolonies.luckrankup2.internal.listener.ConditionalListener;
-import com.minecolonies.luckrankup2.internal.listener.ListenerBase;
-import com.minecolonies.luckrankup2.util.Action;
+import com.minecolonies.rankup.Rankup;
+import com.minecolonies.rankup.internal.Reloadable;
+import com.minecolonies.rankup.internal.command.RankupCommand;
+import com.minecolonies.rankup.internal.command.RankupSubcommand;
+import com.minecolonies.rankup.internal.listener.ConditionalListener;
+import com.minecolonies.rankup.internal.listener.ListenerBase;
+import com.minecolonies.rankup.util.Action;
 import org.spongepowered.api.Sponge;
 import uk.co.drnaylor.quickstart.Module;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
@@ -25,12 +25,12 @@ import java.util.stream.Stream;
 public abstract class StandardModule implements Module
 {
 
-    private final String            moduleId;
-    private final String            moduleName;
+    private final String        moduleId;
+    private final String        moduleName;
     @Inject
-    private       Luckrankup2       plugin;
+    private       Rankup        plugin;
     @Inject
-    private       LuckrankupCommand command;
+    private       RankupCommand command;
 
     private final String packageName;
 
@@ -52,7 +52,7 @@ public abstract class StandardModule implements Module
         return this.moduleName;
     }
 
-    protected Luckrankup2 getPlugin()
+    protected Rankup getPlugin()
     {
         return this.plugin;
     }
@@ -62,11 +62,9 @@ public abstract class StandardModule implements Module
     {
         // Any classes can make use of the injector.
         // This section will be used to do any common tasks, such as scan for commands/listeners/hooks/whatever
-        // getPhononPlugin().getPhononInjector().getInstance(Class)
-        // getPhononPlugin().getPhononInjector().injectMembers(InstantiatedObject);
 
         // Get all the subcommands to register.
-        List<Class<? extends LuckrankupSubcommand>> subcommandList = getStreamForModule(LuckrankupSubcommand.class)
+        List<Class<? extends RankupSubcommand>> subcommandList = getStreamForModule(RankupSubcommand.class)
                                                                        .collect(Collectors.toList());
 
         // For each command, instantiate and register.
@@ -75,7 +73,7 @@ public abstract class StandardModule implements Module
         // Add the subcommands.
         subcommandList.forEach(x ->
         {
-            LuckrankupSubcommand subcommand = injector.getInstance(x);
+            RankupSubcommand subcommand = injector.getInstance(x);
             if (subcommand instanceof Reloadable)
             {
                 Reloadable r = (Reloadable) subcommand;
@@ -91,11 +89,11 @@ public abstract class StandardModule implements Module
         // Now, listeners.
         registerListeners(this.plugin, injector);
 
-        luckrankup2Enable();
+        Rankup2Enable();
     }
 
     // Separate method for if we use a disableable module in the future.
-    protected void registerListeners(Luckrankup2 plugin, Injector injector)
+    protected void registerListeners(Rankup plugin, Injector injector)
     {
         List<Class<? extends ListenerBase>> listenerClass = getStreamForModule(ListenerBase.class).collect(Collectors.toList());
 
@@ -118,7 +116,7 @@ public abstract class StandardModule implements Module
                 // Create the reloadable.
                 try
                 {
-                    Predicate<Luckrankup2> p = cl.value().newInstance();
+                    Predicate<Rankup> p = cl.value().newInstance();
                     Action a = () ->
                     {
                         Sponge.getEventManager().unregisterListeners(base);
@@ -144,7 +142,7 @@ public abstract class StandardModule implements Module
         });
     }
 
-    public void luckrankup2Enable() {}
+    public void Rankup2Enable() {}
 
     /*
      * This is where the magic happens, folks!

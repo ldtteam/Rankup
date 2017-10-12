@@ -1,7 +1,7 @@
-package com.minecolonies.luckrankup2.internal.listener;
+package com.minecolonies.rankup.internal.listener;
 
 import com.google.inject.Inject;
-import com.minecolonies.luckrankup2.Luckrankup2;
+import com.minecolonies.rankup.Rankup;
 
 /**
  * Marker class (mostly) for listeners.
@@ -9,5 +9,5 @@ import com.minecolonies.luckrankup2.Luckrankup2;
 public class ListenerBase
 {
     @Inject
-    protected Luckrankup2 plugin;
+    protected Rankup plugin;
 }

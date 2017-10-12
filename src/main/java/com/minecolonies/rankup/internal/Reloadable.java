@@ -1,4 +1,4 @@
-package com.minecolonies.luckrankup2.internal;
+package com.minecolonies.rankup.internal;
 
 /**
  * Marks a command or listener as reloadable - the {@link #onReload()} method will be called whenever the plugin config is reloaded.

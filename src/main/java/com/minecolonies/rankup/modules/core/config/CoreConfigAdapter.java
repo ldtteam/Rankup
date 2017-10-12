@@ -1,4 +1,4 @@
-package com.minecolonies.luckrankup2.modules.core.config;
+package com.minecolonies.rankup.modules.core.config;
 
 import uk.co.drnaylor.quickstart.config.TypedAbstractConfigAdapter;
 

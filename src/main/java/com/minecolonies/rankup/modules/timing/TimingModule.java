@@ -1,10 +1,10 @@
-package com.minecolonies.luckrankup2.modules.timing;
+package com.minecolonies.rankup.modules.timing;
 
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
-import com.minecolonies.luckrankup2.modules.timing.config.TimingConfig;
-import com.minecolonies.luckrankup2.modules.timing.config.TimingConfigAdapter;
-import com.minecolonies.luckrankup2.qsml.modulespec.ConfigurableModule;
-import com.minecolonies.luckrankup2.util.RankingUtils;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.timing.config.TimingConfig;
+import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
+import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
+import com.minecolonies.rankup.util.RankingUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
@@ -12,7 +12,7 @@ import uk.co.drnaylor.quickstart.annotations.ModuleData;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Timing Module for the Luckrankup2 plugin.
+ * Timing Module for the Rankup2 plugin.
  */
 @ModuleData(id = TimingModule.ID, name = "Timing")
 public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
@@ -27,9 +27,9 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
     }
 
     @Override
-    public void luckrankup2Enable()
+    public void Rankup2Enable()
     {
-        super.luckrankup2Enable();
+        super.Rankup2Enable();
         playerCounterHandler();
     }
 

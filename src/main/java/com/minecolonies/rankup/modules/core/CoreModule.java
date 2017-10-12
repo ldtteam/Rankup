@@ -1,10 +1,10 @@
-package com.minecolonies.luckrankup2.modules.core;
+package com.minecolonies.rankup.modules.core;
 
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
-import com.minecolonies.luckrankup2.modules.core.config.CoreConfigAdapter;
-import com.minecolonies.luckrankup2.modules.core.config.GroupsConfig;
-import com.minecolonies.luckrankup2.qsml.modulespec.ConfigurableModule;
-import com.minecolonies.luckrankup2.util.PermissionsUtils;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.rankup.modules.core.config.GroupsConfig;
+import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
+import com.minecolonies.rankup.util.PermissionsUtils;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.permission.Subject;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Core module for the Luckrankup2 plugin.
+ * Core module for the Rankup plugin.
  */
 @ModuleData(id = CoreModule.ID, name = "Core", isRequired = true)
 public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
@@ -32,10 +32,10 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
     }
 
     @Override
-    public void luckrankup2Enable()
+    public void Rankup2Enable()
     {
         perms = new PermissionsUtils(getPlugin(), Sponge.getGame());
-        super.luckrankup2Enable();
+        super.Rankup2Enable();
 
         final Path accountsPath = this.getPlugin().getConfigDir().resolve("playerstats.conf");
         AccountConfigData data = this.getPlugin().getConfig(accountsPath, AccountConfigData.class,

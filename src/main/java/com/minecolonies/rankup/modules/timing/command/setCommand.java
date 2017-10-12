@@ -1,7 +1,7 @@
-package com.minecolonies.luckrankup2.modules.timing.command;
+package com.minecolonies.rankup.modules.timing.command;
 
-import com.minecolonies.luckrankup2.internal.command.LuckrankupSubcommand;
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.internal.command.RankupSubcommand;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -16,7 +16,7 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 import java.util.Optional;
 
 @NonnullByDefault
-public class setCommand extends LuckrankupSubcommand
+public class setCommand extends RankupSubcommand
 {
     private static final Text USER_KEY = Text.of("user");
     private static final Text TIME_KEY = Text.of("time");
@@ -36,7 +36,7 @@ public class setCommand extends LuckrankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows players with the rankup.timing.base to set another players playtime. \n Usage: /lru set [time] {player}"));
+        return Optional.of(Text.of("Allows players with the rankup.timing.base to set another players playtime. \n Usage: /ru set [time] {player}"));
     }
 
     @Override

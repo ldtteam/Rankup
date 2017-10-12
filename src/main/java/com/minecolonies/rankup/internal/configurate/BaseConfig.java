@@ -1,4 +1,4 @@
-package com.minecolonies.luckrankup2.internal.configurate;
+package com.minecolonies.rankup.internal.configurate;
 
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -8,7 +8,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import java.io.IOException;
 
 /**
- * Created by Asher on 7/10/17.
+ * Base config for all Other configs to use.
  */
 public class BaseConfig<T extends ConfigurationLoader<K>, K extends ConfigurationNode>
 {

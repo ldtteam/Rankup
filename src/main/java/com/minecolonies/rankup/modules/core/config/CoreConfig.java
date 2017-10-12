@@ -1,6 +1,6 @@
-package com.minecolonies.luckrankup2.modules.core.config;
+package com.minecolonies.rankup.modules.core.config;
 
-import com.minecolonies.luckrankup2.internal.configurate.BaseConfig;
+import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 

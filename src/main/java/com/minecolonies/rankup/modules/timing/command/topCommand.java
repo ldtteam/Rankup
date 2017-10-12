@@ -1,8 +1,8 @@
-package com.minecolonies.luckrankup2.modules.timing.command;
+package com.minecolonies.rankup.modules.timing.command;
 
-import com.minecolonies.luckrankup.utils.CommonUtils;
-import com.minecolonies.luckrankup2.internal.command.LuckrankupSubcommand;
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.util.CommonUtils;
+import com.minecolonies.rankup.internal.command.RankupSubcommand;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -19,7 +19,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 @NonnullByDefault
-public class topCommand extends LuckrankupSubcommand
+public class topCommand extends RankupSubcommand
 {
     @Override
     protected String[] getAliases()
@@ -36,7 +36,7 @@ public class topCommand extends LuckrankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows a player to check the Time leader board. \n Usage: /lru top"));
+        return Optional.of(Text.of("Allows a player to check the Time leader board. \n Usage: /ru top"));
     }
 
     @Override

@@ -1,10 +1,10 @@
-package com.minecolonies.luckrankup2.modules.core.listeners;
+package com.minecolonies.rankup.modules.core.listeners;
 
-import com.minecolonies.luckrankup2.internal.listener.ListenerBase;
-import com.minecolonies.luckrankup2.modules.core.CoreModule;
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
-import com.minecolonies.luckrankup2.modules.core.config.CoreConfig;
-import com.minecolonies.luckrankup2.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.rankup.internal.listener.ListenerBase;
+import com.minecolonies.rankup.modules.core.CoreModule;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;

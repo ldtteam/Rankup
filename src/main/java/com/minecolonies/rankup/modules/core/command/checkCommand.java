@@ -1,11 +1,11 @@
-package com.minecolonies.luckrankup2.modules.core.command;
+package com.minecolonies.rankup.modules.core.command;
 
-import com.minecolonies.luckrankup2.internal.command.LuckrankupSubcommand;
-import com.minecolonies.luckrankup2.modules.core.CoreModule;
-import com.minecolonies.luckrankup2.modules.core.config.AccountConfigData;
-import com.minecolonies.luckrankup2.modules.core.config.CoreConfig;
-import com.minecolonies.luckrankup2.modules.core.config.CoreConfigAdapter;
-import com.minecolonies.luckrankup2.util.CommonUtils;
+import com.minecolonies.rankup.internal.command.RankupSubcommand;
+import com.minecolonies.rankup.modules.core.CoreModule;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.rankup.util.CommonUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @NonnullByDefault
-public class checkCommand extends LuckrankupSubcommand
+public class checkCommand extends RankupSubcommand
 {
     private static final Text USER_KEY = Text.of("player");
 
@@ -42,7 +42,7 @@ public class checkCommand extends LuckrankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows a player to see their (Or another players) RankUp stats. \n Usage: /lru check {player}"));
+        return Optional.of(Text.of("Allows a player to see their (Or another players) RankUp stats. \n Usage: /ru check {player}"));
     }
 
     @Override
