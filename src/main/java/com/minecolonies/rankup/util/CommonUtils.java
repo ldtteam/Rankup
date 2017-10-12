@@ -1,20 +1,14 @@
-package com.minecolonies.luckrankup.utils;
+package com.minecolonies.rankup.util;
 
-import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.text.Text;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class CommonUtils
 {
-    public static String DateNow()
+    public static Text toText(final String string)
     {
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        Date today = Calendar.getInstance().getTime();
-        return df.format(today);
+        return Text.of(string);
     }
 
     public static String timeDescript(int timeNeeded)
@@ -55,10 +49,5 @@ public class CommonUtils
             return msg.toString().substring(0, msg.toString().length() - 1);
         }
         return msg.toString();
-    }
-
-    public static org.spongepowered.api.text.Text toText(String str)
-    {
-        return TextSerializers.FORMATTING_CODE.deserialize(str);
     }
 }

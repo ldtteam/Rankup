@@ -1,16 +1,83 @@
 plugins {
+    id 'java'
+    id 'idea'
+    id 'ninja.miserable.blossom' version '1.0.1'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
     id 'org.spongepowered.plugin' version '0.8.1'
+    id 'maven'
 }
 
-group = pluginGroup
-version = pluginVersion
+project.ext.suffix = "-SNAPSHOT"
+
+group = 'com.minecolonies.rankup'
+version = '2.0-SNAPSHOT'
+description = 'A simple plugin for increasing player ranks based on time'
+ext.url = 'http://github.com/Minecolonies/rankup'
+
+//sponge.plugin.id = pluginId
+
+repositories {
+    jcenter()
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+    maven {
+        name 'drnaylor'
+        url 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
+    }
+}
+
+def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
+def spongeapi = '6.0.0'
 
 dependencies {
-    compile 'org.spongepowered:spongeapi:6.0.0'
+    compile('org.spongepowered:spongeapi:' + spongeapi)
+    compile(qsmlDep)
 }
 
-sponge.plugin.id = pluginId
+jar {
+    manifest {
+        attributes  'Implementation-Title': project.name,
+                'Implementation-Version': version,
+                'SpongeAPI-Version': spongeapi,
+                'Git-Hash': getGitHash()
+    }
 
+    archiveName = "Rankup-${version}-base.jar"
+}
+
+shadowJar {
+    dependencies {
+        include dependency(qsmlDep)
+        include dependency('io.github.lukehutch:fast-classpath-scanner')
+    }
+
+    relocate 'uk.co.drnaylor', 'com.minecolonies.rankup.relocate.uk.co.drnaylor'
+    relocate 'io.github.lukehutch', 'com.minecolonies.rankup.relocate.io.github.lukehutch'
+
+    archiveName = "Rankup-${version}-plugin.jar"
+}
+
+
+blossom {
+    def location = 'src/main/java/io/github/nucleuspowered/phonon/PluginInfo.java'
+
+    replaceToken '@name@', project.name, location
+    replaceToken '@version@', version, location
+    replaceToken '@description@', project.description, location
+}
+
+
+build.dependsOn(shadowJar)
+
+static String getGitHash() {
+    def process = 'git rev-parse --short HEAD'.execute()
+    process.waitFor()
+    return process.exitValue() ? 'unknown' : process.text.trim()
+}
+
+/*
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0.1'
-}
+}*/
