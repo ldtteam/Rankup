@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
+import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.InjectorModule;
@@ -33,6 +34,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 import uk.co.drnaylor.quickstart.exceptions.IncorrectAdapterTypeException;
 import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
@@ -42,9 +44,7 @@ import uk.co.drnaylor.quickstart.modulecontainers.DiscoveryModuleContainer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.minecolonies.rankup.Plugininfo.*;
@@ -181,6 +181,8 @@ public class Rankup
         GroupsConfig groups = this.getConfig(groupsPath, GroupsConfig.class,
           HoconConfigurationLoader.builder().setPath(groupsPath).build());
         this.getAllConfigs().put(GroupsConfig.class, groups);
+
+        generateGroups();
     }
 
     /**
@@ -191,6 +193,40 @@ public class Rankup
     public Injector getInjector()
     {
         return this.RankupInjector;
+    }
+
+    public void generateGroups()
+    {
+        GroupsConfig groupsConfig = (GroupsConfig) this.getAllConfigs().get(GroupsConfig.class);
+
+        List<Subject> disabledGroups = new ArrayList<>();
+
+        for (final Subject subject : CoreModule.perms.getGroups().getAllSubjects())
+        {
+            final String id = subject.getIdentifier();
+
+            if (!groupsConfig.groups.containsKey(id))
+            {
+                logger.info("Config doesn't contain group: " + id);
+                groupsConfig.groups.put(id, new GroupsConfig.GroupConfig());
+
+                groupsConfig.groups.get(id).enabled = true;
+                groupsConfig.groups.get(id).rank = 0;
+            }
+
+            if (!groupsConfig.groups.get(id).enabled)
+            {
+                groupsConfig.groups.get(id).rank = -1;
+                disabledGroups.add(subject);
+            }
+            else if (groupsConfig.groups.get(id).rank == -1)
+            {
+                groupsConfig.groups.get(id).enabled = false;
+                disabledGroups.add(subject);
+            }
+        }
+
+        groupsConfig.save();
     }
 
     /**
