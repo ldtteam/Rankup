@@ -10,7 +10,7 @@ plugins {
 project.ext.suffix = "-SNAPSHOT"
 
 group = 'com.minecolonies.rankup'
-version = '2.0-SNAPSHOT'
+version = '1.0'
 description = 'A simple plugin for increasing player ranks based on time'
 ext.url = 'http://github.com/Minecolonies/rankup'
 
