@@ -65,7 +65,7 @@ public abstract class StandardModule implements Module
 
         // Get all the subcommands to register.
         List<Class<? extends RankupSubcommand>> subcommandList = getStreamForModule(RankupSubcommand.class)
-                                                                       .collect(Collectors.toList());
+                                                                   .collect(Collectors.toList());
 
         // For each command, instantiate and register.
         final Injector injector = this.plugin.getInjector();

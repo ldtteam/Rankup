@@ -18,7 +18,7 @@ import java.util.List;
 public class RankingUtils
 {
 
-    public static void rankup(Player player, Rankup plugin)
+    public static void rankup(final Player player, final Rankup plugin)
     {
         final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
 
@@ -36,12 +36,13 @@ public class RankingUtils
         final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
         final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
 
+
         final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
 
         final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
 
-        if (playerTime > groupsConfig.groups.get(nextGroup).timingTime && !CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank).equals(""))
+        if (!nextGroup.equals("") && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
         {
             final String cmd = coreConfig.rankupCommand;
 

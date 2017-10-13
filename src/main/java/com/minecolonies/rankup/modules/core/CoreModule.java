@@ -47,7 +47,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
           HoconConfigurationLoader.builder().setPath(groupsPath).build());
         this.getPlugin().getAllConfigs().put(GroupsConfig.class, groups);
 
-        GroupsConfig config = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
+        GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
 
         List<Subject> disabledGroups = new ArrayList<>();
 
@@ -55,27 +55,27 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
         {
             final String id = subject.getIdentifier();
 
-            if (!config.groups.containsKey(id))
+            if (!groupsConfig.groups.containsKey(id))
             {
-                config.groups.put(id, new GroupsConfig.GroupConfig());
+                groupsConfig.groups.put(id, new GroupsConfig.GroupConfig());
 
-                config.groups.get(id).enabled = true;
-                config.groups.get(id).rank = 0;
+                groupsConfig.groups.get(id).enabled = true;
+                groupsConfig.groups.get(id).rank = 0;
             }
 
-            if (!config.groups.get(id).enabled)
+            if (!groupsConfig.groups.get(id).enabled)
             {
-                config.groups.get(id).rank = -1;
+                groupsConfig.groups.get(id).rank = -1;
                 disabledGroups.add(subject);
             }
-            else if (config.groups.get(id).rank == -1)
+            else if (groupsConfig.groups.get(id).rank == -1)
             {
-                config.groups.get(id).enabled = false;
+                groupsConfig.groups.get(id).enabled = false;
                 disabledGroups.add(subject);
             }
         }
 
-        config.save();
+        groupsConfig.save();
 
         for (final Subject subject : disabledGroups)
         {

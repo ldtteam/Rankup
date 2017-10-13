@@ -8,6 +8,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
+import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.InjectorModule;
 import com.minecolonies.rankup.qsml.RankupLoggerProxy;
 import com.minecolonies.rankup.qsml.RankupModuleConstructor;
@@ -16,6 +18,7 @@ import com.minecolonies.rankup.util.Action;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -75,8 +78,8 @@ public class Rankup
 
     @Inject
     public Rankup(
-                        Logger logger, @DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> loader,
-                        @ConfigDir(sharedRoot = false) Path configDir, GuiceObjectMapperFactory factory)
+                   Logger logger, @DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> loader,
+                   @ConfigDir(sharedRoot = false) Path configDir, GuiceObjectMapperFactory factory)
     {
         this.logger = logger;
         this.loader = loader;
@@ -165,6 +168,19 @@ public class Rankup
     {
         this.container.reloadSystemConfig();
         reloadables.values().forEach(Action::action);
+
+        this.getAllConfigs().remove(GroupsConfig.class);
+        this.getAllConfigs().remove(AccountConfigData.class);
+
+        final Path accountsPath = this.getConfigDir().resolve("playerstats.conf");
+        AccountConfigData data = this.getConfig(accountsPath, AccountConfigData.class,
+          HoconConfigurationLoader.builder().setPath(accountsPath).build());
+        this.getAllConfigs().put(AccountConfigData.class, data);
+
+        final Path groupsPath = this.getConfigDir().resolve("groups.conf");
+        GroupsConfig groups = this.getConfig(groupsPath, GroupsConfig.class,
+          HoconConfigurationLoader.builder().setPath(groupsPath).build());
+        this.getAllConfigs().put(GroupsConfig.class, groups);
     }
 
     /**

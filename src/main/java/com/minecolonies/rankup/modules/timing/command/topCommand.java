@@ -1,8 +1,8 @@
 package com.minecolonies.rankup.modules.timing.command;
 
-import com.minecolonies.rankup.util.CommonUtils;
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.util.CommonUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

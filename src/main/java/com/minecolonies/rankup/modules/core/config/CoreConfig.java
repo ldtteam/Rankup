@@ -23,8 +23,8 @@ public class CoreConfig extends BaseConfig
     public String prefixFallback = "Default";
 
     @Setting(value = "rankup-command", comment = "The command the plugin will execute via console to add a rank to a player, valid entries: {player} and {group}")
-    public String rankupCommand = "/luckperms user {player} parent add {group}";
+    public String rankupCommand = "luckperms user {player} parent add {group}";
 
     @Setting(value = "rankdown-command", comment = "the command the plugin will execute via console to remove a rank from a player, valid entries: {player} and {group}")
-    public String rankdownCommand = "/luckperms user {player} parent remove {group}";
+    public String rankdownCommand = "luckperms user {player} parent remove {group}";
 }

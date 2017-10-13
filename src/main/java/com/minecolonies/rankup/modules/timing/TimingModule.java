@@ -1,5 +1,7 @@
 package com.minecolonies.rankup.modules.timing;
 
+import com.google.inject.Inject;
+import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
@@ -19,6 +21,8 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
 {
 
     public static final String ID = "timing";
+    @Inject
+    protected Rankup plugin;
 
     @Override
     protected TimingConfigAdapter createConfigAdapter()
@@ -33,7 +37,7 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
         playerCounterHandler();
     }
 
-    private void playerCounterHandler()
+    public void playerCounterHandler()
     {
         TimingConfig config = getPlugin().getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
 
@@ -42,19 +46,19 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
         Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerTimeAdd, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
     }
 
-    private void playerTimeAdd()
+    public void playerTimeAdd()
     {
-        TimingConfig timeConfig = getPlugin().getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
-        AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
+        final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
+        final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
 
         for (final Player player : Sponge.getServer().getOnlinePlayers())
         {
             playerData.playerData.get(player.getUniqueId()).timePlayed += timeConfig.updateInterval;
-            RankingUtils.rankup(player, getPlugin());
-            RankingUtils.rankdown(player, getPlugin());
+            RankingUtils.rankup(player, plugin);
+            RankingUtils.rankdown(player, plugin);
         }
 
-        getPlugin().getLogger().info("Times updated for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
+        plugin.getLogger().info("Times updated for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
         playerData.save();
     }
 }

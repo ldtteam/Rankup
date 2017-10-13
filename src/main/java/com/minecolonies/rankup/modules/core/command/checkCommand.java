@@ -3,8 +3,6 @@ package com.minecolonies.rankup.modules.core.command;
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
 import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
-import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.util.CommonUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -75,7 +73,6 @@ public class checkCommand extends RankupSubcommand
     private void sendCheck(final CommandSource src, final User user)
     {
         AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
-        CoreConfig coreConfig = getPlugin().getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
         final AccountConfigData.PlayerConfig playerConf = playerData.playerData.get(user.getUniqueId());
 
