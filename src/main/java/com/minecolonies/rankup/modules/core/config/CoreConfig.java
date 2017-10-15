@@ -27,4 +27,10 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "rankdown-command", comment = "the command the plugin will execute via console to remove a rank from a player, valid entries: {player} and {group}")
     public String rankdownCommand = "luckperms user {player} parent remove {group}";
+
+    @Setting(value = "remove-previous-group", comment = "Whether to remove all other player groups from player after rankUp (Using \"rankdown-command\")")
+    public boolean removeOtherGroups = true;
+
+    @Setting(value = "debug-mode", comment = "If true a message will be output to console every time players are updated or checked.")
+    public boolean debugMode = false;
 }

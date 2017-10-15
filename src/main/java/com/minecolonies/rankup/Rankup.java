@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.magitechserver.magibridge.MagiBridge;
 import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import com.minecolonies.rankup.modules.core.CoreModule;
@@ -33,7 +34,10 @@ import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 import uk.co.drnaylor.quickstart.exceptions.IncorrectAdapterTypeException;
@@ -54,7 +58,8 @@ import static com.minecolonies.rankup.Plugininfo.*;
   name = NAME,
   version = VERSION,
   description = DESCRIPTION,
-  url = URL
+  url = URL,
+         dependencies = {@Dependency(id = "magibridge", optional = true)}
 )
 public class Rankup
 {
@@ -62,6 +67,8 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
+    public EconomyService econ;
+    public static Rankup instance = null;
     public        Game                                         game;
     private final RankupCommand                                rankupCommand;
     private final Path                                         configDir;
@@ -93,6 +100,7 @@ public class Rankup
     @Listener
     public void onPreInit(GamePreInitializationEvent event)
     {
+        instance = this;
         logger.info("preInit");
         try
         {
@@ -127,6 +135,15 @@ public class Rankup
         }
 
         Sponge.getCommandManager().register(this, this.rankupCommand, "ru");
+    }
+
+    @Listener
+    public void onChangeServiceProvider(ChangeServiceProviderEvent event)
+    {
+        if (event.getService().equals(EconomyService.class))
+        {
+            this.econ = (EconomyService) event.getNewProviderRegistration().getProvider();
+        }
     }
 
     @Listener
@@ -184,6 +201,8 @@ public class Rankup
 
         generateGroups();
     }
+
+    public static Rankup getInstance() { return instance; }
 
     /**
      * Gets the Rankup injector modules, for injecting this plugin instance into classes.

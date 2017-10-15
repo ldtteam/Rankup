@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import java.util.function.Predicate;
 
 /**
- * Indicates that the listener may need turning off.
+ * Indicates that the listeners may need turning off.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

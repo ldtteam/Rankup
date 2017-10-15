@@ -2,7 +2,10 @@ package com.minecolonies.rankup.modules.timing;
 
 import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
+import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
 import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
@@ -54,11 +57,16 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
         for (final Player player : Sponge.getServer().getOnlinePlayers())
         {
             playerData.playerData.get(player.getUniqueId()).timePlayed += timeConfig.updateInterval;
-            RankingUtils.rankup(player, plugin);
-            RankingUtils.rankdown(player, plugin);
+            RankingUtils.timeUp(player, plugin);
+            RankingUtils.timeDown(player, plugin);
         }
 
-        plugin.getLogger().info("Times updated for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
+        final CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+
+        if (config.debugMode)
+        {
+            plugin.getLogger().info("Times updated for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
+        }
         playerData.save();
     }
 }

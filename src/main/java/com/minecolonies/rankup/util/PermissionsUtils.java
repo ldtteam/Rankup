@@ -147,6 +147,25 @@ public class PermissionsUtils
         return "";
     }
 
+    public String getPreviousGroup(final int currentRank)
+    {
+        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+
+        final Map<Integer, String> ranksAndGroups = new HashMap<>();
+
+        final int nextRank = currentRank - 1;
+
+        config.groups.forEach((name, conf) ->
+                                ranksAndGroups.put(conf.rank, name));
+
+        if (ranksAndGroups.containsKey(nextRank))
+        {
+            return ranksAndGroups.get(nextRank);
+        }
+
+        return "";
+    }
+
     public List<Subject> getPlayerGroups(Player player)
     {
         return player.getParents();

@@ -1,8 +1,9 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'application'
     id 'ninja.miserable.blossom' version '1.0.1'
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
     id 'org.spongepowered.plugin' version '0.8.1'
     id 'maven'
 }
@@ -12,9 +13,19 @@ project.ext.suffix = "-SNAPSHOT"
 group = 'com.minecolonies.rankup'
 version = '1.0'
 description = 'A simple plugin for increasing player ranks based on time'
+mainClassName = 'com.minecolonies.rankup.Rankup'
+compileJava.options.encoding = 'UTF-8'
 ext.url = 'http://github.com/Minecolonies/rankup'
 
-//sponge.plugin.id = pluginId
+def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
+def spongeapi = '6.0.0'
+
+dependencies {
+    shadow files('libs/magibridge.jar')
+
+    compile('org.spongepowered:spongeapi:' + spongeapi)
+    compile(qsmlDep)
+}
 
 repositories {
     jcenter()
@@ -26,14 +37,6 @@ repositories {
         name 'drnaylor'
         url 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
     }
-}
-
-def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
-def spongeapi = '6.0.0'
-
-dependencies {
-    compile('org.spongepowered:spongeapi:' + spongeapi)
-    compile(qsmlDep)
 }
 
 jar {
