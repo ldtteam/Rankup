@@ -131,7 +131,7 @@ public class checkCommand extends RankupSubcommand
                 UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
                 int userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
                 src.sendMessage(Text.of(MIDDLE, "Current Balance: ", TextColors.AQUA, userMoney));
-                if (nextGroup != "")
+                if (!inDisabledGroup && nextGroup != "")
                 {
                     final Integer moneyNeeded = groupsConfig.groups.get(nextGroup).moneyNeeded - userMoney;
 
@@ -144,7 +144,7 @@ public class checkCommand extends RankupSubcommand
                         src.sendMessage(Text.of(MIDDLE, "You should rankup on the next balance check!"));
                     }
                 }
-                else
+                else if (!inDisabledGroup)
                 {
                     src.sendMessage(Text.of(MIDDLE, "Time to next Group: ", TextColors.GOLD, "You have progressed to the"));
                     src.sendMessage(Text.of(MIDDLE, TextColors.GOLD, "highest possible group!"));

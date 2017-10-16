@@ -46,10 +46,10 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
 
         getPlugin().getLogger().info("Updating player times every " + config.updateInterval + " minute(s)!");
 
-        Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerTimeAdd, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
+        Sponge.getScheduler().createAsyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerTimeAdd, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
     }
 
-    public void playerTimeAdd()
+    public synchronized void playerTimeAdd()
     {
         final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);

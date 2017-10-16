@@ -41,7 +41,7 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
 
         getPlugin().getLogger().info("checking player balances every " + config.updateInterval + " minute(s)!");
 
-        Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerCheckBalances, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
+        Sponge.getScheduler().createAsyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerCheckBalances, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
     }
 
     public void playerCheckBalances()

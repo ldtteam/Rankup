@@ -24,10 +24,14 @@ public class CoreListener extends ListenerBase
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player)
     {
+        plugin.getLogger().info("Player Group: " + CoreModule.perms.getPlayerGroupWithMostParents(player));
+        updatePlayerInfo(player);
+    }
+
+    private synchronized void updatePlayerInfo(final Player player)
+    {
         AccountConfigData data = (AccountConfigData) this.plugin.getAllConfigs().get(AccountConfigData.class);
         CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
-
-        plugin.getLogger().info("Player Group: " + CoreModule.perms.getPlayerGroupWithMostParents(player));
 
         if (data.playerData.containsKey(player.getUniqueId()))
         {
@@ -68,7 +72,7 @@ public class CoreListener extends ListenerBase
         data.save();
     }
 
-    public String dateNow()
+    private String dateNow()
     {
         CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 

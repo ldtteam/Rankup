@@ -18,5 +18,4 @@ public class MagibridgeModule extends ConfigurableModule<MagibridgeConfigAdapter
     {
         return new MagibridgeConfigAdapter();
     }
-
 }

@@ -12,8 +12,6 @@ public interface RankupEvent extends Cancellable, Event
 
     /**
      * Gets the {@link Player} that this event was fired
-     *
-     * @Return The player that was ranked up
      */
     Player getPlayer();
 
@@ -30,5 +28,4 @@ public interface RankupEvent extends Cancellable, Event
      * @return the Group
      */
     String getCurrentGroup();
-
 }

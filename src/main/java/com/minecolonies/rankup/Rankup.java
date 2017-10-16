@@ -6,7 +6,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.magitechserver.magibridge.MagiBridge;
 import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import com.minecolonies.rankup.modules.core.CoreModule;
@@ -59,7 +58,7 @@ import static com.minecolonies.rankup.Plugininfo.*;
   version = VERSION,
   description = DESCRIPTION,
   url = URL,
-         dependencies = {@Dependency(id = "magibridge", optional = true)}
+  dependencies = {@Dependency(id = "magibridge", optional = true)}
 )
 public class Rankup
 {

@@ -10,10 +10,10 @@ import org.spongepowered.api.event.impl.AbstractEvent;
  */
 public class RURankupEvent extends AbstractEvent implements RankupEvent
 {
-    private Player player;
-    private String currentGroup;
-    private String nextGroup;
-    private Cause cause;
+    private Player  player;
+    private String  currentGroup;
+    private String  nextGroup;
+    private Cause   cause;
     private boolean isCancelled;
 
     public RURankupEvent(final Player player, final String currentGroup, final String nextGroup, final Cause cause)
