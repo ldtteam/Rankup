@@ -47,8 +47,10 @@ jar {
                 'Git-Hash': getGitHash()
     }
 
-    archiveName = "Rankup-${version}-base.jar"
+    archiveName = "Rankup-V${version}-base.jar"
 }
+
+configurations.runtime.artifacts.removeAll { "Rankup-V${version}-base.jar" }
 
 shadowJar {
     dependencies {
@@ -59,7 +61,7 @@ shadowJar {
     relocate 'uk.co.drnaylor', 'com.minecolonies.rankup.relocate.uk.co.drnaylor'
     relocate 'io.github.lukehutch', 'com.minecolonies.rankup.relocate.io.github.lukehutch'
 
-    archiveName = "Rankup-${version}-plugin.jar"
+    archiveName = "Rankup-V${version}-plugin.jar"
 }
 
 
