@@ -8,6 +8,7 @@ plugins {
     id 'maven'
 }
 
+jar.enabled = false
 configurations.runtime.artifacts.removeAll { it.archiveTask.is jar }
 
 project.ext.suffix = "-SNAPSHOT"
