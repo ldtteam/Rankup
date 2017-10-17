@@ -50,7 +50,7 @@ jar {
     archiveName = "Rankup-V${version}-base.jar"
 }
 
-configurations.runtime.artifacts.removeAll { "Rankup-V${version}-base.jar" }
+configurations.runtime.artifacts.removeAll { it.archiveTask.is jar }
 
 shadowJar {
     dependencies {
