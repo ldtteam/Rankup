@@ -11,7 +11,7 @@ plugins {
 project.ext.suffix = "-SNAPSHOT"
 
 group = 'com.minecolonies.rankup'
-version = '1.1'
+version = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 description = 'A simple plugin for increasing player ranks based on time'
 mainClassName = 'com.minecolonies.rankup.Rankup'
 compileJava.options.encoding = 'UTF-8'
