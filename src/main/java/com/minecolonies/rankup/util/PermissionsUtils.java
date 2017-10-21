@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
+import org.spongepowered.api.service.permission.SubjectReference;
 
 import java.util.*;
 
@@ -34,7 +35,7 @@ public class PermissionsUtils
 
         List<Subject> disabledGroups = new ArrayList<>();
 
-        for (final Subject subject : getGroups().getAllSubjects())
+        for (final Subject subject : getGroups().getLoadedSubjects())
         {
             final String id = subject.getIdentifier();
 
@@ -166,12 +167,12 @@ public class PermissionsUtils
         return "";
     }
 
-    public List<Subject> getPlayerGroups(Player player)
+    public List<SubjectReference> getPlayerGroups(Player player)
     {
         return player.getParents();
     }
 
-    public List<Subject> getPlayerGroups(User user)
+    public List<SubjectReference> getPlayerGroups(User user)
     {
         return user.getParents();
     }
@@ -180,9 +181,9 @@ public class PermissionsUtils
     {
         final List<String> ids = new ArrayList<>();
 
-        for (final Subject subject : getPlayerGroups(player))
+        for (final SubjectReference subject : getPlayerGroups(player))
         {
-            ids.add(subject.getIdentifier());
+            ids.add(subject.getSubjectIdentifier());
         }
 
         return ids;
@@ -192,45 +193,11 @@ public class PermissionsUtils
     {
         final List<String> ids = new ArrayList<>();
 
-        for (final Subject subject : getPlayerGroups(user))
+        for (final SubjectReference subject : getPlayerGroups(user))
         {
-            ids.add(subject.getIdentifier());
+            ids.add(subject.getSubjectIdentifier());
         }
 
         return ids;
-    }
-
-    public String getPlayerGroupWithMostParents(Player player)
-    {
-        Iterator<Subject> groups_iterator = getPlayerGroups(player).iterator();
-
-        if (player == null)
-        {
-            return null;
-        }
-
-        int i = -1;
-        Subject currentGroup = null;
-
-        while (groups_iterator.hasNext())
-        {
-            Subject group = groups_iterator.next();
-            int size = group.getParents().size();
-
-            if (size > i)
-            {
-                i = size;
-                currentGroup = group;
-            }
-        }
-
-        if (currentGroup != null)
-        {
-            return currentGroup.getIdentifier();
-        }
-        else
-        {
-            return null;
-        }
     }
 }

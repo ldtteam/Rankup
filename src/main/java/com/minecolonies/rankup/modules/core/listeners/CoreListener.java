@@ -5,6 +5,7 @@ import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.rankup.modules.timing.TimingModule;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
@@ -24,7 +25,7 @@ public class CoreListener extends ListenerBase
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player)
     {
-        plugin.getLogger().info("Player Group: " + CoreModule.perms.getPlayerGroupWithMostParents(player));
+        plugin.getLogger().info("Player Group: " + CoreModule.perms.getPlayerHighestRankingGroup(player));
         updatePlayerInfo(player);
     }
 

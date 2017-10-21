@@ -12,8 +12,6 @@ import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
 
@@ -26,6 +24,7 @@ public class RankingUtils
     {
         final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
 
+
         //Check if player is in disabled group.
         for (final Subject subject : CoreModule.perms.getDisabledGroups())
         {
@@ -35,15 +34,15 @@ public class RankingUtils
             }
         }
 
+
         final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-        final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
-        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
         final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
 
         final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
+
 
         if (!nextGroup.equals("") && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
         {
@@ -135,7 +134,7 @@ public class RankingUtils
             return;
         }
 
-        RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Cause.of(NamedCause.source(Rankup.getInstance())));
+        RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Sponge.getCauseStackManager().getCurrentCause());
         Sponge.getEventManager().post(rankupEvent);
         if (rankupEvent.isCancelled())
         {

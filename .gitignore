@@ -16,3 +16,4 @@ OLD/
 \.gradle/
 .DS_Store
 \build/
+\libs/

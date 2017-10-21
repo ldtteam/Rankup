@@ -11,8 +11,6 @@ plugins {
 jar.enabled = false
 configurations.runtime.artifacts.removeAll { it.archiveTask.is jar }
 
-project.ext.suffix = "-SNAPSHOT"
-
 group = 'com.minecolonies.rankup'
 version = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 description = 'A simple plugin for increasing player ranks based on time'
@@ -21,10 +19,10 @@ compileJava.options.encoding = 'UTF-8'
 ext.url = 'http://github.com/Minecolonies/rankup'
 
 def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
-def spongeapi = '6.0.0'
+def spongeapi = '7.0.0-SNAPSHOT'
 
 dependencies {
-    compileOnly files('libs/magibridge.jar')
+    compileOnly files('libs/magibridge7.jar')
 
     compile('org.spongepowered:spongeapi:' + spongeapi)
     compile(qsmlDep)
@@ -42,19 +40,6 @@ repositories {
     }
 }
 
-/*
-jar {
-    manifest {
-        attributes  'Implementation-Title': project.name,
-                'Implementation-Version': version,
-                'SpongeAPI-Version': spongeapi,
-                'Git-Hash': getGitHash()
-    }
-
-    archiveName = "Rankup-V${version}-base.jar"
-}
-*/
-
 shadowJar {
     dependencies {
         include dependency(qsmlDep)
@@ -64,7 +49,7 @@ shadowJar {
     relocate 'uk.co.drnaylor', 'com.minecolonies.rankup.relocate.uk.co.drnaylor'
     relocate 'io.github.lukehutch', 'com.minecolonies.rankup.relocate.io.github.lukehutch'
 
-    archiveName = "Rankup-V${version}-plugin.jar"
+    archiveName = "Rankup-V${version}-API7-plugin.jar"
 }
 
 
@@ -76,14 +61,7 @@ blossom {
     replaceToken '@description@', project.description, location
 }
 
-
 build.dependsOn(shadowJar)
-
-static String getGitHash() {
-    def process = 'git rev-parse --short HEAD'.execute()
-    process.waitFor()
-    return process.exitValue() ? 'unknown' : process.text.trim()
-}
 
 /*
 task wrapper(type: Wrapper) {

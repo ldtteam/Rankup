@@ -51,7 +51,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
         List<Subject> disabledGroups = new ArrayList<>();
 
-        for (final Subject subject : perms.getGroups().getAllSubjects())
+        for (final Subject subject : perms.getGroups().getLoadedSubjects())
         {
             final String id = subject.getIdentifier();
 
