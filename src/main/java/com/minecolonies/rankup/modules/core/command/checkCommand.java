@@ -94,10 +94,12 @@ public class checkCommand extends RankupSubcommand
 
         boolean inDisabledGroup = false;
 
+        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(user);
+
         //Check if player is in disabled group.
-        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : CoreModule.perms.getDisabledGroups())
         {
-            if (playerGroups.contains(subject.getIdentifier()))
+            if (playerGroups.contains(subject))
             {
                 inDisabledGroup = true;
             }
@@ -124,9 +126,7 @@ public class checkCommand extends RankupSubcommand
 
             if (getPlugin().getModuleContainer().isModuleLoaded("economy"))
             {
-                final GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
-
-                final String nextGroup = CoreModule.perms.getNextGroup(CoreModule.perms.getPlayerHighestRankingGroup(user));
+                final String nextGroup = CoreModule.perms.getNextGroup(user);
 
                 UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
                 int userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
