@@ -56,7 +56,7 @@ shadowJar {
 blossom {
     def location = 'src/main/java/com/minecolonies/rankup/Plugininfo.java'
 
-    replaceToken '@name@', project.name, location
+    replaceToken '@name@', 'Rankup', location
     replaceToken '@version@', version, location
     replaceToken '@description@', project.description, location
 }
