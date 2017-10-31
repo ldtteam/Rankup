@@ -18,8 +18,11 @@ plugins {
 
 apply plugin: org.spongepowered.gradle.ore.OreDeployPlugin
 
+/*
 jar.enabled = false
 configurations.runtime.artifacts.removeAll { it.archiveTask.is jar }
+configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
+*/
 
 group = 'com.minecolonies.rankup'
 version = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
@@ -33,6 +36,7 @@ def spongeapi = '6.0.0'
 
 dependencies {
     compileOnly files('libs/magibridge.jar')
+    compileOnly files('libs/spongegradle.jar')
 
     compile('org.spongepowered:spongeapi:' + spongeapi)
     compile(qsmlDep)
@@ -62,6 +66,11 @@ shadowJar {
     archiveName = "Rankup-V${version}-API6-plugin.jar"
 }
 
+println "Archives Artifacts: " + configurations.archives.allArtifacts
+
+signing {
+    sign configurations.archives //configurations.archives
+}
 
 blossom {
     def location = 'src/main/java/com/minecolonies/rankup/Plugininfo.java'
@@ -73,4 +82,6 @@ blossom {
 
 build.dependsOn(shadowJar)
 
+oreDeploy.channel = "API6"
+oreDeploy.recommended = false
 oreDeploy.apiKey = System.getenv()['OREKEY'] != null ? System.getenv()['OREKEY'] : "123"
