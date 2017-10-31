@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'application'
-    id 'ninja.miserable.blossom' version '1.0.1'
+    //id 'ninja.miserable.blossom' version '1.0.1'
     id 'com.github.johnrengelman.shadow' version '2.0.1'
     id 'org.spongepowered.plugin' version '0.8.1'
     id 'maven'
@@ -52,13 +52,13 @@ shadowJar {
     archiveName = "Rankup-V${version}-API7-plugin.jar"
 }
 
-
+/*
 blossom {
     def location = 'src/main/java/com/minecolonies/rankup/Plugininfo.java'
 
     replaceToken '@name@', project.name, location
     replaceToken '@version@', version, location
     replaceToken '@description@', project.description, location
-}
+}*/
 
 build.dependsOn(shadowJar)
