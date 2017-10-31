@@ -4,6 +4,10 @@ import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The core section to the main config file.
  */
@@ -33,4 +37,13 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "debug-mode", comment = "If true a message will be output to console every time players are updated or checked.")
     public boolean debugMode = false;
+
+    @Setting(value = "track-configs", comment = "This is where all track config names are defined, please be careful here.")
+    public List<String> groupConfigs = Arrays.asList("groups.conf", "patreons.conf");
+
+    @Setting(value = "disabled-groups", comment = "List of disabled groups")
+    public List<String> disabledGroups = Arrays.asList("admin", "mod", "owner");
+
+    @Setting(comment = "This is weird, but basically Luckperms is screwing with something, anyway, please put your BASE group here (luckperms default is \"default\"")
+    public String defaultGroup = "default";
 }
