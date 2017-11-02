@@ -33,11 +33,9 @@ public class RankingUtils
 
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
 
-        final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(player);
 
         final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
-
 
         if (!nextGroup.equals("") && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
         {
