@@ -63,7 +63,7 @@ blossom {
     replaceToken '@name@', project.name, location
     replaceToken '@version@', version, location
     replaceToken '@description@', project.description, location
-}*/
+}
 
 oreDeploy.channel = "API7"
 oreDeploy.recommended = false
