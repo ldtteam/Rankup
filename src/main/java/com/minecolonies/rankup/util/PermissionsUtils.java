@@ -13,7 +13,10 @@ import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.SubjectCollection;
 import org.spongepowered.api.service.permission.SubjectReference;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PermissionsUtils
 {
@@ -176,7 +179,7 @@ public class PermissionsUtils
     {
         final String currentGroup = getPlayerHighestRankingGroup(player);
 
-        if (currentGroup.equals(""))
+        if ("".equals(currentGroup))
         {
             return "";
         }

@@ -4,7 +4,6 @@ import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-
 import java.util.Arrays;
 import java.util.List;
 

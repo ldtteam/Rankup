@@ -10,7 +10,6 @@ import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.service.permission.Subject;
 
 import java.util.List;
 
@@ -125,7 +124,7 @@ public class RankingUtils
         final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(player);
 
-        if (nextGroup.equals(""))
+        if ("".equals(nextGroup))
         {
             return;
         }
