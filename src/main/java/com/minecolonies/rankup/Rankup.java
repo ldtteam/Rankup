@@ -39,7 +39,6 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.economy.EconomyService;
-import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 import uk.co.drnaylor.quickstart.exceptions.IncorrectAdapterTypeException;
 import uk.co.drnaylor.quickstart.exceptions.NoModuleException;

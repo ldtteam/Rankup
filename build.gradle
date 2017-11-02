@@ -1,8 +1,8 @@
 buildscript {
     dependencies {
+        classpath 'org.apache.httpcomponents:httpmime:4.5.3'
         classpath files('libs/spongegradle.jar')
     }
-    apply plugin: 'signing'
 }
 
 plugins {
@@ -11,18 +11,11 @@ plugins {
     id 'idea'
     id 'application'
     id 'ninja.miserable.blossom' version '1.0.1'
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
     id 'org.spongepowered.plugin' version '0.8.1'
     id 'maven'
 }
 
 apply plugin: org.spongepowered.gradle.ore.OreDeployPlugin
-
-/*
-jar.enabled = false
-configurations.runtime.artifacts.removeAll { it.archiveTask.is jar }
-configurations.archives.artifacts.removeAll { it.archiveTask.is jar }
-*/
 
 group = 'com.minecolonies.rankup'
 version = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
@@ -37,9 +30,10 @@ def spongeapi = '6.0.0'
 dependencies {
     compileOnly files('libs/magibridge.jar')
     compileOnly files('libs/spongegradle.jar')
+    compileOnly('org.spongepowered:spongeapi:' + spongeapi)
 
-    compile('org.spongepowered:spongeapi:' + spongeapi)
     compile(qsmlDep)
+    compile('io.github.lukehutch:fast-classpath-scanner')
 }
 
 repositories {
@@ -54,22 +48,13 @@ repositories {
     }
 }
 
-shadowJar {
-    dependencies {
-        include dependency(qsmlDep)
-        include dependency('io.github.lukehutch:fast-classpath-scanner')
-    }
-
-    relocate 'uk.co.drnaylor', 'com.minecolonies.rankup.relocate.uk.co.drnaylor'
-    relocate 'io.github.lukehutch', 'com.minecolonies.rankup.relocate.io.github.lukehutch'
-
+jar {
     archiveName = "Rankup-V${version}-API6-plugin.jar"
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-println "Archives Artifacts: " + configurations.archives.allArtifacts
-
 signing {
-    sign configurations.archives //configurations.archives
+    sign configurations.archives
 }
 
 blossom {
@@ -80,8 +65,6 @@ blossom {
     replaceToken '@description@', project.description, location
 }
 
-build.dependsOn(shadowJar)
-
 oreDeploy.channel = "API6"
 oreDeploy.recommended = false
-oreDeploy.apiKey = System.getenv()['OREKEY'] != null ? System.getenv()['OREKEY'] : "123"
+oreDeploy.apiKey = System.getenv('OREKEY')
