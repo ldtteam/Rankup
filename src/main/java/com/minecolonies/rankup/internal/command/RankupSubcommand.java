@@ -84,7 +84,7 @@ public abstract class RankupSubcommand implements CommandExecutor
     public List<String> getModuleData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
     {
         int userMoney;
-        if (getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (getPlugin().econ != null && getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
         {
             UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
             userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();

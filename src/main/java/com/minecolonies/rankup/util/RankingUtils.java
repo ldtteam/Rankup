@@ -69,7 +69,7 @@ public class RankingUtils
         final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
 
-        if (!nextGroup.equals("") && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
+        if (plugin.econ != null && !nextGroup.equals("") && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
         {
             final UniqueAccount acc = plugin.econ.getOrCreateAccount(player.getUniqueId()).get();
             if (acc.getBalance(plugin.econ.getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)

@@ -115,7 +115,7 @@ public class PermissionsUtils
         final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
 
         int userMoney;
-        if (plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
         {
             UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
             userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
