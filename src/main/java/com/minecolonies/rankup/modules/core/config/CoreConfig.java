@@ -4,6 +4,9 @@ import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The core section to the main config file.
  */
@@ -33,4 +36,23 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "debug-mode", comment = "If true a message will be output to console every time players are updated or checked.")
     public boolean debugMode = false;
+
+    @Setting(value = "check-message", comment = "This is the template for the /ru check command, accepted entries are: \n"
+                                                  + "{player}        - The Player's name (the one being checked)\n"
+                                                  + "{rank}          - The current rank of the player\n"
+                                                  + "{prefix}        - The prefix of the player's current group\n"
+                                                  + "{timing-time}   - How much time the player has been playing \n"
+                                                  + "{timing-next}   - How much time until the player joins the next group \n"
+                                                  + "{economy-bal}   - How much money the player has\n"
+                                                  + "{economy-next}  - How much money the player needs to join the next group\n"
+                                                  + "{joindate}      - The date of when the player joined your server\n"
+                                                  + "{lastjoin}      - When the player last joined the server")
+    public List<String> checkMessageTemplate = Arrays.asList(
+      "§6---[§2{player}§6]---",
+      "§fRank: {rank}",
+      "§fPlay time: {timing-time}",
+      "§fTime to next group: {timing-next}",
+      "§fJoin date: §a{joindate}",
+      "§fLast join: §9{lastjoin}",
+      "§6-----------");
 }

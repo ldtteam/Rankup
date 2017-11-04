@@ -6,6 +6,7 @@ import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
@@ -107,6 +108,28 @@ public class PermissionsUtils
         }
 
         return groupsConfig.groups.get(nextGroup).timingTime - playerConfig.timePlayed;
+    }
+
+    public Integer balanceToNextGroup(final User user)
+    {
+        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+
+        int userMoney;
+        if (plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        {
+            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
+        }
+        else
+        {
+            userMoney = 0;
+        }
+
+        if (getNextGroup(getPlayerHighestRankingGroup(user)).equals(""))
+        {
+            return 0;
+        }
+        return groupsConfig.groups.get(getNextGroup(getPlayerHighestRankingGroup(user))).moneyNeeded - userMoney;
     }
 
     public String getNextGroup(final String currentGroup)
