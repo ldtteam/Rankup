@@ -2,18 +2,14 @@ package com.minecolonies.rankup.modules.timing.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
-import com.minecolonies.rankup.modules.timing.TimingModule;
-import com.minecolonies.rankup.modules.timing.config.TimingConfig;
-import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
-import org.spongepowered.api.Sponge;
+import com.minecolonies.rankup.util.CommonUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
-import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.*;
@@ -60,7 +56,6 @@ public class topCommand extends RankupSubcommand
     private void sendTopList(CommandSource source)
     {
         AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
-        final TimingConfig timeConfig = getPlugin().getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
 
         HashMap<UUID, Integer> stats = new HashMap<>();
 
@@ -79,40 +74,26 @@ public class topCommand extends RankupSubcommand
 
 
         int index = 0;
-        source.sendMessage(convertToText(timeConfig.topMessageHead));
+        source.sendMessage(TOP);
         for (UUID uuid : sorted)
         {
             index++;
+            int time = playerData.playerData.get(uuid).timePlayed;
+            final String player = playerData.playerData.get(uuid).playerName;
 
-            User user;
-            if (Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).isPresent())
-            {
-                user = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).get();
-            }
-            else
-            {
-                return;
-            }
-
-            final AccountConfigData.PlayerConfig playerConf = playerData.playerData.get(user.getUniqueId());
-
-            if (playerConf == null)
-            {
-                return;
-            }
-
-            final List<String> message = getModuleData(user, getPlayerData(user, timeConfig.topMessageTemplate, playerConf), playerConf);
-
-            for (final Text msg : convertToText(message))
-            {
-                source.sendMessage(msg);
-            }
-
+            source.sendMessage(Text.of(MIDDLE,
+              index + ". Player name: ",
+              TextColors.BLUE,
+              player,
+              TextColors.WHITE,
+              " With time played at: ",
+              TextColors.GOLD,
+              CommonUtils.toText(CommonUtils.timeDescript(time))));
             if (index == 10)
             {
                 break;
             }
         }
-        source.sendMessage(convertToText(timeConfig.topMessageFoot));
+        source.sendMessage(BOTTOM);
     }
 }
