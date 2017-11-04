@@ -23,8 +23,6 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
     public static final String ID = "core";
 
-    public static PermissionsUtils perms;
-
     @Override
     protected CoreConfigAdapter createConfigAdapter()
     {
@@ -34,7 +32,6 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
     @Override
     public void Rankup2Enable()
     {
-        perms = new PermissionsUtils(getPlugin(), Sponge.getGame());
         super.Rankup2Enable();
 
         final Path accountsPath = this.getPlugin().getConfigDir().resolve("playerstats.conf");
@@ -51,7 +48,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
         List<Subject> disabledGroups = new ArrayList<>();
 
-        for (final Subject subject : perms.getGroups().getAllSubjects())
+        for (final Subject subject : getPlugin().perms.getGroups().getAllSubjects())
         {
             final String id = subject.getIdentifier();
 

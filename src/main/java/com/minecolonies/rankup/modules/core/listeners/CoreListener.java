@@ -24,8 +24,9 @@ public class CoreListener extends ListenerBase
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player)
     {
-        plugin.getLogger().info("Player Group: " + CoreModule.perms.getPlayerGroupWithMostParents(player));
+        plugin.getLogger().info("Player Group: " + plugin.perms.getPlayerGroupWithMostParents(player));
         updatePlayerInfo(player);
+        plugin.accUtils.addPlayer(player);
     }
 
     private synchronized void updatePlayerInfo(final Player player)

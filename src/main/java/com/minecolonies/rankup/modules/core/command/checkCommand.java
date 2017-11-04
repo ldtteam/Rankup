@@ -85,17 +85,17 @@ public class checkCommand extends RankupSubcommand
             return;
         }
 
-        final String playerPrefix = user.getOption("prefix").orElse(CoreModule.perms.getPlayerHighestRankingGroup(user));
+        final String playerPrefix = user.getOption("prefix").orElse(getPlugin().perms.getPlayerHighestRankingGroup(user));
 
         src.sendMessage(TOP);
         src.sendMessage(Text.of(MIDDLE, "Current Player Group: ", TextSerializers.FORMATTING_CODE.deserialize(playerPrefix)));
 
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(user);
+        final List<String> playerGroups = getPlugin().perms.getPlayerGroupIds(user);
 
         boolean inDisabledGroup = false;
 
         //Check if player is in disabled group.
-        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        for (final Subject subject : getPlugin().perms.getDisabledGroups())
         {
             if (playerGroups.contains(subject.getIdentifier()))
             {
@@ -107,7 +107,7 @@ public class checkCommand extends RankupSubcommand
         {
             if (getPlugin().getModuleContainer().isModuleLoaded("timing"))
             {
-                final Integer time = CoreModule.perms.timeToNextGroup(user);
+                final Integer time = getPlugin().perms.timeToNextGroup(user);
 
                 src.sendMessage(Text.of(MIDDLE, "Current Player Time: ", TextColors.AQUA, CommonUtils.timeDescript(playerConf.timePlayed)));
 
@@ -126,7 +126,7 @@ public class checkCommand extends RankupSubcommand
             {
                 final GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
 
-                final String nextGroup = CoreModule.perms.getNextGroup(CoreModule.perms.getPlayerHighestRankingGroup(user));
+                final String nextGroup = getPlugin().perms.getNextGroup(getPlugin().perms.getPlayerHighestRankingGroup(user));
 
                 UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
                 int userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();

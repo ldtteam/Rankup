@@ -15,7 +15,10 @@ import com.minecolonies.rankup.qsml.InjectorModule;
 import com.minecolonies.rankup.qsml.RankupLoggerProxy;
 import com.minecolonies.rankup.qsml.RankupModuleConstructor;
 import com.minecolonies.rankup.qsml.SubInjectorModule;
+import com.minecolonies.rankup.util.AccountingUtils;
 import com.minecolonies.rankup.util.Action;
+import com.minecolonies.rankup.util.ConfigUtils;
+import com.minecolonies.rankup.util.PermissionsUtils;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -66,6 +69,9 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
+    public PermissionsUtils perms;
+    public ConfigUtils configUtils;
+    public AccountingUtils accUtils;
     public EconomyService econ;
     public static Rankup instance = null;
     public        Game                                         game;
@@ -101,6 +107,9 @@ public class Rankup
     {
         instance = this;
         logger.info("preInit");
+        perms = new PermissionsUtils(this, Sponge.getGame());
+        configUtils = new ConfigUtils(this);
+        accUtils = new AccountingUtils(this);
         try
         {
             this.container = DiscoveryModuleContainer.builder()
@@ -219,7 +228,7 @@ public class Rankup
 
         List<Subject> disabledGroups = new ArrayList<>();
 
-        for (final Subject subject : CoreModule.perms.getGroups().getAllSubjects())
+        for (final Subject subject : perms.getGroups().getAllSubjects())
         {
             final String id = subject.getIdentifier();
 

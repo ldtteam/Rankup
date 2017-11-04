@@ -1,7 +1,14 @@
 package com.minecolonies.rankup.util;
 
+import com.minecolonies.rankup.Rankup;
+import com.minecolonies.rankup.modules.core.CoreModule;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import org.spongepowered.api.text.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class CommonUtils
@@ -49,5 +56,14 @@ public class CommonUtils
             return msg.toString().substring(0, msg.toString().length() - 1);
         }
         return msg.toString();
+    }
+
+    public static String dateNow(final Rankup plugin)
+    {
+        CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+
+        DateFormat dateFormat = new SimpleDateFormat(config.dateFormat);
+        java.util.Date today = Calendar.getInstance().getTime();
+        return dateFormat.format(today);
     }
 }
