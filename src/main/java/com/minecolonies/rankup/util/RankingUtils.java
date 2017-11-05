@@ -24,6 +24,7 @@ public class RankingUtils
     {
         final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
 
+        plugin.getLogger().info("Debug Time Check");
 
         //Check if player is in disabled group.
         for (final Subject subject : CoreModule.perms.getDisabledGroups())
@@ -38,16 +39,24 @@ public class RankingUtils
         final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
 
+        plugin.getLogger().info("Debug Time Check: pass Disabled");
+        
         final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
 
         final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
 
-
+        plugin.getLogger().info("Debug Time Check: highestGroup: " + highestGroup);
+        plugin.getLogger().info("Debug Time Check: nextGroup: " + nextGroup);
+        plugin.getLogger().info("Debug Time Check: playerTime: " + playerTime);
+        
         if (!nextGroup.equals("") && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
         {
+            plugin.getLogger().info("Debug Time Check: Rankup Proccessing Now!");
             rankUp(player, plugin);
         }
+        
+        plugin.getLogger().info("Debug Time Check: finished!);
     }
 
     public static void balanceCheck(final Player player, final Rankup plugin)
@@ -108,7 +117,7 @@ public class RankingUtils
     private static void rankDown(final Player player, final Rankup plugin)
     {
         final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
-
+        
         final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String previousGroup = CoreModule.perms.getPreviousGroup(groupsConfig.groups.get(currentGroup).rank);
 
@@ -126,30 +135,40 @@ public class RankingUtils
     {
         final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
 
+        plugin.getLogger().info("Debug Rankup check");
+        
         final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
         final String nextGroup = CoreModule.perms.getNextGroup(currentGroup);
 
+        plugin.getLogger().info("Debug Rankup check: currentGroup: " + currentGroup);
+        plugin.getLogger().info("Debug Rankup check: nextGroup: " + nextGroup);
+        
         if (nextGroup == "")
         {
             return;
         }
-
+        
         RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Sponge.getCauseStackManager().getCurrentCause());
         Sponge.getEventManager().post(rankupEvent);
         if (rankupEvent.isCancelled())
         {
             return;
         }
+        plugin.getLogger().info("Debug Rankup check: RankupEvent ran!");
 
         final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
         final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
 
+        plugin.getLogger().info("Debug Rankup check: playerGroups: " + playerGroups);
+        
         final String cmd = coreConfig.rankupCommand;
 
         final String finalCmd = cmd.replace("{player}", player.getName())
                                   .replace("{group}", nextGroup);
 
+        plugin.getLogger().info("Debug Rankup check: finalCmd: " + finalCmd);
+        
         plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
 
         for (final String command : groupsConfig.groups.get(nextGroup).commands)
@@ -158,6 +177,8 @@ public class RankingUtils
             final String finalCommand = command.replace("{player}", player.getName())
                                           .replace("{group}", nextGroup);
 
+            plugin.getLogger().info("Debug Rankup check: finalCommand cmd: " finalCommand);
+            
             plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
         }
 
@@ -172,9 +193,12 @@ public class RankingUtils
                     final String finalRemCmd = remCmd.replace("{player}", player.getName())
                                                  .replace("{group}", group);
 
+                    plugin.getLogger().info("Debug Rankup check: finalRemCmd: " + finalRemCmd);
+                    
                     plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
                 }
             }
         }
+        plugin.getLogger().info("Debug Rankup check: Rankup finished");
     }
 }
