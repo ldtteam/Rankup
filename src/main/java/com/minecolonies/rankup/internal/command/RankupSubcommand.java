@@ -99,7 +99,7 @@ public abstract class RankupSubcommand implements CommandExecutor
         String nextTime;
         boolean inDisabled = false;
         
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(user);
         
         for (final Subject subject : CoreModule.perms.getDisabledGroups())
         {
