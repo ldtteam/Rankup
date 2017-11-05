@@ -1,8 +1,6 @@
 package com.minecolonies.rankup.modules.economy;
 
-import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.economy.config.EconomyConfig;
 import com.minecolonies.rankup.modules.economy.config.EconomyConfigAdapter;
 import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
@@ -37,11 +35,11 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
 
     public void economyHandler()
     {
-        EconomyConfig config = getPlugin().getConfigAdapter(EconomyModule.ID, EconomyConfigAdapter.class).get().getNodeOrDefault();
+        EconomyConfig config = getPlugin().configUtils.getEconomyConfig();
 
         getPlugin().getLogger().info("checking player balances every " + config.updateInterval + " minute(s)!");
 
-        Sponge.getScheduler().createAsyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerCheckBalances, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
+        Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerCheckBalances, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
     }
 
     public void playerCheckBalances()
@@ -51,9 +49,9 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
             RankingUtils.balanceCheck(player, getPlugin());
         }
 
-        final CoreConfig config = getPlugin().getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
 
-        if (config.debugMode)
+        if (coreConfig.debugMode)
         {
             getPlugin().getLogger().info("Balances checked for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
         }

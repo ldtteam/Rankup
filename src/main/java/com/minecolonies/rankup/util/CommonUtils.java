@@ -1,9 +1,6 @@
 package com.minecolonies.rankup.util;
 
 import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import org.spongepowered.api.text.Text;
 
 import java.text.DateFormat;
@@ -60,9 +57,7 @@ public class CommonUtils
 
     public static String dateNow(final Rankup plugin)
     {
-        CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
-
-        DateFormat dateFormat = new SimpleDateFormat(config.dateFormat);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date today = Calendar.getInstance().getTime();
         return dateFormat.format(today);
     }

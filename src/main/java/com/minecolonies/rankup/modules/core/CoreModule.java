@@ -42,7 +42,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
           HoconConfigurationLoader.builder().setPath(groupsPath).build());
         this.getPlugin().getAllConfigs().put(GroupsConfig.class, groups);
 
-        GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
+        GroupsConfig groupsConfig = getPlugin().configUtils.getGroupsConfig();
 
         List<Subject> disabledGroups = new ArrayList<>();
 

@@ -2,10 +2,7 @@ package com.minecolonies.rankup.modules.timing;
 
 import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
 import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
@@ -42,31 +39,29 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
 
     public void playerCounterHandler()
     {
-        TimingConfig config = getPlugin().getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
+        TimingConfig timeConfig = plugin.configUtils.getTimingConfig();
 
-        getPlugin().getLogger().info("Updating player times every " + config.updateInterval + " minute(s)!");
+        getPlugin().getLogger().info("Updating player times every " + timeConfig.updateInterval + " minute(s)!");
 
-        Sponge.getScheduler().createAsyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerTimeAdd, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
+        Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerTimeAdd, timeConfig.updateInterval, timeConfig.updateInterval, TimeUnit.MINUTES);
     }
 
     public synchronized void playerTimeAdd()
     {
-        final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
-        final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
+        TimingConfig timeConfig = plugin.configUtils.getTimingConfig();
 
         for (final Player player : Sponge.getServer().getOnlinePlayers())
         {
-            playerData.playerData.get(player.getUniqueId()).timePlayed += timeConfig.updateInterval;
+            plugin.accUtils.addPlayerTime(player.getUniqueId(), timeConfig.updateInterval);
             RankingUtils.timeUp(player, plugin);
             RankingUtils.timeDown(player, plugin);
         }
 
-        final CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
 
-        if (config.debugMode)
+        if (coreConfig.debugMode)
         {
             plugin.getLogger().info("Times updated for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
         }
-        playerData.save();
     }
 }

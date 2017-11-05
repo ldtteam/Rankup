@@ -8,6 +8,8 @@ import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.util.UUID;
+
 /**
  * Listeners used by the Core Module.
  */
@@ -16,15 +18,16 @@ public class CoreListener extends ListenerBase
     @Listener
     public void onPlayerJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player)
     {
-        plugin.getLogger().info("Player Group: " + plugin.perms.getPlayerGroupWithMostParents(player));
+        plugin.getLogger().info("Player Group: " + plugin.perms.getPlayerHighestRankingGroup(player));
         updatePlayerInfo(player);
     }
 
     private synchronized void updatePlayerInfo(final Player player)
     {
         CoreConfig config = plugin.configUtils.getCoreConfig();
+        final UUID uuid = player.getUniqueId();
 
-        if (plugin.accUtils.doesPlayerExist(player))
+        if (plugin.accUtils.doesPlayerExist(uuid))
         {
             final String message = config.welcomeMessage
                                      .replace("{player}", player.getName())
@@ -32,7 +35,7 @@ public class CoreListener extends ListenerBase
 
             player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
 
-            plugin.accUtils.updatePlayer(player);
+            plugin.accUtils.updatePlayer(uuid);
         }
         else
         {
@@ -42,7 +45,7 @@ public class CoreListener extends ListenerBase
 
             player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
 
-            plugin.accUtils.addPlayer(player);
+            plugin.accUtils.addPlayer(uuid);
         }
     }
 }

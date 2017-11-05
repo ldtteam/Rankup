@@ -4,9 +4,7 @@ import com.magitechserver.magibridge.MagiBridge;
 import com.magitechserver.magibridge.api.MagiBridgeAPI;
 import com.minecolonies.rankup.internal.events.RURankupEvent;
 import com.minecolonies.rankup.internal.listener.ListenerBase;
-import com.minecolonies.rankup.modules.magibridge.MagibridgeModule;
 import com.minecolonies.rankup.modules.magibridge.config.MagibridgeConfig;
-import com.minecolonies.rankup.modules.magibridge.config.MagibridgeConfigAdapter;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.spongepowered.api.event.Listener;
 
@@ -20,7 +18,7 @@ public class MagibridgeListener extends ListenerBase
     public void onRankup(RURankupEvent event)
     {
 
-        final MagibridgeConfig magibridgeConfig = plugin.getConfigAdapter(MagibridgeModule.ID, MagibridgeConfigAdapter.class).get().getNodeOrDefault();
+        final MagibridgeConfig magibridgeConfig = plugin.configUtils.getMagibridgeConfig();
 
         String channelID;
 

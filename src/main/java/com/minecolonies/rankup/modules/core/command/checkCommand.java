@@ -1,9 +1,7 @@
 package com.minecolonies.rankup.modules.core.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
-import com.minecolonies.rankup.modules.core.config.GroupsConfig;
-import com.minecolonies.rankup.util.CommonUtils;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,13 +9,9 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
-import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,90 +68,22 @@ public class checkCommand extends RankupSubcommand
 
     private void sendCheck(final CommandSource src, final User user)
     {
-        AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
+        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
 
-        final AccountConfigData.PlayerConfig playerConf = playerData.playerData.get(user.getUniqueId());
-
-        if (playerConf == null)
+        if (getPlugin().accUtils.doesPlayerExist(user.getUniqueId()))
         {
-            src.sendMessage(Text.of(TextColors.DARK_RED, "User must have been online at least once since server restart (Sorry)"));
-            return;
-        }
+            final List<String> message = getModuleData(user, getPlayerData(user, coreConfig.checkMessageTemplate));
 
-        final String playerPrefix = user.getOption("prefix").orElse(getPlugin().perms.getPlayerHighestRankingGroup(user));
+            final List<Text> finalMessage = convertToText(message);
 
-        src.sendMessage(TOP);
-        src.sendMessage(Text.of(MIDDLE, "Current Player Group: ", TextSerializers.FORMATTING_CODE.deserialize(playerPrefix)));
-
-        final List<String> playerGroups = getPlugin().perms.getPlayerGroupIds(user);
-
-        boolean inDisabledGroup = false;
-
-        //Check if player is in disabled group.
-        for (final Subject subject : getPlugin().perms.getDisabledGroups())
-        {
-            if (playerGroups.contains(subject.getIdentifier()))
+            for (final Text text : finalMessage)
             {
-                inDisabledGroup = true;
+                src.sendMessage(text);
             }
         }
-
-        try
+        else
         {
-            if (getPlugin().getModuleContainer().isModuleLoaded("timing"))
-            {
-                final Integer time = getPlugin().perms.timeToNextGroup(user);
-
-                src.sendMessage(Text.of(MIDDLE, "Current Player Time: ", TextColors.AQUA, CommonUtils.timeDescript(getPlugin().accUtils.getPlayerTime(user.getUniqueId()))));
-
-                if (!inDisabledGroup && time != -1)
-                {
-                    src.sendMessage(Text.of(MIDDLE, "Time to next Group: ", TextColors.GOLD, CommonUtils.timeDescript(time)));
-                }
-                else if (time == -1)
-                {
-                    src.sendMessage(Text.of(MIDDLE, "Time to next Group: ", TextColors.GOLD, "You have progressed to the"));
-                    src.sendMessage(Text.of(MIDDLE, TextColors.GOLD, "highest possible group!"));
-                }
-            }
-
-            if (getPlugin().getModuleContainer().isModuleLoaded("economy"))
-            {
-                final GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
-
-                final String nextGroup = getPlugin().perms.getNextGroup(getPlugin().perms.getPlayerHighestRankingGroup(user));
-
-                UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
-                int userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
-                src.sendMessage(Text.of(MIDDLE, "Current Balance: ", TextColors.AQUA, userMoney));
-                if (!inDisabledGroup && nextGroup != "")
-                {
-                    final Integer moneyNeeded = groupsConfig.groups.get(nextGroup).moneyNeeded - userMoney;
-
-                    if (moneyNeeded > 0)
-                    {
-                        src.sendMessage(Text.of(MIDDLE, "Money needed for next group: ", TextColors.GOLD, moneyNeeded));
-                    }
-                    else
-                    {
-                        src.sendMessage(Text.of(MIDDLE, "You should rankup on the next balance check!"));
-                    }
-                }
-                else if (!inDisabledGroup)
-                {
-                    src.sendMessage(Text.of(MIDDLE, "Time to next Group: ", TextColors.GOLD, "You have progressed to the"));
-                    src.sendMessage(Text.of(MIDDLE, TextColors.GOLD, "highest possible group!"));
-                }
-            }
+            src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid User - (Probably hasn't been online since last restart)"));
         }
-        catch (NoModuleException e)
-        {
-            e.printStackTrace();
-        }
-
-        src.sendMessage(Text.of(MIDDLE, "Join Date: ", TextColors.DARK_GREEN, getPlugin().accUtils.getPlayerJoinDate(user.getUniqueId())));
-        src.sendMessage(Text.of(MIDDLE, "Last Join: ", TextColors.BLUE, getPlugin().accUtils.getPlayerLastDate(user.getUniqueId())));
-
-        src.sendMessage(BOTTOM);
     }
 }

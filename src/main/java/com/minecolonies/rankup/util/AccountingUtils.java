@@ -4,8 +4,9 @@ import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.databases.DatabaseModule;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.sql.SqlService;
+import org.spongepowered.api.service.user.UserStorageService;
 import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
 
 import javax.sql.DataSource;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -24,8 +26,9 @@ public class AccountingUtils extends ConfigUtils
 {
 
     private SqlService sql;
+    private Connection conn;
 
-    private static final String TABLE_ID           = "players";
+    private String table_id = "player_stats";
     private static final String UUID_COLUMN        = "UUID";
     private static final String PLAYER_NAME_COLUMN = "PLAYER_NAME";
     private static final String JOIN_DATE_COLUMN   = "JOIN_DATE";
@@ -39,6 +42,7 @@ public class AccountingUtils extends ConfigUtils
 
     private DataSource getDataSource(String jdbcUrl) throws SQLException
     {
+        table_id = getDatabasesConfig().sqlTablePrefix + "player_stats";
         if (sql == null)
         {
             sql = Sponge.getServiceManager().provide(SqlService.class).get();
@@ -46,19 +50,37 @@ public class AccountingUtils extends ConfigUtils
         return sql.getDataSource(jdbcUrl);
     }
 
+    private String getURI()
+    {
+        if (getDatabasesConfig().database.equalsIgnoreCase("mysql"))
+        {
+            return "jdbc:mysql://"
+                     + getDatabasesConfig().sqlUsername
+                     + ":"
+                     + getDatabasesConfig().sqlPassword
+                     + "@"
+                     + getDatabasesConfig().sqlAddress
+                     + "/"
+                     + getDatabasesConfig().sqlDatabase;
+        }
+        return "jdbc:h2:" + plugin.getConfigDir() + "/h2/playerstats";
+    }
+
     private Connection getConn()
     {
-        String uri = "jdbc:h2:" + plugin.getConfigDir() + "/playerstats";
-
-        try
+        if (conn == null)
         {
-            return getDataSource(uri).getConnection();
+            String uri = getURI();
+            try
+            {
+                conn = getDataSource(uri).getConnection();
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return conn;
     }
 
     private ResultSet getQuery(final String query)
@@ -71,9 +93,7 @@ public class AccountingUtils extends ConfigUtils
 
                 if (conn != null)
                 {
-                    Statement stmt = conn.createStatement();
-
-                    return stmt.executeQuery(query);
+                    return conn.createStatement().executeQuery(query);
                 }
             }
         }
@@ -84,13 +104,42 @@ public class AccountingUtils extends ConfigUtils
         return null;
     }
 
+    private String toDate(final String date)
+    {
+        if (getDatabasesConfig().database.equalsIgnoreCase("h2"))
+        {
+            return "to_date('" + date + "','yyyy-mm-dd')";
+        }
+        return "STR_TO_DATE('" + date + "','%Y-%m-%d')";
+    }
+
+    public void createTableIfNeeded()
+    {
+        try
+        {
+            Statement stmt = getConn().createStatement();
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS " + table_id + "("
+                           + UUID_COLUMN + " varchar(255) NOT NULL, "
+                           + PLAYER_NAME_COLUMN + " varchar(255) NOT NULL, "
+                           + JOIN_DATE_COLUMN + " DATE NOT NULL, "
+                           + LAST_JOIN_COLUMN + " DATE NOT NULL, "
+                           + TIME_PLAYED_COLUMN + " int NOT NULL, "
+                           + "PRIMARY KEY(" + UUID_COLUMN + ") )");
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     public String getPlayerName(final UUID uuid)
     {
         try
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery("SELECT " + PLAYER_NAME_COLUMN + " FROM " + TABLE_ID + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery("SELECT " + PLAYER_NAME_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -115,7 +164,7 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery("SELECT " + JOIN_DATE_COLUMN + " FROM " + TABLE_ID + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery("SELECT " + JOIN_DATE_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -140,7 +189,7 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery("SELECT " + LAST_JOIN_COLUMN + " FROM " + TABLE_ID + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery("SELECT " + LAST_JOIN_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -165,7 +214,7 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery("SELECT " + TIME_PLAYED_COLUMN + " FROM " + TABLE_ID + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery("SELECT " + TIME_PLAYED_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -194,11 +243,11 @@ public class AccountingUtils extends ConfigUtils
 
             if (isDate)
             {
-                stmt.execute("UPDATE " + TABLE_ID + " SET " + column + " = to_date('" + attribute + "', 'dd/mm/yyyy') WHERE " + UUID_COLUMN + " = " + uuid);
+                stmt.execute("UPDATE " + table_id + " SET " + column + " = " + toDate(attribute) + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
             }
             else
             {
-                stmt.execute("UPDATE " + TABLE_ID + " SET " + column + " = '" + attribute + "' WHERE " + UUID_COLUMN + " = " + uuid);
+                stmt.execute("UPDATE " + table_id + " SET " + column + " = '" + attribute + "' WHERE " + UUID_COLUMN + " = '" + uuid + "'");
             }
         }
     }
@@ -211,7 +260,7 @@ public class AccountingUtils extends ConfigUtils
         {
             Statement stmt = conn.createStatement();
 
-            stmt.execute("UPDATE " + TABLE_ID + " SET " + column + " = " + attribute + " WHERE " + UUID_COLUMN + " = " + uuid);
+            stmt.execute("UPDATE " + table_id + " SET " + column + " = " + attribute + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
         }
     }
 
@@ -246,7 +295,7 @@ public class AccountingUtils extends ConfigUtils
             }
             else
             {
-                DateFormat dateFormat = new SimpleDateFormat(getCoreConfig().dateFormat);
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 final AccountConfigData accConfig = getAccountConfig();
                 accConfig.playerData.get(uuid).joinDate = dateFormat.format(date);
@@ -269,7 +318,7 @@ public class AccountingUtils extends ConfigUtils
             }
             else
             {
-                DateFormat dateFormat = new SimpleDateFormat(getCoreConfig().dateFormat);
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 final AccountConfigData accConfig = getAccountConfig();
                 accConfig.playerData.get(uuid).lastVisit = dateFormat.format(date);
@@ -303,7 +352,7 @@ public class AccountingUtils extends ConfigUtils
         }
     }
 
-    public void addPlayerTime(final UUID uuid, final int time)
+    public int addPlayerTime(final UUID uuid, final int time)
     {
         try
         {
@@ -311,21 +360,55 @@ public class AccountingUtils extends ConfigUtils
             {
                 final int timeToAdd = getPlayerTime(uuid) + time;
                 updatePlayerTime(uuid, timeToAdd);
+                return timeToAdd;
             }
             else
             {
                 final AccountConfigData accConfig = getAccountConfig();
-                accConfig.playerData.get(uuid).timePlayed = accConfig.playerData.get(uuid).timePlayed + time;
+                final int timeToAdd = accConfig.playerData.get(uuid).timePlayed + time;
+                accConfig.playerData.get(uuid).timePlayed = timeToAdd;
                 accConfig.save();
+                return timeToAdd;
             }
         }
         catch (NoModuleException e)
         {
             e.printStackTrace();
         }
+        return -1;
     }
 
-    public boolean doesPlayerExist(final Player player)
+    public HashMap<UUID, Integer> getPlayers()
+    {
+        final HashMap<UUID, Integer> uuids = new HashMap<>();
+        try
+        {
+            if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
+            {
+                final ResultSet results = getQuery("SELECT " + UUID_COLUMN + " from " + table_id);
+                while (results != null && results.next())
+                {
+                    final UUID uuid = UUID.fromString(results.getString(UUID_COLUMN));
+                    uuids.put(uuid, getPlayerTime(uuid));
+                }
+            }
+            else
+            {
+                final AccountConfigData accConfig = getAccountConfig();
+                for (final UUID uuid : accConfig.playerData.keySet())
+                {
+                    uuids.put(uuid, getPlayerTime(uuid));
+                }
+            }
+        }
+        catch (NoModuleException | SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return uuids;
+    }
+
+    public boolean doesPlayerExist(final UUID uuid)
     {
         try
         {
@@ -335,17 +418,17 @@ public class AccountingUtils extends ConfigUtils
 
                 if (conn != null)
                 {
-                    final ResultSet results = getQuery("SELECT " + PLAYER_NAME_COLUMN + " FROM " + TABLE_ID + " WHERE " + UUID_COLUMN + " = '" + player.getUniqueId() + "'");
+                    final ResultSet results = getQuery("SELECT " + PLAYER_NAME_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
 
                     if (results != null)
                     {
-                        return results != null && !results.next();
+                        return results.next();
                     }
                 }
             }
             else
             {
-                return getAccountConfig().playerData.containsKey(player.getUniqueId());
+                return getAccountConfig().playerData.containsKey(uuid);
             }
         }
         catch (SQLException | NoModuleException e)
@@ -355,9 +438,11 @@ public class AccountingUtils extends ConfigUtils
         return false;
     }
 
-    public void addPlayer(final Player player)
+    public void addPlayer(final UUID uuid)
     {
-        if (doesPlayerExist(player))
+        final User user = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).orElse(null);
+
+        if (user == null || doesPlayerExist(uuid))
         {
             return;
         }
@@ -372,60 +457,66 @@ public class AccountingUtils extends ConfigUtils
                 {
                     Statement stmt = conn.createStatement();
 
-                    stmt.execute("INSERT INTO players"
-                                   + "(UUID, PLAYER_NAME, JOIN_DATE, LAST_JOIN, TIME_PLAYED) "
+                    stmt.execute("INSERT INTO " + table_id
+                                   + "(" + UUID_COLUMN + ", " + PLAYER_NAME_COLUMN + ", " + JOIN_DATE_COLUMN + ", " + LAST_JOIN_COLUMN + ", " + TIME_PLAYED_COLUMN + ") "
                                    + "VALUES"
-                                   + "('" + player.getUniqueId() + "',"
-                                   + " '" + player.getName() + "',"
-                                   + " to_date('" + CommonUtils.dateNow(plugin) + "', 'dd/mm/yyyy'),"
-                                   + " to_date('" + CommonUtils.dateNow(plugin) + "', 'dd/mm/yyyy'),"
+                                   + "('" + uuid + "',"
+                                   + " '" + user.getName() + "',"
+                                   + " " + toDate(CommonUtils.dateNow(plugin)) + ","
+                                   + " " + toDate(CommonUtils.dateNow(plugin)) + ","
                                    + " 0)");
                 }
             }
             else
             {
                 final AccountConfigData accConfig = getAccountConfig();
-                accConfig.playerData.put(player.getUniqueId(), new AccountConfigData.PlayerConfig());
-                accConfig.playerData.get(player.getUniqueId()).timePlayed = 0;
-                accConfig.playerData.get(player.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(player.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(player.getUniqueId()).playerName = player.getName();
+                accConfig.playerData.put(user.getUniqueId(), new AccountConfigData.PlayerConfig());
+                accConfig.playerData.get(user.getUniqueId()).timePlayed = 0;
+                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).playerName = user.getName();
                 accConfig.save();
             }
         }
         catch (SQLException | NoModuleException e)
         {
+            if (e instanceof SQLException)
+            {
+                plugin.getLogger().info(((SQLException) e).getSQLState());
+            }
+
             e.printStackTrace();
         }
     }
 
-    public void updatePlayer(final Player player)
+    public void updatePlayer(final UUID uuid)
     {
+        final User user = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).orElse(null);
+
+        if (user == null || !doesPlayerExist(uuid))
+        {
+            return;
+        }
+
         try
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                Connection conn = getConn();
-
-                if (conn != null)
+                if (!user.getName().equals(getPlayerName(uuid)))
                 {
-                    final UUID uuid = player.getUniqueId();
-                    if (!player.getName().equals(getPlayerName(uuid)))
-                    {
-                        updatePlayerName(uuid, player.getName());
-                    }
-
-                    updatePlayerLastDate(uuid, CommonUtils.dateNow(plugin));
+                    updatePlayerName(uuid, user.getName());
                 }
+
+                updatePlayerLastDate(uuid, CommonUtils.dateNow(plugin));
             }
             else
             {
                 final AccountConfigData accConfig = getAccountConfig();
-                accConfig.playerData.put(player.getUniqueId(), new AccountConfigData.PlayerConfig());
-                accConfig.playerData.get(player.getUniqueId()).timePlayed = 0;
-                accConfig.playerData.get(player.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(player.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(player.getUniqueId()).playerName = player.getName();
+                accConfig.playerData.put(user.getUniqueId(), new AccountConfigData.PlayerConfig());
+                accConfig.playerData.get(user.getUniqueId()).timePlayed = 0;
+                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).playerName = user.getName();
                 accConfig.save();
             }
         }
