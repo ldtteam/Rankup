@@ -155,7 +155,7 @@ public class RankingUtils
         {
             final String finalCommand = command.replace("{player}", player.getName())
                                           .replace("{group}", nextGroup);
-            plugin.getLogger().info("Debug Rankup check: finalCommand cmd: " finalCommand);
+            plugin.getLogger().info("Debug Rankup check: finalCommand cmd: " + finalCommand);
             
             plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
         }
