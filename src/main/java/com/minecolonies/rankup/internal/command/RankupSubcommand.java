@@ -103,7 +103,7 @@ public abstract class RankupSubcommand implements CommandExecutor
         }
         else
         {
-            nextTime = "You have reached the max rank!"
+            nextTime = "You have reached the max rank!";
         }
         
         final String balance = Integer.toString(userMoney);
