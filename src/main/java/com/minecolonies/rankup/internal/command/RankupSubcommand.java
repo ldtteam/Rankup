@@ -98,6 +98,9 @@ public abstract class RankupSubcommand implements CommandExecutor
         final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
         String nextTime;
         boolean inDisabled = false;
+        
+        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        
         for (final Subject subject : CoreModule.perms.getDisabledGroups())
         {
             if (playerGroups.contains(subject.getIdentifier()))
