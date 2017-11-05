@@ -13,6 +13,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.service.permission.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
