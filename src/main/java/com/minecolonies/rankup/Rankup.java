@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
-import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.InjectorModule;
@@ -70,9 +69,9 @@ public class Rankup
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
     public PermissionsUtils perms;
-    public ConfigUtils configUtils;
-    public AccountingUtils accUtils;
-    public EconomyService econ;
+    public ConfigUtils      configUtils;
+    public AccountingUtils  accUtils;
+    public EconomyService   econ;
     public static Rankup instance = null;
     public        Game                                         game;
     private final RankupCommand                                rankupCommand;

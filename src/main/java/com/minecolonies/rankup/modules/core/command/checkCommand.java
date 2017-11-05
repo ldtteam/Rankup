@@ -1,7 +1,6 @@
 package com.minecolonies.rankup.modules.core.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
-import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.util.CommonUtils;
@@ -109,7 +108,7 @@ public class checkCommand extends RankupSubcommand
             {
                 final Integer time = getPlugin().perms.timeToNextGroup(user);
 
-                src.sendMessage(Text.of(MIDDLE, "Current Player Time: ", TextColors.AQUA, CommonUtils.timeDescript(playerConf.timePlayed)));
+                src.sendMessage(Text.of(MIDDLE, "Current Player Time: ", TextColors.AQUA, CommonUtils.timeDescript(getPlugin().accUtils.getPlayerTime(user.getUniqueId()))));
 
                 if (!inDisabledGroup && time != -1)
                 {
@@ -156,8 +155,8 @@ public class checkCommand extends RankupSubcommand
             e.printStackTrace();
         }
 
-        src.sendMessage(Text.of(MIDDLE, "Join Date: ", TextColors.DARK_GREEN, playerConf.joinDate));
-        src.sendMessage(Text.of(MIDDLE, "Last Join: ", TextColors.BLUE, playerConf.lastVisit));
+        src.sendMessage(Text.of(MIDDLE, "Join Date: ", TextColors.DARK_GREEN, getPlugin().accUtils.getPlayerJoinDate(user.getUniqueId())));
+        src.sendMessage(Text.of(MIDDLE, "Last Join: ", TextColors.BLUE, getPlugin().accUtils.getPlayerLastDate(user.getUniqueId())));
 
         src.sendMessage(BOTTOM);
     }

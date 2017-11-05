@@ -4,9 +4,7 @@ import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
-import com.minecolonies.rankup.util.PermissionsUtils;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

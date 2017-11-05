@@ -4,7 +4,6 @@ import com.minecolonies.rankup.internal.command.RankupSubcommand;
 import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
-import com.minecolonies.rankup.util.ConfigUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
