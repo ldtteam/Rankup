@@ -57,8 +57,11 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
         for (final Player player : Sponge.getServer().getOnlinePlayers())
         {
             playerData.playerData.get(player.getUniqueId()).timePlayed += timeConfig.updateInterval;
+            System.out.println("timup");
             RankingUtils.timeUp(player, plugin);
+            System.out.println("timedown");
             RankingUtils.timeDown(player, plugin);
+            System.out.println("after");
         }
 
         final CoreConfig config = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
