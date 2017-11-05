@@ -96,8 +96,20 @@ public abstract class RankupSubcommand implements CommandExecutor
 
         final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
         String nextTime;
+        boolean inDisabled = false;
+        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        {
+            if (playerGroups.contains(subject.getIdentifier()))
+            {
+                inDisabled = true;//IF the player is withing a disabled group, stop here.
+            }
+        }
         
-        if (CoreModule.perms.getPlayerHighestRankingGroup(user) != "")
+        if (inDisabled)
+        {
+            nextTime = "You are in a disabled group!";
+        }
+        else if (CoreModule.perms.getPlayerHighestRankingGroup(user) != "")
         {
             nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
         }
