@@ -56,7 +56,7 @@ public class RankingUtils
             rankUp(player, plugin);
         }
         
-        plugin.getLogger().info("Debug Time Check: finished!);
+        plugin.getLogger().info("Debug Time Check: finished!");
     }
 
     public static void balanceCheck(final Player player, final Rankup plugin)
