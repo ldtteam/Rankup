@@ -95,7 +95,17 @@ public abstract class RankupSubcommand implements CommandExecutor
         }
 
         final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
-        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
+        String nextTime;
+        
+        if (CoreModule.perms.getPlayerHighestRankingGroup(user) != "")
+        {
+            nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
+        }
+        else
+        {
+            nextTime = "You have reached the max rank!"
+        }
+        
         final String balance = Integer.toString(userMoney);
         final String nextBal = Integer.toString(CoreModule.perms.balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
