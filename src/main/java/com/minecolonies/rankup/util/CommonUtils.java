@@ -1,6 +1,5 @@
 package com.minecolonies.rankup.util;
 
-import com.minecolonies.rankup.Rankup;
 import org.spongepowered.api.text.Text;
 
 import java.text.DateFormat;

@@ -5,9 +5,6 @@ import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
 import org.spongepowered.api.service.sql.SqlService;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 
-/**
- * Created by Asher on 4/11/17.
- */
 @ModuleData(id = DatabaseModule.ID, name = "Databases")
 public class DatabaseModule extends ConfigurableModule<DatabaseConfigAdapter>
 {
