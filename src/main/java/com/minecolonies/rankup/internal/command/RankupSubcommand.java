@@ -2,10 +2,7 @@ package com.minecolonies.rankup.internal.command;
 
 import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.util.CommonUtils;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.spec.CommandExecutor;
@@ -43,12 +40,12 @@ public abstract class RankupSubcommand implements CommandExecutor
         return empty;
     }
 
-    public Text convertToText(final String string)
+    protected Text convertToText(final String string)
     {
         return Text.of(TextSerializers.FORMATTING_CODE.deserialize(string));
     }
 
-    public List<Text> convertToText(final List<String> strings)
+    protected List<Text> convertToText(final List<String> strings)
     {
         List<Text> texts = new ArrayList<>();
 
@@ -60,28 +57,27 @@ public abstract class RankupSubcommand implements CommandExecutor
         return texts;
     }
 
-    public List<String> getPlayerData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
+    protected List<String> getPlayerData(final User user, final List<String> messages)
     {
-        CoreConfig coreConfig = getPlugin().getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
 
         final List<String> newMessage = new ArrayList<>();
 
-        for (final String msg : messages)
+        for (String msg : messages)
         {
-            String message = msg;
-            message = msg.replace("{player}", user.getName())
-                        .replace("{rank}", CoreModule.perms.getPlayerHighestRankingGroup(user))
-                        .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
-                        .replace("{joindate}", playerConfig.joinDate)
-                        .replace("{lastjoin}", playerConfig.lastVisit);
+            msg = msg.replace("{player}", user.getName())
+                    .replace("{rank}", plugin.perms.getPlayerHighestRankingGroup(user))
+                    .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
+                    .replace("{joindate}", plugin.accUtils.getPlayerJoinDate(user.getUniqueId()))
+                    .replace("{lastjoin}", plugin.accUtils.getPlayerLastDate(user.getUniqueId()));
 
-            newMessage.add(message);
+            newMessage.add(msg);
         }
 
         return newMessage;
     }
 
-    public List<String> getModuleData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
+    protected List<String> getModuleData(final User user, final List<String> messages)
     {
         int userMoney;
         if (getPlugin().econ != null && getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
@@ -94,21 +90,20 @@ public abstract class RankupSubcommand implements CommandExecutor
             userMoney = 0;
         }
 
-        final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
-        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
+        final String playTime = CommonUtils.timeDescript(plugin.accUtils.getPlayerTime(user.getUniqueId()));
+        final String nextTime = CommonUtils.timeDescript(plugin.perms.timeToNextGroup(user));
         final String balance = Integer.toString(userMoney);
-        final String nextBal = Integer.toString(CoreModule.perms.balanceToNextGroup(user));
+        final String nextBal = Integer.toString(plugin.perms.balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
 
-        for (final String msg : messages)
+        for (String msg : messages)
         {
-            String message = msg;
-            message = msg.replace("{timing-time}", playTime)
-                        .replace("{timing-next}", nextTime)
-                        .replace("{economy-bal}", balance)
-                        .replace("{economy-next}", nextBal);
+            msg = msg.replace("{timing-time}", playTime)
+                    .replace("{timing-next}", nextTime)
+                    .replace("{economy-bal}", balance)
+                    .replace("{economy-next}", nextBal);
 
-            newMessage.add(message);
+            newMessage.add(msg);
         }
         return newMessage;
     }

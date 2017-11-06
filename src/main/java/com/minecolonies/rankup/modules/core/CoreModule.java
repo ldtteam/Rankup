@@ -4,9 +4,7 @@ import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
-import com.minecolonies.rankup.util.PermissionsUtils;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 
@@ -23,8 +21,6 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
     public static final String ID = "core";
 
-    public static PermissionsUtils perms;
-
     @Override
     protected CoreConfigAdapter createConfigAdapter()
     {
@@ -34,7 +30,6 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
     @Override
     public void Rankup2Enable()
     {
-        perms = new PermissionsUtils(getPlugin(), Sponge.getGame());
         super.Rankup2Enable();
 
         final Path accountsPath = this.getPlugin().getConfigDir().resolve("playerstats.conf");
@@ -47,11 +42,11 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
           HoconConfigurationLoader.builder().setPath(groupsPath).build());
         this.getPlugin().getAllConfigs().put(GroupsConfig.class, groups);
 
-        GroupsConfig groupsConfig = (GroupsConfig) getPlugin().getAllConfigs().get(GroupsConfig.class);
+        GroupsConfig groupsConfig = getPlugin().configUtils.getGroupsConfig();
 
         List<Subject> disabledGroups = new ArrayList<>();
 
-        for (final Subject subject : perms.getGroups().getLoadedSubjects())
+        for (final Subject subject : getPlugin().perms.getGroups().getLoadedSubjects())
         {
             final String id = subject.getIdentifier();
 
