@@ -14,8 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -28,7 +26,7 @@ public class AccountingUtils extends ConfigUtils
     private SqlService sql;
     private Connection conn;
 
-    private String table_id = "player_stats";
+    private              String table_id           = "player_stats";
     private static final String UUID_COLUMN        = "UUID";
     private static final String PLAYER_NAME_COLUMN = "PLAYER_NAME";
     private static final String JOIN_DATE_COLUMN   = "JOIN_DATE";
@@ -106,11 +104,12 @@ public class AccountingUtils extends ConfigUtils
 
     private String toDate(final String date)
     {
+        final String newDate = CommonUtils.dateFormat(date);
         if (getDatabasesConfig().database.equalsIgnoreCase("h2"))
         {
-            return "to_date('" + date + "','yyyy-mm-dd')";
+            return "to_date('" + newDate + "','yyyy-mm-dd')";
         }
-        return "STR_TO_DATE('" + date + "','%Y-%m-%d')";
+        return "STR_TO_DATE('" + newDate + "','%Y-%m-%d')";
     }
 
     public void createTableIfNeeded()
@@ -295,10 +294,9 @@ public class AccountingUtils extends ConfigUtils
             }
             else
             {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 final AccountConfigData accConfig = getAccountConfig();
-                accConfig.playerData.get(uuid).joinDate = dateFormat.format(date);
+                accConfig.playerData.get(uuid).joinDate = CommonUtils.dateFormat(date);
                 accConfig.save();
             }
         }
@@ -318,10 +316,8 @@ public class AccountingUtils extends ConfigUtils
             }
             else
             {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
                 final AccountConfigData accConfig = getAccountConfig();
-                accConfig.playerData.get(uuid).lastVisit = dateFormat.format(date);
+                accConfig.playerData.get(uuid).lastVisit = CommonUtils.dateFormat(date);
                 accConfig.save();
             }
         }
@@ -462,8 +458,8 @@ public class AccountingUtils extends ConfigUtils
                                    + "VALUES"
                                    + "('" + uuid + "',"
                                    + " '" + user.getName() + "',"
-                                   + " " + toDate(CommonUtils.dateNow(plugin)) + ","
-                                   + " " + toDate(CommonUtils.dateNow(plugin)) + ","
+                                   + " " + toDate(CommonUtils.dateNow()) + ","
+                                   + " " + toDate(CommonUtils.dateNow()) + ","
                                    + " 0)");
                 }
             }
@@ -472,8 +468,8 @@ public class AccountingUtils extends ConfigUtils
                 final AccountConfigData accConfig = getAccountConfig();
                 accConfig.playerData.put(user.getUniqueId(), new AccountConfigData.PlayerConfig());
                 accConfig.playerData.get(user.getUniqueId()).timePlayed = 0;
-                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow();
+                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow();
                 accConfig.playerData.get(user.getUniqueId()).playerName = user.getName();
                 accConfig.save();
             }
@@ -507,15 +503,15 @@ public class AccountingUtils extends ConfigUtils
                     updatePlayerName(uuid, user.getName());
                 }
 
-                updatePlayerLastDate(uuid, CommonUtils.dateNow(plugin));
+                updatePlayerLastDate(uuid, CommonUtils.dateNow());
             }
             else
             {
                 final AccountConfigData accConfig = getAccountConfig();
                 accConfig.playerData.put(user.getUniqueId(), new AccountConfigData.PlayerConfig());
                 accConfig.playerData.get(user.getUniqueId()).timePlayed = 0;
-                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow(plugin);
-                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow(plugin);
+                accConfig.playerData.get(user.getUniqueId()).lastVisit = CommonUtils.dateNow();
+                accConfig.playerData.get(user.getUniqueId()).joinDate = CommonUtils.dateNow();
                 accConfig.playerData.get(user.getUniqueId()).playerName = user.getName();
                 accConfig.save();
             }

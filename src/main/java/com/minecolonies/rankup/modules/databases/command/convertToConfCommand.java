@@ -2,10 +2,12 @@ package com.minecolonies.rankup.modules.databases.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
@@ -33,6 +35,16 @@ public class convertToConfCommand extends RankupSubcommand
 
     @Override
     public CommandResult execute(final CommandSource src, final CommandContext args) throws CommandException
+    {
+        Task.Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
+        taskBuilder.name("conf-to-database").async().delayTicks(4L).execute(this::convert).submit(getPlugin());
+
+        src.sendMessage(Text.of("Conversion has started, feel free to check your Console for progress!"));
+
+        return CommandResult.success();
+    }
+
+    private void convert()
     {
         AccountConfigData accConfig = getPlugin().configUtils.getAccountConfig();
 
@@ -71,11 +83,14 @@ public class convertToConfCommand extends RankupSubcommand
                 playerConfig.timePlayed = timePlayed;
             }
             index++;
+
+            if (index % 25 == 0)
+            {
+                getPlugin().getLogger().info("Players converted: " + index);
+            }
         }
         accConfig.save();
 
-        src.sendMessage(Text.of(index + " players added"));
-
-        return CommandResult.success();
+        getPlugin().getLogger().info(index + " players added");
     }
 }

@@ -10,7 +10,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class DatabaseConfig extends BaseConfig
 {
-    @Setting(comment = "You may choose between MySQL or H2 (Hikari) databases for Player Stats storage!")
+    @Setting(comment = "You may choose between MySQL (Mariadb works too) or H2 (Hikari) databases for Player Stats storage!")
     public String database = "h2";
 
     @Setting

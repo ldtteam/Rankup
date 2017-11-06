@@ -4,8 +4,10 @@ import com.minecolonies.rankup.Rankup;
 import org.spongepowered.api.text.Text;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class CommonUtils
@@ -55,10 +57,37 @@ public class CommonUtils
         return msg.toString();
     }
 
-    public static String dateNow(final Rankup plugin)
+    public static String dateNow()
     {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date today = Calendar.getInstance().getTime();
         return dateFormat.format(today);
+    }
+
+    public static String dateFormat(String date)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat reverseFormat = new SimpleDateFormat("dd-MM-yyyy");
+        dateFormat.setLenient(false);
+        reverseFormat.setLenient(false);
+
+        try
+        {
+            dateFormat.parse(date);
+        }
+        catch (ParseException ex)
+        {
+            try
+            {
+                Date newDate = reverseFormat.parse(date);
+                return dateFormat.format(newDate);
+            }
+            catch (ParseException e)
+            {
+                ex.printStackTrace();
+                e.printStackTrace();
+            }
+        }
+        return date;
     }
 }
