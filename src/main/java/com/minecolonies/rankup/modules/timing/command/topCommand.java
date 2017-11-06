@@ -1,10 +1,7 @@
 package com.minecolonies.rankup.modules.timing.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
-import com.minecolonies.rankup.modules.timing.TimingModule;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
-import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -59,24 +56,14 @@ public class topCommand extends RankupSubcommand
 
     private void sendTopList(CommandSource source)
     {
-        AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
-        final TimingConfig timeConfig = getPlugin().getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
+        TimingConfig timeConfig = getPlugin().configUtils.getTimingConfig();
 
-        HashMap<UUID, Integer> stats = new HashMap<>();
-
-        for (UUID uuid : playerData.playerData.keySet())
-        {
-            if (playerData.playerData.get(uuid).timePlayed > 0)
-            {
-                stats.put(uuid, playerData.playerData.get(uuid).timePlayed);
-            }
-        }
+        final HashMap<UUID, Integer> stats = getPlugin().accUtils.getPlayers();
 
         List<UUID> sorted = stats.entrySet().stream()
                               .sorted(reverseOrder(comparing(Map.Entry::getValue)))
                               .map(Map.Entry::getKey)
                               .collect(toList());
-
 
         int index = 0;
         source.sendMessage(convertToText(timeConfig.topMessageHead));
@@ -94,14 +81,7 @@ public class topCommand extends RankupSubcommand
                 return;
             }
 
-            final AccountConfigData.PlayerConfig playerConf = playerData.playerData.get(user.getUniqueId());
-
-            if (playerConf == null)
-            {
-                return;
-            }
-
-            final List<String> message = getModuleData(user, getPlayerData(user, timeConfig.topMessageTemplate, playerConf), playerConf);
+            final List<String> message = getModuleData(user, getPlayerData(user, timeConfig.topMessageTemplate));
 
             for (final Text msg : convertToText(message))
             {

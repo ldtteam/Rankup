@@ -1,7 +1,6 @@
 package com.minecolonies.rankup.util;
 
 import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
@@ -31,7 +30,7 @@ public class PermissionsUtils
 
     public List<Subject> getDisabledGroups()
     {
-        GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         List<Subject> disabledGroups = new ArrayList<>();
 
@@ -39,7 +38,7 @@ public class PermissionsUtils
         {
             final String id = subject.getIdentifier();
 
-            if (config.groups.containsKey(id) && !config.groups.get(id).enabled)
+            if (groupsConfig.groups.containsKey(id) && !groupsConfig.groups.get(id).enabled)
             {
                 disabledGroups.add(subject);
             }
@@ -50,7 +49,7 @@ public class PermissionsUtils
 
     public String getPlayerHighestRankingGroup(Player player)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         String currentGroup = "";
         Integer currentRank = -1;
@@ -58,9 +57,9 @@ public class PermissionsUtils
         for (final String group : getPlayerGroupIds(player))
         {
 
-            final int rank = config.groups.get(group).rank;
+            final int rank = groupsConfig.groups.get(group).rank;
 
-            if (config.groups.containsKey(group) && rank > currentRank)
+            if (groupsConfig.groups.containsKey(group) && rank > currentRank)
             {
                 currentGroup = group;
                 currentRank = rank;
@@ -72,7 +71,7 @@ public class PermissionsUtils
 
     public String getPlayerHighestRankingGroup(User user)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         String currentGroup = "";
         Integer currentRank = -1;
@@ -80,9 +79,9 @@ public class PermissionsUtils
         for (final String group : getPlayerGroupIds(user))
         {
 
-            final int rank = config.groups.get(group).rank;
+            final int rank = groupsConfig.groups.get(group).rank;
 
-            if (config.groups.containsKey(group) && rank > currentRank)
+            if (groupsConfig.groups.containsKey(group) && rank > currentRank)
             {
                 currentGroup = group;
                 currentRank = rank;
@@ -94,10 +93,7 @@ public class PermissionsUtils
 
     public Integer timeToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
-        final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-
-        final AccountConfigData.PlayerConfig playerConfig = playerData.playerData.get(user.getUniqueId());
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         final String currentGroup = getPlayerHighestRankingGroup(user);
         final String nextGroup = getNextGroup(groupsConfig.groups.get(currentGroup).rank);
@@ -107,12 +103,12 @@ public class PermissionsUtils
             return -1;
         }
 
-        return groupsConfig.groups.get(nextGroup).timingTime - playerConfig.timePlayed;
+        return groupsConfig.groups.get(nextGroup).timingTime - plugin.accUtils.getPlayerTime(user.getUniqueId());
     }
 
     public Integer balanceToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         int userMoney;
         if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
@@ -134,14 +130,14 @@ public class PermissionsUtils
 
     public String getNextGroup(final String currentGroup)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
-        final int nextRank = config.groups.get(currentGroup).rank + 1;
+        final int nextRank = groupsConfig.groups.get(currentGroup).rank + 1;
 
-        config.groups.forEach((name, conf) ->
-                                ranksAndGroups.put(conf.rank, name));
+        groupsConfig.groups.forEach((name, conf) ->
+                                      ranksAndGroups.put(conf.rank, name));
 
         if (ranksAndGroups.containsKey(nextRank))
         {
@@ -153,14 +149,14 @@ public class PermissionsUtils
 
     public String getNextGroup(final int currentRank)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
         final int nextRank = currentRank + 1;
 
-        config.groups.forEach((name, conf) ->
-                                ranksAndGroups.put(conf.rank, name));
+        groupsConfig.groups.forEach((name, conf) ->
+                                      ranksAndGroups.put(conf.rank, name));
 
         if (ranksAndGroups.containsKey(nextRank))
         {
@@ -172,14 +168,14 @@ public class PermissionsUtils
 
     public String getPreviousGroup(final int currentRank)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig();
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
         final int nextRank = currentRank - 1;
 
-        config.groups.forEach((name, conf) ->
-                                ranksAndGroups.put(conf.rank, name));
+        groupsConfig.groups.forEach((name, conf) ->
+                                      ranksAndGroups.put(conf.rank, name));
 
         if (ranksAndGroups.containsKey(nextRank))
         {
