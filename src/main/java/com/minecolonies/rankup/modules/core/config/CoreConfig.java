@@ -19,6 +19,9 @@ public class CoreConfig extends BaseConfig
     @Setting(value = "first-time-welcome-message", comment = "The message to display for a player in chat when they login to the server for the first time")
     public String firstWelcomeMessage = "Welcome to our server {player}!";
 
+    @Setting(value = "date-format", comment = "Date format to save data info of players.")
+    public String dateFormat = "dd/MM/yyyy";
+
     @Setting(value = "prefix-fallback", comment = "This is the prefix that will be put in place if a player has no prefix, leave \"\" to have no prefix fall-back")
     public String prefixFallback = "Default";
 
