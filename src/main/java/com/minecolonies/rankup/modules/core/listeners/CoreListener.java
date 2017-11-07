@@ -5,7 +5,6 @@ import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
-import com.minecolonies.rankup.modules.timing.TimingModule;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;

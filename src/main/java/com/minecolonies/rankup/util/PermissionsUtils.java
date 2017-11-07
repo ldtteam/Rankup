@@ -1,18 +1,23 @@
 package com.minecolonies.rankup.util;
 
 import com.minecolonies.rankup.Rankup;
+import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.PermissionService;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
 import org.spongepowered.api.service.permission.SubjectReference;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PermissionsUtils
 {
@@ -25,68 +30,108 @@ public class PermissionsUtils
         this.permissionService = game.getServiceManager().getRegistration(PermissionService.class).get().getProvider();
     }
 
+    public GroupsConfig getGroupConfig(final Player player)
+    {
+        Integer currentRank = 0;
+        GroupsConfig currentConf = null;
+
+        for (final GroupsConfig groupConf : plugin.getGroupConfigs())
+        {
+            for (final String group : groupConf.groups.keySet())
+            {
+                if (getPlayerGroupIds(player).contains(group) && currentRank <= groupConf.rank)
+                {
+                    currentRank = groupConf.rank;
+                    currentConf = groupConf;
+                }
+            }
+        }
+        if (currentConf == null)
+        {
+            plugin.getLogger().info("Well crap, there's apparently an issue with getting this players group config! \n"
+                                      + "Their groups are: " + getPlayerGroupIds(player));
+        }
+        return currentConf;
+    }
+
+    public GroupsConfig getGroupConfig(final User player)
+    {
+        Integer currentRank = 0;
+        GroupsConfig currentConf = null;
+
+        for (final GroupsConfig groupConf : plugin.getGroupConfigs())
+        {
+            for (final String group : groupConf.groups.keySet())
+            {
+                if (getPlayerGroupIds(player).contains(group) && currentRank <= groupConf.rank)
+                {
+                    currentRank = groupConf.rank;
+                    currentConf = groupConf;
+                }
+            }
+        }
+        if (currentConf == null)
+        {
+            plugin.getLogger().info("Well crap, there's apparently an issue with getting this players group config! \n"
+                                      + "Their groups are: " + getPlayerGroupIds(player));
+        }
+        return currentConf;
+    }
+
     public SubjectCollection getGroups()
     {
         return permissionService.getGroupSubjects();
     }
 
-    public List<Subject> getDisabledGroups()
+    public List<String> getDisabledGroups()
     {
-        GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
-        List<Subject> disabledGroups = new ArrayList<>();
-
-        for (final Subject subject : getGroups().getLoadedSubjects())
-        {
-            final String id = subject.getIdentifier();
-
-            if (config.groups.containsKey(id) && !config.groups.get(id).enabled)
-            {
-                disabledGroups.add(subject);
-            }
-        }
-
-        return disabledGroups;
+        return coreConfig.disabledGroups;
     }
 
-    public String getPlayerHighestRankingGroup(Player player)
+    public String getPlayerHighestRankingGroup(final Player player)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig config = getGroupConfig(player);
 
         String currentGroup = "";
         Integer currentRank = -1;
 
         for (final String group : getPlayerGroupIds(player))
         {
-
-            final int rank = config.groups.get(group).rank;
-
-            if (config.groups.containsKey(group) && rank > currentRank)
+            if (config.groups.containsKey(group))
             {
-                currentGroup = group;
-                currentRank = rank;
+                final int rank = config.groups.get(group).rank;
+
+                if (config.groups.containsKey(group) && rank > currentRank)
+                {
+                    currentGroup = group;
+                    currentRank = rank;
+                }
             }
         }
 
         return currentGroup;
     }
 
-    public String getPlayerHighestRankingGroup(User user)
+    public String getPlayerHighestRankingGroup(final User user)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig config = getGroupConfig(user);
 
         String currentGroup = "";
         Integer currentRank = -1;
 
         for (final String group : getPlayerGroupIds(user))
         {
-
-            final int rank = config.groups.get(group).rank;
-
-            if (config.groups.containsKey(group) && rank > currentRank)
+            if (config.groups.containsKey(group))
             {
-                currentGroup = group;
-                currentRank = rank;
+                final int rank = config.groups.get(group).rank;
+
+                if (config.groups.containsKey(group) && rank > currentRank)
+                {
+                    currentGroup = group;
+                    currentRank = rank;
+                }
             }
         }
 
@@ -95,17 +140,16 @@ public class PermissionsUtils
 
     public Integer timeToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = getGroupConfig(user);
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
 
         final AccountConfigData.PlayerConfig playerConfig = playerData.playerData.get(user.getUniqueId());
 
-        final String currentGroup = getPlayerHighestRankingGroup(user);
-        final String nextGroup = getNextGroup(groupsConfig.groups.get(currentGroup).rank);
+        final String nextGroup = getNextGroup(user);
 
         if (nextGroup.equals(""))
         {
-            return -1;
+            return -0;
         }
 
         return groupsConfig.groups.get(nextGroup).timingTime - playerConfig.timePlayed;
@@ -113,7 +157,7 @@ public class PermissionsUtils
 
     public Integer balanceToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = getGroupConfig(user);
 
         int userMoney;
         if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
@@ -126,16 +170,18 @@ public class PermissionsUtils
             userMoney = 0;
         }
 
-        if (getNextGroup(getPlayerHighestRankingGroup(user)).equals(""))
+        if (getNextGroup(user).equals("") || groupsConfig == null)
         {
             return 0;
         }
-        return groupsConfig.groups.get(getNextGroup(getPlayerHighestRankingGroup(user))).moneyNeeded - userMoney;
+        return groupsConfig.groups.get(getNextGroup(user)).moneyNeeded - userMoney;
     }
 
-    public String getNextGroup(final String currentGroup)
+    public String getNextGroup(final Player player)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final String currentGroup = getPlayerHighestRankingGroup(player);
+
+        final GroupsConfig config = getGroupConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
@@ -152,13 +198,20 @@ public class PermissionsUtils
         return "";
     }
 
-    public String getNextGroup(final int currentRank)
+    public String getNextGroup(final User player)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final String currentGroup = getPlayerHighestRankingGroup(player);
+
+        if ("".equals(currentGroup))
+        {
+            return "";
+        }
+
+        final GroupsConfig config = getGroupConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
-        final int nextRank = currentRank + 1;
+        final int nextRank = config.groups.get(currentGroup).rank + 1;
 
         config.groups.forEach((name, conf) ->
                                 ranksAndGroups.put(conf.rank, name));
@@ -171,9 +224,9 @@ public class PermissionsUtils
         return "";
     }
 
-    public String getPreviousGroup(final int currentRank)
+    public String getPreviousGroup(final Player player, final int currentRank)
     {
-        final GroupsConfig config = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig config = getGroupConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
@@ -204,9 +257,16 @@ public class PermissionsUtils
     {
         final List<String> ids = new ArrayList<>();
 
+        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+
         for (final SubjectReference subject : getPlayerGroups(player))
         {
             ids.add(subject.getSubjectIdentifier());
+        }
+
+        if (ids.isEmpty())
+        {
+            ids.add(coreConfig.defaultGroup);
         }
 
         return ids;
@@ -216,9 +276,16 @@ public class PermissionsUtils
     {
         final List<String> ids = new ArrayList<>();
 
+        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+
         for (final SubjectReference subject : getPlayerGroups(user))
         {
             ids.add(subject.getSubjectIdentifier());
+        }
+
+        if (ids.isEmpty())
+        {
+            ids.add(coreConfig.defaultGroup);
         }
 
         return ids;
