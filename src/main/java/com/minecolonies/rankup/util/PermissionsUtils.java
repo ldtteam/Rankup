@@ -9,6 +9,7 @@ import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
@@ -86,7 +87,7 @@ public class PermissionsUtils
         return coreConfig.disabledGroups;
     }
 
-    public String getPlayerHighestRankingGroup(Player player)
+    public String getPlayerHighestRankingGroup(final Player player)
     {
         final GroupsConfig config = getGroupConfig(player);
 
@@ -110,7 +111,7 @@ public class PermissionsUtils
         return currentGroup;
     }
 
-    public String getPlayerHighestRankingGroup(User user)
+    public String getPlayerHighestRankingGroup(final User user)
     {
         final GroupsConfig config = getGroupConfig(user);
 
@@ -145,22 +146,40 @@ public class PermissionsUtils
 
         if (nextGroup.equals(""))
         {
-            return -1;
+            return -0;
         }
 
         return groupsConfig.groups.get(nextGroup).timingTime - playerConfig.timePlayed;
     }
 
+    public Integer balanceToNextGroup(final User user)
+    {
+        final GroupsConfig groupsConfig = getGroupConfig(user);
+
+        int userMoney;
+        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        {
+            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
+        }
+        else
+        {
+            userMoney = 0;
+        }
+
+        if (getNextGroup(user).equals("") || groupsConfig == null)
+        {
+            return 0;
+        }
+        return groupsConfig.groups.get(getNextGroup(user)).moneyNeeded - userMoney;
+    }
+
     public String getNextGroup(final Player player)
     {
         final String currentGroup = getPlayerHighestRankingGroup(player);
-
         final GroupsConfig config = getGroupConfig(player);
-
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
-
         final int nextRank = config.groups.get(currentGroup).rank + 1;
-
         config.groups.forEach((name, conf) ->
                                 ranksAndGroups.put(conf.rank, name));
 
@@ -168,7 +187,6 @@ public class PermissionsUtils
         {
             return ranksAndGroups.get(nextRank);
         }
-
         return "";
     }
 
