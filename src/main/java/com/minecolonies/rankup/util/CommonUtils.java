@@ -13,6 +13,11 @@ public class CommonUtils
 
     public static String timeDescript(int timeNeeded)
     {
+        if (timeNeeded == -0)
+        {
+            return "You are currently in the highest group possible!";
+        }
+
         long day = TimeUnit.MINUTES.toDays(timeNeeded);
         long hours = TimeUnit.MINUTES.toHours(timeNeeded - TimeUnit.DAYS.toMinutes(day));
         long minutes = TimeUnit.MINUTES.toMinutes((timeNeeded - TimeUnit.DAYS.toMinutes(day)) - TimeUnit.HOURS.toMinutes(hours));
