@@ -46,6 +46,15 @@ public class CoreConfig extends BaseConfig
     @Setting(comment = "This is weird, but basically Luckperms is screwing with something, anyway, please put your BASE group here (luckperms default is \"default\"")
     public String defaultGroup = "default";
 
+    @Setting(comment = "setting for \"days\" output in time desc")
+    public String daysDisplay = "day(s)";
+
+    @Setting(comment = "setting for \"hours\" output in time desc")
+    public String hoursDisplay = "hour(s)";
+
+    @Setting(comment = "setting for \"minutes\" output in time desc")
+    public String minutesDisplay = "minute(s)";
+
     @Setting(value = "check-message", comment = "This is the template for the /ru check command, accepted entries are: \n"
                                                   + "{player}        - The Player's name (the one being checked)\n"
                                                   + "{rank}          - The current rank of the player\n"
