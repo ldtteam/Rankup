@@ -94,8 +94,8 @@ public abstract class RankupSubcommand implements CommandExecutor
             userMoney = 0;
         }
 
-        final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
-        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
+        final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed, plugin);
+        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
         final String nextBal = Integer.toString(CoreModule.perms.balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
