@@ -154,6 +154,28 @@ public class PermissionsUtils
 
     public Integer balanceToNextGroup(final User user)
     {
+        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+
+        int userMoney;
+        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        {
+            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
+        }
+        else
+        {
+            userMoney = 0;
+        }
+
+        if (getNextGroup(getPlayerHighestRankingGroup(user)).equals(""))
+        {
+            return 0;
+        }
+        return groupsConfig.groups.get(getNextGroup(getPlayerHighestRankingGroup(user))).moneyNeeded - userMoney;
+    }
+
+    public String getNextGroup(final String currentGroup)
+    {
         final GroupsConfig groupsConfig = getGroupConfig(user);
 
         int userMoney;
