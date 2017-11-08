@@ -167,29 +167,7 @@ public class PermissionsUtils
             userMoney = 0;
         }
 
-        if (getNextGroup(getPlayerHighestRankingGroup(user)).equals(""))
-        {
-            return 0;
-        }
-        return groupsConfig.groups.get(getNextGroup(getPlayerHighestRankingGroup(user))).moneyNeeded - userMoney;
-    }
-
-    public String getNextGroup(final String currentGroup)
-    {
-        final GroupsConfig groupsConfig = getGroupConfig(user);
-
-        int userMoney;
-        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
-        {
-            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
-        }
-        else
-        {
-            userMoney = 0;
-        }
-
-        if (getNextGroup(user).equals("") || groupsConfig == null)
+        if (getNextGroup(user).equals(""))
         {
             return 0;
         }
