@@ -15,6 +15,9 @@ import java.util.Map;
 @ConfigSerializable
 public class GroupsConfig extends BaseConfig
 {
+    @Setting(value = "group-rank", comment = "This is the rank of a track, the higher the more precedence \n "
+                         + "Basically, if a player has two groups from two tracks the group of higher rank shall be chosen")
+    public Integer rank = 0;
 
     @Setting(comment = "ALL Groups you have\n these are all generated via the plugin on server restart (and possibly on reload in the future)")
     public Map<String, GroupConfig> groups = new HashMap<>();

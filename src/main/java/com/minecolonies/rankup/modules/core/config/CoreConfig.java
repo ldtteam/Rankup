@@ -4,6 +4,7 @@ import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +37,24 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "debug-mode", comment = "If true a message will be output to console every time players are updated or checked.")
     public boolean debugMode = false;
+
+    @Setting(value = "track-configs", comment = "This is where all track config names are defined, please be careful here.")
+    public List<String> groupConfigs = Arrays.asList("groups.conf", "patreons.conf");
+
+    @Setting(value = "disabled-groups", comment = "List of disabled groups")
+    public List<String> disabledGroups = Arrays.asList("admin", "mod", "owner");
+
+    @Setting(comment = "This is weird, but basically Luckperms is screwing with something, anyway, please put your BASE group here (luckperms default is \"default\"")
+    public String defaultGroup = "default";
+
+    @Setting(comment = "setting for \"days\" output in time desc")
+    public String daysDisplay = "day(s)";
+
+    @Setting(comment = "setting for \"hours\" output in time desc")
+    public String hoursDisplay = "hour(s)";
+
+    @Setting(comment = "setting for \"minutes\" output in time desc")
+    public String minutesDisplay = "minute(s)";
 
     @Setting(value = "check-message", comment = "This is the template for the /ru check command, accepted entries are: \n"
                                                   + "{player}        - The Player's name (the one being checked)\n"

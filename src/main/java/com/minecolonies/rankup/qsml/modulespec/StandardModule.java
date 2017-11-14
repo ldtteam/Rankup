@@ -132,7 +132,7 @@ public abstract class StandardModule implements Module
                 catch (Exception e)
                 {
                     // Developers - this should never happen!
-                    e.printStackTrace();
+                    plugin.getLogger().error("QSML Listener registering failed! ", e);
                 }
             }
             else

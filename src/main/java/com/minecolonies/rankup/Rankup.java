@@ -10,6 +10,8 @@ import com.minecolonies.rankup.internal.command.RankupCommand;
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
 import com.minecolonies.rankup.modules.core.CoreModule;
 import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.qsml.InjectorModule;
 import com.minecolonies.rankup.qsml.RankupLoggerProxy;
@@ -37,7 +39,6 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.economy.EconomyService;
-import org.spongepowered.api.service.permission.Subject;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 import uk.co.drnaylor.quickstart.exceptions.IncorrectAdapterTypeException;
 import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
@@ -66,18 +67,16 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
-    public EconomyService econ;
-    public static Rankup instance = null;
-    public        Game                                         game;
+    private EconomyService econ;
+    private static Rankup instance = null;
+    private        Game                                         game;
     private final RankupCommand                                rankupCommand;
     private final Path                                         configDir;
     private       GuiceObjectMapperFactory                     factory;
     private       Map<Class<? extends BaseConfig>, BaseConfig> configs;
+    private       List<GroupsConfig>                           groupConfigs;
     private       Injector                                     RankupInjector;
     private       DiscoveryModuleContainer                     container;
-
-    public ConfigurationLoader<CommentedConfigurationNode> statsManager;
-    public CommentedConfigurationNode                      stats;
 
     // Using a map for later implementation of reloadable modules.
     private Multimap<String, Action> reloadables = HashMultimap.create();
@@ -92,6 +91,7 @@ public class Rankup
         this.configDir = configDir;
         this.factory = factory;
         this.configs = new HashMap<>();
+        this.groupConfigs = new ArrayList<>();
         this.rankupCommand = new RankupCommand();
         this.RankupInjector = Guice.createInjector(new InjectorModule(this, this.rankupCommand));
     }
@@ -114,7 +114,7 @@ public class Rankup
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            logger.error("Exception on Rankup Preinit: ", e);
             onError();
         }
     }
@@ -160,8 +160,28 @@ public class Rankup
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.error("onReloadEvent threw an exception: ", e);
         }
+    }
+
+    /**
+     * Getter for the econ.
+     *
+     * @return the currently set econ.
+     */
+    public EconomyService getEcon()
+    {
+        return this.econ;
+    }
+
+    /**
+     * Getter for the game.
+     *
+     * @return the current Game.
+     */
+    public Game getGame()
+    {
+        return this.game;
     }
 
     /**
@@ -185,7 +205,6 @@ public class Rankup
         this.container.reloadSystemConfig();
         reloadables.values().forEach(Action::action);
 
-        this.getAllConfigs().remove(GroupsConfig.class);
         this.getAllConfigs().remove(AccountConfigData.class);
 
         final Path accountsPath = this.getConfigDir().resolve("playerstats.conf");
@@ -193,12 +212,15 @@ public class Rankup
           HoconConfigurationLoader.builder().setPath(accountsPath).build());
         this.getAllConfigs().put(AccountConfigData.class, data);
 
-        final Path groupsPath = this.getConfigDir().resolve("groups.conf");
-        GroupsConfig groups = this.getConfig(groupsPath, GroupsConfig.class,
-          HoconConfigurationLoader.builder().setPath(groupsPath).build());
-        this.getAllConfigs().put(GroupsConfig.class, groups);
+        CoreConfig config = getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
-        generateGroups();
+        for (final String name : config.groupConfigs)
+        {
+            final Path confPath = getConfigDir().resolve("group-configs").resolve(name);
+            GroupsConfig groups = getConfig(confPath, GroupsConfig.class,
+              HoconConfigurationLoader.builder().setPath(confPath).build());
+            getGroupConfigs().add(groups);
+        }
     }
 
     public static Rankup getInstance() { return instance; }
@@ -211,40 +233,6 @@ public class Rankup
     public Injector getInjector()
     {
         return this.RankupInjector;
-    }
-
-    public void generateGroups()
-    {
-        GroupsConfig groupsConfig = (GroupsConfig) this.getAllConfigs().get(GroupsConfig.class);
-
-        List<Subject> disabledGroups = new ArrayList<>();
-
-        for (final Subject subject : CoreModule.perms.getGroups().getAllSubjects())
-        {
-            final String id = subject.getIdentifier();
-
-            if (!groupsConfig.groups.containsKey(id))
-            {
-                logger.info("Config doesn't contain group: " + id);
-                groupsConfig.groups.put(id, new GroupsConfig.GroupConfig());
-
-                groupsConfig.groups.get(id).enabled = true;
-                groupsConfig.groups.get(id).rank = 0;
-            }
-
-            if (!groupsConfig.groups.get(id).enabled)
-            {
-                groupsConfig.groups.get(id).rank = -1;
-                disabledGroups.add(subject);
-            }
-            else if (groupsConfig.groups.get(id).rank == -1)
-            {
-                groupsConfig.groups.get(id).enabled = false;
-                disabledGroups.add(subject);
-            }
-        }
-
-        groupsConfig.save();
     }
 
     /**
@@ -323,6 +311,11 @@ public class Rankup
     public Map<Class<? extends BaseConfig>, BaseConfig> getAllConfigs()
     {
         return this.configs;
+    }
+
+    public List<GroupsConfig> getGroupConfigs()
+    {
+        return this.groupConfigs;
     }
 
     /**

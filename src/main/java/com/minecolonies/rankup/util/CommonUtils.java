@@ -1,5 +1,9 @@
 package com.minecolonies.rankup.util;
 
+import com.minecolonies.rankup.Rankup;
+import com.minecolonies.rankup.modules.core.CoreModule;
+import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import org.spongepowered.api.text.Text;
 
 import java.util.concurrent.TimeUnit;
@@ -11,24 +15,31 @@ public class CommonUtils
         return Text.of(string);
     }
 
-    public static String timeDescript(int timeNeeded)
+    public static String timeDescript(int timeNeeded, final Rankup plugin)
     {
+        if (timeNeeded == -0)
+        {
+            return "You are currently in the highest group possible!";
+        }
+
         long day = TimeUnit.MINUTES.toDays(timeNeeded);
         long hours = TimeUnit.MINUTES.toHours(timeNeeded - TimeUnit.DAYS.toMinutes(day));
         long minutes = TimeUnit.MINUTES.toMinutes((timeNeeded - TimeUnit.DAYS.toMinutes(day)) - TimeUnit.HOURS.toMinutes(hours));
         StringBuilder msg = new StringBuilder();
 
+        CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+
         if (day > 0)
         {
-            msg.append(day).append(" day(s), ");
+            msg.append(day).append(" " + coreConfig.daysDisplay + ", ");
         }
         if (hours > 0)
         {
-            msg.append(hours).append(" hours(s), ");
+            msg.append(hours).append(" " + coreConfig.hoursDisplay + ", ");
         }
         if (minutes > 0)
         {
-            msg.append(minutes).append(" minute(s), ");
+            msg.append(minutes).append(" " + coreConfig.minutesDisplay + ", ");
         }
 
         try
