@@ -1,6 +1,7 @@
 package com.minecolonies.rankup.internal.configurate;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.rankup.Rankup;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -37,6 +38,7 @@ public class BaseConfig<T extends ConfigurationLoader<K>, K extends Configuratio
         }
     }
 
+    @SuppressWarnings("squid:S1148")
     public void load()
     {
         try

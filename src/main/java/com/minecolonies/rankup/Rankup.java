@@ -67,9 +67,9 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
-    public EconomyService econ;
-    public static Rankup instance = null;
-    public        Game                                         game;
+    private EconomyService econ;
+    private static Rankup instance = null;
+    private        Game                                         game;
     private final RankupCommand                                rankupCommand;
     private final Path                                         configDir;
     private       GuiceObjectMapperFactory                     factory;
@@ -77,9 +77,6 @@ public class Rankup
     private       List<GroupsConfig>                           groupConfigs;
     private       Injector                                     RankupInjector;
     private       DiscoveryModuleContainer                     container;
-
-    public ConfigurationLoader<CommentedConfigurationNode> statsManager;
-    public CommentedConfigurationNode                      stats;
 
     // Using a map for later implementation of reloadable modules.
     private Multimap<String, Action> reloadables = HashMultimap.create();
@@ -117,7 +114,7 @@ public class Rankup
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            logger.error("Exception on Rankup Preinit: ", e);
             onError();
         }
     }
@@ -163,8 +160,28 @@ public class Rankup
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.error("onReloadEvent threw an exception: ", e);
         }
+    }
+
+    /**
+     * Getter for the econ.
+     *
+     * @return the currently set econ.
+     */
+    public EconomyService getEcon()
+    {
+        return this.econ;
+    }
+
+    /**
+     * Getter for the game.
+     *
+     * @return the current Game.
+     */
+    public Game getGame()
+    {
+        return this.game;
     }
 
     /**

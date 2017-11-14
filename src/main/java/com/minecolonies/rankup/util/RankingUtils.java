@@ -23,10 +23,10 @@ public class RankingUtils
 
     public static void timeUp(final Player player, final Rankup plugin)
     {
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = CoreModule.getPerms().getPlayerGroupIds(player);
 
         //Check if player is in disabled group.
-        for (final String subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : CoreModule.getPerms().getDisabledGroups())
         {
             if (playerGroups.contains(subject))
             {
@@ -35,8 +35,8 @@ public class RankingUtils
         }
 
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(player);
-        final String nextGroup = CoreModule.perms.getNextGroup(player);
+        final GroupsConfig groupsConfig = CoreModule.getPerms().getGroupConfig(player);
+        final String nextGroup = CoreModule.getPerms().getNextGroup(player);
 
         final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
 
@@ -48,12 +48,12 @@ public class RankingUtils
 
     public static void balanceCheck(final Player player, final Rankup plugin)
     {
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = CoreModule.getPerms().getPlayerGroupIds(player);
 
-        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(player);
+        final GroupsConfig groupsConfig = CoreModule.getPerms().getGroupConfig(player);
 
         //Check if player is in disabled group.
-        for (final String subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : CoreModule.getPerms().getDisabledGroups())
         {
             if (playerGroups.contains(subject))
             {
@@ -62,12 +62,12 @@ public class RankingUtils
             }
         }
 
-        final String nextGroup = CoreModule.perms.getNextGroup(player);
+        final String nextGroup = CoreModule.getPerms().getNextGroup(player);
 
-        if (plugin.econ != null && !nextGroup.equals("") && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
+        if (plugin.getEcon() != null && !nextGroup.equals("") && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
         {
-            final UniqueAccount acc = plugin.econ.getOrCreateAccount(player.getUniqueId()).get();
-            if (acc.getBalance(plugin.econ.getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
+            final UniqueAccount acc = plugin.getEcon().getOrCreateAccount(player.getUniqueId()).get();
+            if (acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
             {
                 rankUp(player, plugin);
             }
@@ -76,12 +76,12 @@ public class RankingUtils
 
     public static void timeDown(Player player, Rankup plugin)
     {
-        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(player);
+        final GroupsConfig groupsConfig = CoreModule.getPerms().getGroupConfig(player);
         final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = CoreModule.getPerms().getPlayerGroupIds(player);
 
         //Check if player is in disabled group.
-        for (final String subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : CoreModule.getPerms().getDisabledGroups())
         {
             if (playerGroups.contains(subject))
             {
@@ -89,7 +89,7 @@ public class RankingUtils
             }
         }
 
-        for (final String group : CoreModule.perms.getPlayerGroupIds(player))
+        for (final String group : CoreModule.getPerms().getPlayerGroupIds(player))
         {
             if (groupsConfig.groups.containsKey(group))
             {
@@ -105,10 +105,10 @@ public class RankingUtils
 
     private static void rankDown(final Player player, final Rankup plugin)
     {
-        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(player);
+        final GroupsConfig groupsConfig = CoreModule.getPerms().getGroupConfig(player);
 
-        final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String previousGroup = CoreModule.perms.getPreviousGroup(player, groupsConfig.groups.get(currentGroup).rank);
+        final String currentGroup = CoreModule.getPerms().getPlayerHighestRankingGroup(player);
+        final String previousGroup = CoreModule.getPerms().getPreviousGroup(player, groupsConfig.groups.get(currentGroup).rank);
 
         final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
@@ -116,15 +116,15 @@ public class RankingUtils
         final String finalRemCmd = remCmd.replace("{player}", player.getName())
                                      .replace("{group}", previousGroup);
 
-        plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
+        plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
     }
 
     private static void rankUp(final Player player, final Rankup plugin)
     {
-        final GroupsConfig groupsConfig = CoreModule.perms.getGroupConfig(player);
+        final GroupsConfig groupsConfig = CoreModule.getPerms().getGroupConfig(player);
         
-        final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String nextGroup = CoreModule.perms.getNextGroup(player);
+        final String currentGroup = CoreModule.getPerms().getPlayerHighestRankingGroup(player);
+        final String nextGroup = CoreModule.getPerms().getNextGroup(player);
 
         if (nextGroup.equals(""))
         {
@@ -140,14 +140,14 @@ public class RankingUtils
 
         final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
 
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = CoreModule.getPerms().getPlayerGroupIds(player);
         
         final String cmd = coreConfig.rankupCommand;
 
         final String finalCmd = cmd.replace("{player}", player.getName())
                                   .replace("{group}", nextGroup);
         
-        plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
+        plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
 
         for (final String command : groupsConfig.groups.get(nextGroup).commands)
         {
@@ -155,7 +155,7 @@ public class RankingUtils
             final String finalCommand = command.replace("{player}", player.getName())
                                           .replace("{group}", nextGroup);
             
-            plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
+            plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
         }
 
         if (coreConfig.removeOtherGroups)
@@ -169,7 +169,7 @@ public class RankingUtils
                     final String finalRemCmd = remCmd.replace("{player}", player.getName())
                                                  .replace("{group}", group);
                     
-                    plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
+                    plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
                 }
             }
         }

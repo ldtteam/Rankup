@@ -25,7 +25,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
     public static final String ID = "core";
 
-    public static PermissionsUtils perms;
+    private static PermissionsUtils perms;
 
     @Override
     protected CoreConfigAdapter createConfigAdapter()
@@ -69,6 +69,11 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
             }
             checkConfig(groupConfig);
         }
+    }
+
+    public static PermissionsUtils getPerms()
+    {
+        return perms;
     }
 
     public void initGroupConfig(final GroupsConfig groupsConfig)

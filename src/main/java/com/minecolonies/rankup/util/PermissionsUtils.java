@@ -154,13 +154,13 @@ public class PermissionsUtils
 
     public Integer balanceToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = getGroupConfig(user);
 
         int userMoney;
-        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (plugin.getEcon() != null && plugin.getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
         {
-            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
+            UniqueAccount acc = plugin.getEcon().getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue();
         }
         else
         {

@@ -40,7 +40,7 @@ public abstract class RankupSubcommand implements CommandExecutor
 
     public CommandElement[] getArguments()
     {
-        return empty;
+        return empty.clone();
     }
 
     public Text convertToText(final String string)
@@ -70,7 +70,7 @@ public abstract class RankupSubcommand implements CommandExecutor
         {
             String message = msg;
             message = msg.replace("{player}", user.getName())
-                        .replace("{rank}", CoreModule.perms.getPlayerHighestRankingGroup(user))
+                        .replace("{rank}", CoreModule.getPerms().getPlayerHighestRankingGroup(user))
                         .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
                         .replace("{joindate}", playerConfig.joinDate)
                         .replace("{lastjoin}", playerConfig.lastVisit);
@@ -84,10 +84,10 @@ public abstract class RankupSubcommand implements CommandExecutor
     public List<String> getModuleData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
     {
         int userMoney;
-        if (getPlugin().econ != null && getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (getPlugin().getEcon() != null && getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
         {
-            UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
+            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
         }
         else
         {
@@ -95,9 +95,9 @@ public abstract class RankupSubcommand implements CommandExecutor
         }
 
         final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed, plugin);
-        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user), plugin);
+        final String nextTime = CommonUtils.timeDescript(CoreModule.getPerms().timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
-        final String nextBal = Integer.toString(CoreModule.perms.balanceToNextGroup(user));
+        final String nextBal = Integer.toString(CoreModule.getPerms().balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
 
         for (final String msg : messages)
