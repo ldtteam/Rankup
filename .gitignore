@@ -16,8 +16,9 @@ OLD/
 workspace.xml
 tasks.xml
 gradle.xml
-\.idea/libraries
+\.idea/*
 \.gradle/
 .DS_Store
 \build/
 \libs/
+*.iml
