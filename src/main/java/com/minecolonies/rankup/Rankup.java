@@ -70,22 +70,18 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
-    public PermissionsUtils perms;
-    public ConfigUtils      configUtils;
-    public AccountingUtils  accUtils;
+    private PermissionsUtils perms;
+    private ConfigUtils      configUtils;
+    private AccountingUtils  accUtils;
     public EconomyService   econ;
-    public static Rankup instance = null;
-    public        Game                                         game;
+    private        Game                                         game;
     private final RankupCommand                                rankupCommand;
     private final Path                                         configDir;
     private       GuiceObjectMapperFactory                     factory;
     private       Map<Class<? extends BaseConfig>, BaseConfig> configs;
     private       List<GroupsConfig>                           groupConfigs;
-    private       Injector                                     RankupInjector;
+    private       Injector                                     rankupInjector;
     private       DiscoveryModuleContainer                     container;
-
-    public ConfigurationLoader<CommentedConfigurationNode> statsManager;
-    public CommentedConfigurationNode                      stats;
 
     // Using a map for later implementation of reloadable modules.
     private Multimap<String, Action> reloadables = HashMultimap.create();
@@ -102,13 +98,12 @@ public class Rankup
         this.configs = new HashMap<>();
         this.groupConfigs = new ArrayList<>();
         this.rankupCommand = new RankupCommand();
-        this.RankupInjector = Guice.createInjector(new InjectorModule(this, this.rankupCommand));
+        this.rankupInjector = Guice.createInjector(new InjectorModule(this, this.rankupCommand));
     }
 
     @Listener
     public void onPreInit(GamePreInitializationEvent event)
     {
-        instance = this;
         logger.info("preInit");
         perms = new PermissionsUtils(this, Sponge.getGame());
         configUtils = new ConfigUtils(this);
@@ -217,8 +212,6 @@ public class Rankup
         }
     }
 
-    public static Rankup getInstance() { return instance; }
-
     /**
      * Gets the Rankup injector modules, for injecting this plugin instance into classes.
      *
@@ -226,7 +219,7 @@ public class Rankup
      */
     public Injector getInjector()
     {
-        return this.RankupInjector;
+        return this.rankupInjector;
     }
 
     /**
@@ -246,7 +239,7 @@ public class Rankup
      */
     private void updateInjector()
     {
-        this.RankupInjector = this.RankupInjector.createChildInjector(this.subInjectorModule);
+        this.rankupInjector = this.rankupInjector.createChildInjector(this.subInjectorModule);
         this.subInjectorModule.reset();
     }
 
@@ -331,4 +324,25 @@ public class Rankup
     {
         return this.configDir;
     }
+
+    public PermissionsUtils getPerms()
+    {
+        return perms;
+    }
+
+    public AccountingUtils getAccUtils()
+    {
+        return accUtils;
+    }
+
+    public ConfigUtils getConfigUtils()
+    {
+        return configUtils;
+    }
+
+    public Game getGame()
+    {
+        return game;
+    }
+
 }

@@ -21,6 +21,6 @@ public class DatabaseModule extends ConfigurableModule<DatabaseConfigAdapter>
     public void Rankup2Enable()
     {
         getPlugin().getLogger().info("Started Database module");
-        getPlugin().accUtils.createTableIfNeeded();
+        getPlugin().getAccUtils().createTableIfNeeded();
     }
 }

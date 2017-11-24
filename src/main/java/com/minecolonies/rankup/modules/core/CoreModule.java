@@ -68,7 +68,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
 
     public void initGroupConfig(final GroupsConfig groupsConfig)
     {
-        for (final Subject subject : getPlugin().perms.getGroups().getLoadedSubjects())
+        for (final Subject subject : getPlugin().getPerms().getGroups().getLoadedSubjects())
         {
             final String id = subject.getIdentifier();
 

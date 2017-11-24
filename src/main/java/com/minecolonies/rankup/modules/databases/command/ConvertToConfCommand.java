@@ -13,8 +13,11 @@ import org.spongepowered.api.text.Text;
 import java.util.Optional;
 import java.util.UUID;
 
-public class convertToConfCommand extends RankupSubcommand
+public class ConvertToConfCommand extends RankupSubcommand
 {
+    private static final int QUARTER_OF_ONE_HUNDRED = 25;
+    private static final long EXECUTE_TICK_DELAY = 4L;
+
     @Override
     protected String[] getAliases()
     {
@@ -30,14 +33,14 @@ public class convertToConfCommand extends RankupSubcommand
     @Override
     protected Optional<String> getPermission()
     {
-        return Optional.empty();
+        return Optional.of("rankup.convert.base");
     }
 
     @Override
     public CommandResult execute(final CommandSource src, final CommandContext args) throws CommandException
     {
         Task.Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
-        taskBuilder.name("conf-to-database").async().delayTicks(4L).execute(this::convert).submit(getPlugin());
+        taskBuilder.name("conf-to-database").async().delayTicks(EXECUTE_TICK_DELAY).execute(this::convert).submit(getPlugin());
 
         src.sendMessage(Text.of("Conversion has started, feel free to check your Console for progress!"));
 
@@ -46,20 +49,20 @@ public class convertToConfCommand extends RankupSubcommand
 
     private void convert()
     {
-        AccountConfigData accConfig = getPlugin().configUtils.getAccountConfig();
+        AccountConfigData accConfig = getPlugin().getConfigUtils().getAccountConfig();
 
         int index = 0;
 
-        for (final UUID uuid : getPlugin().accUtils.getPlayers().keySet())
+        for (final UUID uuid : getPlugin().getAccUtils().getPlayers().keySet())
         {
             if (accConfig.playerData.containsKey(uuid))
             {
                 AccountConfigData.PlayerConfig playerConfig = accConfig.playerData.get(uuid);
 
-                final String name = getPlugin().accUtils.getPlayerName(uuid);
-                final String joinDate = getPlugin().accUtils.getPlayerJoinDate(uuid);
-                final String lastDate = getPlugin().accUtils.getPlayerLastDate(uuid);
-                final int timePlayed = getPlugin().accUtils.getPlayerTime(uuid);
+                final String name = getPlugin().getAccUtils().getPlayerName(uuid);
+                final String joinDate = getPlugin().getAccUtils().getPlayerJoinDate(uuid);
+                final String lastDate = getPlugin().getAccUtils().getPlayerLastDate(uuid);
+                final int timePlayed = getPlugin().getAccUtils().getPlayerTime(uuid);
 
                 playerConfig.playerName = name;
                 playerConfig.joinDate = joinDate;
@@ -72,10 +75,10 @@ public class convertToConfCommand extends RankupSubcommand
 
                 AccountConfigData.PlayerConfig playerConfig = accConfig.playerData.get(uuid);
 
-                final String name = getPlugin().accUtils.getPlayerName(uuid);
-                final String joinDate = getPlugin().accUtils.getPlayerJoinDate(uuid);
-                final String lastDate = getPlugin().accUtils.getPlayerLastDate(uuid);
-                final int timePlayed = getPlugin().accUtils.getPlayerTime(uuid);
+                final String name = getPlugin().getAccUtils().getPlayerName(uuid);
+                final String joinDate = getPlugin().getAccUtils().getPlayerJoinDate(uuid);
+                final String lastDate = getPlugin().getAccUtils().getPlayerLastDate(uuid);
+                final int timePlayed = getPlugin().getAccUtils().getPlayerTime(uuid);
 
                 playerConfig.playerName = name;
                 playerConfig.joinDate = joinDate;
@@ -84,7 +87,7 @@ public class convertToConfCommand extends RankupSubcommand
             }
             index++;
 
-            if (index % 25 == 0)
+            if (index % QUARTER_OF_ONE_HUNDRED == 0)
             {
                 getPlugin().getLogger().info("Players converted: " + index);
             }

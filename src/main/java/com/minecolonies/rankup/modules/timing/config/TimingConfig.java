@@ -1,6 +1,7 @@
 package com.minecolonies.rankup.modules.timing.config;
 
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
+import com.minecolonies.rankup.util.Constants;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -18,10 +19,10 @@ public class TimingConfig extends BaseConfig
 
     @Setting(value = "top-message", comment = "Here you may set how you want to have the body of the top command display, accepted entries are same as check-message")
     public List<String> topMessageTemplate = Arrays.asList(
-      "§6---[§2{player}§6]---",
-      "§fRank: {rank}",
-      "§f{timing-time}",
-      "§fJoin date: §a{joindate}",
+      "§6---[§2" + Constants.PlayerInfo.PLAYER_NAME + "§6]---",
+      "§fRank: " + Constants.PlayerInfo.PLAYER_RANK,
+      "§f" + Constants.ModuleInfo.TIMING_TIME,
+      "§fJoin date: §a" + Constants.PlayerInfo.PLAYER_JOIN,
       "§6-----------");
 
     @Setting(value = "top-message-head", comment = "This is where you may define how the top of the top message displays")

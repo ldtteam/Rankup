@@ -13,8 +13,11 @@ import org.spongepowered.api.text.Text;
 import java.util.Optional;
 import java.util.UUID;
 
-public class convertToDatabaseCommand extends RankupSubcommand
+public class ConvertToDatabaseCommand extends RankupSubcommand
 {
+    private static final int QUARTER_OF_ONE_HUNDRED = 25;
+    private static final long EXECUTE_TICK_DELAY = 4L;
+
     @Override
     protected String[] getAliases()
     {
@@ -30,14 +33,14 @@ public class convertToDatabaseCommand extends RankupSubcommand
     @Override
     protected Optional<String> getPermission()
     {
-        return Optional.empty();
+        return Optional.of("rankup.convert.base");
     }
 
     @Override
     public CommandResult execute(final CommandSource src, final CommandContext args) throws CommandException
     {
         Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
-        taskBuilder.name("conf-to-database").async().delayTicks(4L).execute(this::convert).submit(getPlugin());
+        taskBuilder.name("conf-to-database").async().delayTicks(EXECUTE_TICK_DELAY).execute(this::convert).submit(getPlugin());
 
         src.sendMessage(Text.of("Conversion has started, feel free to check your Console for progress!"));
 
@@ -46,7 +49,7 @@ public class convertToDatabaseCommand extends RankupSubcommand
 
     private void convert()
     {
-        AccountConfigData accConfig = getPlugin().configUtils.getAccountConfig();
+        AccountConfigData accConfig = getPlugin().getConfigUtils().getAccountConfig();
         int index = 0;
 
         for (final UUID uuid : accConfig.playerData.keySet())
@@ -56,25 +59,25 @@ public class convertToDatabaseCommand extends RankupSubcommand
             String joinDate = playerConfig.joinDate;
             String lastDate = playerConfig.lastVisit;
 
-            if (getPlugin().accUtils.doesPlayerExist(uuid))
+            if (getPlugin().getAccUtils().doesPlayerExist(uuid))
             {
-                getPlugin().accUtils.updatePlayerName(uuid, playerConfig.playerName);
-                getPlugin().accUtils.updatePlayerJoinDate(uuid, joinDate);
-                getPlugin().accUtils.updatePlayerLastDate(uuid, lastDate);
-                getPlugin().accUtils.updatePlayerTime(uuid, playerConfig.timePlayed);
+                getPlugin().getAccUtils().updatePlayerName(uuid, playerConfig.playerName);
+                getPlugin().getAccUtils().updatePlayerJoinDate(uuid, joinDate);
+                getPlugin().getAccUtils().updatePlayerLastDate(uuid, lastDate);
+                getPlugin().getAccUtils().updatePlayerTime(uuid, playerConfig.timePlayed);
             }
             else
             {
-                getPlugin().accUtils.addPlayer(uuid);
+                getPlugin().getAccUtils().addPlayer(uuid);
 
-                getPlugin().accUtils.updatePlayerName(uuid, playerConfig.playerName);
-                getPlugin().accUtils.updatePlayerJoinDate(uuid, joinDate);
-                getPlugin().accUtils.updatePlayerLastDate(uuid, lastDate);
-                getPlugin().accUtils.updatePlayerTime(uuid, playerConfig.timePlayed);
+                getPlugin().getAccUtils().updatePlayerName(uuid, playerConfig.playerName);
+                getPlugin().getAccUtils().updatePlayerJoinDate(uuid, joinDate);
+                getPlugin().getAccUtils().updatePlayerLastDate(uuid, lastDate);
+                getPlugin().getAccUtils().updatePlayerTime(uuid, playerConfig.timePlayed);
             }
             index++;
 
-            if (index % 25 == 0)
+            if (index % QUARTER_OF_ONE_HUNDRED == 0)
             {
                 getPlugin().getLogger().info("Players converted: " + index);
             }

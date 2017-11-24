@@ -26,7 +26,7 @@ import org.spongepowered.api.entity.living.player.Player;
 public class ConfigUtils
 {
 
-    Rankup plugin;
+    public Rankup plugin;
 
     public ConfigUtils(Rankup pl)
     {
@@ -97,7 +97,7 @@ public class ConfigUtils
                     return groupConf;
                 }
 
-                if (plugin.perms.getPlayerGroupIds(player).contains(group) && currentRank <= groupConf.rank)
+                if (plugin.getPerms().getPlayerGroupIds(player).contains(group) && currentRank <= groupConf.rank)
                 {
                     currentRank = groupConf.rank;
                     currentConf = groupConf;
@@ -107,7 +107,7 @@ public class ConfigUtils
         if (currentConf == null)
         {
             plugin.getLogger().info("Well crap, there's apparently an issue with getting this players group config! \n"
-                                      + "Their groups are: " + plugin.perms.getPlayerGroupIds(player));
+                                      + "Their groups are: " + plugin.getPerms().getPlayerGroupIds(player));
         }
         return currentConf;
     }

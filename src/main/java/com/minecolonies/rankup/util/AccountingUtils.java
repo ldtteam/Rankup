@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -90,12 +91,12 @@ public class AccountingUtils extends ConfigUtils
     {
         try
         {
-            if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
+            if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID) && conn != null)
             {
-                if (conn != null)
-                {
-                    return conn.createStatement().executeQuery(query);
-                }
+                final Statement stmt = conn.createStatement();
+                final ResultSet results = stmt.executeQuery(query);
+                stmt.close();
+                return results;
             }
         }
         catch (NoModuleException | SQLException e)
@@ -377,7 +378,7 @@ public class AccountingUtils extends ConfigUtils
         return -1;
     }
 
-    public HashMap<UUID, Integer> getPlayers()
+    public Map<UUID, Integer> getPlayers()
     {
         final HashMap<UUID, Integer> uuids = new HashMap<>();
         try

@@ -1,6 +1,7 @@
 package com.minecolonies.rankup.modules.core.config;
 
 import com.minecolonies.rankup.internal.configurate.BaseConfig;
+import com.minecolonies.rankup.util.Constants;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -35,8 +36,8 @@ public class GroupsConfig extends BaseConfig
         @Setting(value = "group-rank", comment = "The rank of which the group is, rank one is a starting rank of a player, rank 2 being the next rank they will gain. Set to -1 to ignore")
         public int rank = 0;
 
-        @Setting(value = "group-commands-on-rankup", comment = "When someone ranks up into this group all these commands are run. \n you may use {player} and {group} attributes")
-        public List<String> commands = Arrays.asList("say {player} joined group {group}", "give {player} minecraft:dirt");
+        @Setting(value = "group-commands-on-rankup", comment = "When someone ranks up into this group all these commands are run. \n you may use " + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + " attributes")
+        public List<String> commands = Arrays.asList("say " + Constants.PlayerInfo.PLAYER_NAME + " joined group " + Constants.PlayerInfo.PLAYER_GROUP + "", "give " + Constants.PlayerInfo.PLAYER_NAME + " minecraft:dirt");
 
         @Setting(value = "timing-time", comment = "The amount of time played required to enter this group")
         public int timingTime = 0;

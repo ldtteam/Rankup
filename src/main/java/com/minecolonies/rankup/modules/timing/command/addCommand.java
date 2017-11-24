@@ -1,6 +1,7 @@
 package com.minecolonies.rankup.modules.timing.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
+import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -35,7 +36,7 @@ public class addCommand extends RankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows players with the rankup.timing.base to add time to another players playtime. \n Usage: /ru add [time] {player}"));
+        return Optional.of(Text.of("Allows players with the rankup.timing.base to add time to another players playtime. \n Usage: /ru add [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
     }
 
     @Override
@@ -69,12 +70,12 @@ public class addCommand extends RankupSubcommand
 
     private void addTime(final CommandSource src, final User user, final Integer time)
     {
-        if (!getPlugin().accUtils.doesPlayerExist(user.getUniqueId()))
+        if (!getPlugin().getAccUtils().doesPlayerExist(user.getUniqueId()))
         {
             src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid User"));
             return;
         }
 
-        src.sendMessage(Text.of(user.getName() + "(s) new playTime is: " + getPlugin().accUtils.addPlayerTime(user.getUniqueId(), time)));
+        src.sendMessage(Text.of(user.getName() + "(s) new playTime is: " + getPlugin().getAccUtils().addPlayerTime(user.getUniqueId(), time)));
     }
 }

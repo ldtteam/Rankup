@@ -56,9 +56,9 @@ public class topCommand extends RankupSubcommand
 
     private void sendTopList(CommandSource source)
     {
-        TimingConfig timeConfig = getPlugin().configUtils.getTimingConfig();
+        TimingConfig timeConfig = getPlugin().getConfigUtils().getTimingConfig();
 
-        final HashMap<UUID, Integer> stats = getPlugin().accUtils.getPlayers();
+        final Map<UUID, Integer> stats = getPlugin().getAccUtils().getPlayers();
 
         List<UUID> sorted = stats.entrySet().stream()
                               .sorted(reverseOrder(comparing(Map.Entry::getValue)))

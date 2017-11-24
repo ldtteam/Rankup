@@ -39,7 +39,7 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
 
     public void playerCounterHandler()
     {
-        TimingConfig timeConfig = plugin.configUtils.getTimingConfig();
+        TimingConfig timeConfig = plugin.getConfigUtils().getTimingConfig();
 
         getPlugin().getLogger().info("Updating player times every " + timeConfig.updateInterval + " minute(s)!");
 
@@ -48,16 +48,16 @@ public class TimingModule extends ConfigurableModule<TimingConfigAdapter>
 
     public synchronized void playerTimeAdd()
     {
-        TimingConfig timeConfig = plugin.configUtils.getTimingConfig();
+        TimingConfig timeConfig = plugin.getConfigUtils().getTimingConfig();
 
         for (final Player player : Sponge.getServer().getOnlinePlayers())
         {
-            plugin.accUtils.addPlayerTime(player.getUniqueId(), timeConfig.updateInterval);
+            plugin.getAccUtils().addPlayerTime(player.getUniqueId(), timeConfig.updateInterval);
             RankingUtils.timeUp(player, plugin);
             RankingUtils.timeDown(player, plugin);
         }
 
-        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
+        CoreConfig coreConfig = getPlugin().getConfigUtils().getCoreConfig();
 
         if (coreConfig.debugMode)
         {

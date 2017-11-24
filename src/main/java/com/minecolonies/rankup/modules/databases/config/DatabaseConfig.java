@@ -16,6 +16,7 @@ public class DatabaseConfig extends BaseConfig
     @Setting
     public String sqlUsername = "user";
 
+    @SuppressWarnings("squid:S2068")
     @Setting
     public String sqlPassword = "pass";
 

@@ -35,7 +35,7 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
 
     public void economyHandler()
     {
-        EconomyConfig config = getPlugin().configUtils.getEconomyConfig();
+        EconomyConfig config = getPlugin().getConfigUtils().getEconomyConfig();
 
         getPlugin().getLogger().info("checking player balances every " + config.updateInterval + " minute(s)!");
 
@@ -49,7 +49,7 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
             RankingUtils.balanceCheck(player, getPlugin());
         }
 
-        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
+        CoreConfig coreConfig = getPlugin().getConfigUtils().getCoreConfig();
 
         if (coreConfig.debugMode)
         {

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import com.minecolonies.rankup.util.CommonUtils;
+import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.User;
@@ -37,7 +38,7 @@ public abstract class RankupSubcommand implements CommandExecutor
 
     public CommandElement[] getArguments()
     {
-        return empty;
+        return empty.clone();
     }
 
     protected Text convertToText(final String string)
@@ -59,18 +60,18 @@ public abstract class RankupSubcommand implements CommandExecutor
 
     protected List<String> getPlayerData(final User user, final List<String> messages)
     {
-        CoreConfig coreConfig = getPlugin().configUtils.getCoreConfig();
+        CoreConfig coreConfig = getPlugin().getConfigUtils().getCoreConfig();
 
         final List<String> newMessage = new ArrayList<>();
 
         for (String msg : messages)
         {
-            msg = msg.replace("{player}", user.getName())
-                    .replace("{rank}", plugin.perms.getPlayerHighestRankingGroup(user))
-                    .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
-                    .replace("{joindate}", plugin.accUtils.getPlayerJoinDate(user.getUniqueId()))
-                    .replace("{lastjoin}", plugin.accUtils.getPlayerLastDate(user.getUniqueId()))
-                    .replace("{track}", plugin.configUtils.getGroupsConfig(user.getPlayer().orElse(null)).name);
+            msg = msg.replace(Constants.PlayerInfo.PLAYER_NAME, user.getName())
+                    .replace(Constants.PlayerInfo.PLAYER_RANK, plugin.getPerms().getPlayerHighestRankingGroup(user))
+                    .replace(Constants.PlayerInfo.PLAYER_PREFIX, user.getOption("prefix").orElse(coreConfig.prefixFallback))
+                    .replace(Constants.PlayerInfo.PLAYER_JOIN, plugin.getAccUtils().getPlayerJoinDate(user.getUniqueId()))
+                    .replace(Constants.PlayerInfo.PLAYER_LAST, plugin.getAccUtils().getPlayerLastDate(user.getUniqueId()))
+                    .replace(Constants.PlayerInfo.PLAYER_TRACK, plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null)).name);
 
             newMessage.add(msg);
         }
@@ -91,18 +92,18 @@ public abstract class RankupSubcommand implements CommandExecutor
             userMoney = 0;
         }
 
-        final String playTime = CommonUtils.timeDescript(plugin.accUtils.getPlayerTime(user.getUniqueId()), plugin);
-        final String nextTime = CommonUtils.timeDescript(plugin.perms.timeToNextGroup(user), plugin);
+        final String playTime = CommonUtils.timeDescript(plugin.getAccUtils().getPlayerTime(user.getUniqueId()), plugin);
+        final String nextTime = CommonUtils.timeDescript(plugin.getPerms().timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
-        final String nextBal = Integer.toString(plugin.perms.balanceToNextGroup(user));
+        final String nextBal = Integer.toString(plugin.getPerms().balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
 
         for (String msg : messages)
         {
-            msg = msg.replace("{timing-time}", playTime)
-                    .replace("{timing-next}", nextTime)
-                    .replace("{economy-bal}", balance)
-                    .replace("{economy-next}", nextBal);
+            msg = msg.replace(Constants.ModuleInfo.TIMING_TIME, playTime)
+                    .replace(Constants.ModuleInfo.TIMING_NEXT, nextTime)
+                    .replace(Constants.ModuleInfo.ECONOMY_BAL, balance)
+                    .replace(Constants.ModuleInfo.ECONOMY_NEXT, nextBal);
 
             newMessage.add(msg);
         }

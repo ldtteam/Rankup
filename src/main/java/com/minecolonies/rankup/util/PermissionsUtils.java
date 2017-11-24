@@ -2,7 +2,6 @@ package com.minecolonies.rankup.util;
 
 import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
 import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
@@ -44,7 +43,7 @@ public class PermissionsUtils
 
     public String getPlayerHighestRankingGroup(final Player player)
     {
-        final GroupsConfig config = plugin.configUtils.getGroupsConfig(player);
+        final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(player);
 
         String currentGroup = "";
         Integer currentRank = -1;
@@ -68,7 +67,7 @@ public class PermissionsUtils
 
     public String getPlayerHighestRankingGroup(final User user)
     {
-        final GroupsConfig config = plugin.configUtils.getGroupsConfig(user.getPlayer().orElse(null));
+        final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
 
         String currentGroup = "";
         Integer currentRank = -1;
@@ -92,21 +91,21 @@ public class PermissionsUtils
 
     public Integer timeToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig(user.getPlayer().orElse(null));
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
 
         final String nextGroup = getNextGroup(user);
 
-        if (nextGroup.equals(""))
+        if ("".equals(nextGroup))
         {
             return -1;
         }
 
-        return groupsConfig.groups.get(nextGroup).timingTime - plugin.accUtils.getPlayerTime(user.getUniqueId());
+        return groupsConfig.groups.get(nextGroup).timingTime - plugin.getAccUtils().getPlayerTime(user.getUniqueId());
     }
 
     public Integer balanceToNextGroup(final User user)
     {
-        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig(user.getPlayer().orElse(null));
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
 
         int userMoney;
         if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
@@ -119,7 +118,7 @@ public class PermissionsUtils
             userMoney = 0;
         }
 
-        if (getNextGroup(user).equals("") || groupsConfig == null)
+        if ("".equals(getNextGroup(user)) || groupsConfig == null)
         {
             return 0;
         }
@@ -130,7 +129,7 @@ public class PermissionsUtils
     {
         final String currentGroup = getPlayerHighestRankingGroup(player);
 
-        final GroupsConfig config = plugin.configUtils.getGroupsConfig(player);
+        final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
@@ -156,7 +155,7 @@ public class PermissionsUtils
             return "";
         }
 
-        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig(player.getPlayer().orElse(null));
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player.getPlayer().orElse(null));
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
@@ -175,7 +174,7 @@ public class PermissionsUtils
 
     public String getPreviousGroup(final Player player, final int currentRank)
     {
-        final GroupsConfig groupsConfig = plugin.configUtils.getGroupsConfig(player);
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();
 
