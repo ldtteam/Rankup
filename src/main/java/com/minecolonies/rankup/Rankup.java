@@ -145,6 +145,8 @@ public class Rankup
             onError();
         }
 
+        accUtils.onInit();
+
         Sponge.getCommandManager().register(this, this.rankupCommand, "ru");
     }
 

@@ -38,6 +38,11 @@ public class AccountingUtils extends ConfigUtils
         super(pl);
     }
 
+    public void onInit()
+    {
+        getConn();
+    }
+
     private DataSource getDataSource(String jdbcUrl) throws SQLException
     {
         table_id = getDatabasesConfig().sqlTablePrefix + "player_stats";
@@ -87,8 +92,6 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final Connection conn = getConn();
-
                 if (conn != null)
                 {
                     return conn.createStatement().executeQuery(query);
@@ -97,7 +100,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (NoModuleException | SQLException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Query failed", e);
         }
         return null;
     }
@@ -119,16 +122,18 @@ public class AccountingUtils extends ConfigUtils
             Statement stmt = getConn().createStatement();
 
             stmt.execute("CREATE TABLE IF NOT EXISTS " + table_id + "("
-                           + UUID_COLUMN + " varchar(255) NOT NULL, "
-                           + PLAYER_NAME_COLUMN + " varchar(255) NOT NULL, "
+                           + UUID_COLUMN + " varchar(40) NOT NULL, "
+                           + PLAYER_NAME_COLUMN + " varchar(40) NOT NULL, "
                            + JOIN_DATE_COLUMN + " DATE NOT NULL, "
                            + LAST_JOIN_COLUMN + " DATE NOT NULL, "
                            + TIME_PLAYED_COLUMN + " int NOT NULL, "
                            + "PRIMARY KEY(" + UUID_COLUMN + ") )");
+
+            stmt.close();
         }
         catch (SQLException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Table Creation Failed", e);
         }
     }
 
@@ -152,7 +157,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Player Name failed", e);
         }
         return "";
     }
@@ -177,7 +182,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Player Join Date failed", e);
         }
         return "";
     }
@@ -202,7 +207,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Player Last Join Date failed", e);
         }
         return "";
     }
@@ -227,15 +232,13 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Player Time failed", e);
         }
         return 0;
     }
 
     private void updatePlayerAttribute(final UUID uuid, final String column, final String attribute, final boolean isDate) throws SQLException
     {
-        final Connection conn = getConn();
-
         if (conn != null)
         {
             Statement stmt = conn.createStatement();
@@ -248,18 +251,18 @@ public class AccountingUtils extends ConfigUtils
             {
                 stmt.execute("UPDATE " + table_id + " SET " + column + " = '" + attribute + "' WHERE " + UUID_COLUMN + " = '" + uuid + "'");
             }
+            stmt.close();
         }
     }
 
     private void updatePlayerAttribute(final UUID uuid, final String column, final int attribute) throws SQLException
     {
-        final Connection conn = getConn();
-
         if (conn != null)
         {
             Statement stmt = conn.createStatement();
 
             stmt.execute("UPDATE " + table_id + " SET " + column + " = " + attribute + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
+            stmt.close();
         }
     }
 
@@ -280,7 +283,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Update Player Name failed", e);
         }
     }
 
@@ -302,7 +305,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Update Player Join Date failed", e);
         }
     }
 
@@ -323,7 +326,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Update Player Last Join Date failed", e);
         }
     }
 
@@ -344,7 +347,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Update Player Time failed", e);
         }
     }
 
@@ -369,7 +372,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Add Player Time failed", e);
         }
         return -1;
     }
@@ -399,7 +402,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (NoModuleException | SQLException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Get Players failed", e);
         }
         return uuids;
     }
@@ -410,8 +413,6 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                Connection conn = getConn();
-
                 if (conn != null)
                 {
                     final ResultSet results = getQuery("SELECT " + PLAYER_NAME_COLUMN + " FROM " + table_id + " WHERE " + UUID_COLUMN + " = '" + uuid + "'");
@@ -429,7 +430,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Does Player Exist failed", e);
         }
         return false;
     }
@@ -447,8 +448,6 @@ public class AccountingUtils extends ConfigUtils
         {
             if (plugin.getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                Connection conn = getConn();
-
                 if (conn != null)
                 {
                     Statement stmt = conn.createStatement();
@@ -461,6 +460,8 @@ public class AccountingUtils extends ConfigUtils
                                    + " " + toDate(CommonUtils.dateNow()) + ","
                                    + " " + toDate(CommonUtils.dateNow()) + ","
                                    + " 0)");
+
+                    stmt.close();
                 }
             }
             else
@@ -476,12 +477,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (SQLException | NoModuleException e)
         {
-            if (e instanceof SQLException)
-            {
-                plugin.getLogger().info(((SQLException) e).getSQLState());
-            }
-
-            e.printStackTrace();
+            plugin.getLogger().warn("Add Player failed", e);
         }
     }
 
@@ -518,7 +514,7 @@ public class AccountingUtils extends ConfigUtils
         }
         catch (NoModuleException e)
         {
-            e.printStackTrace();
+            plugin.getLogger().warn("Update Player failed", e);
         }
     }
 }
