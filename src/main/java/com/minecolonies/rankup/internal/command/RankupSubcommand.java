@@ -69,7 +69,8 @@ public abstract class RankupSubcommand implements CommandExecutor
                     .replace("{rank}", plugin.perms.getPlayerHighestRankingGroup(user))
                     .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
                     .replace("{joindate}", plugin.accUtils.getPlayerJoinDate(user.getUniqueId()))
-                    .replace("{lastjoin}", plugin.accUtils.getPlayerLastDate(user.getUniqueId()));
+                    .replace("{lastjoin}", plugin.accUtils.getPlayerLastDate(user.getUniqueId()))
+                    .replace("{track}", plugin.configUtils.getGroupsConfig(user.getPlayer().orElse(null)).name);
 
             newMessage.add(msg);
         }
@@ -90,8 +91,8 @@ public abstract class RankupSubcommand implements CommandExecutor
             userMoney = 0;
         }
 
-        final String playTime = CommonUtils.timeDescript(plugin.accUtils.getPlayerTime(user.getUniqueId()));
-        final String nextTime = CommonUtils.timeDescript(plugin.perms.timeToNextGroup(user));
+        final String playTime = CommonUtils.timeDescript(plugin.accUtils.getPlayerTime(user.getUniqueId()), plugin);
+        final String nextTime = CommonUtils.timeDescript(plugin.perms.timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
         final String nextBal = Integer.toString(plugin.perms.balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();

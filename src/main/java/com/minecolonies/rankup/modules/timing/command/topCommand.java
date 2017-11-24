@@ -72,12 +72,15 @@ public class topCommand extends RankupSubcommand
             index++;
 
             User user;
+            // For some reason the player has to be queried twice??? it's so weird.
+            Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).isPresent();
             if (Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).isPresent())
             {
                 user = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).get();
             }
             else
             {
+                source.sendMessage(convertToText(timeConfig.topMessageFoot));
                 return;
             }
 

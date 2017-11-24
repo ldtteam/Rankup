@@ -34,6 +34,24 @@ public class CoreConfig extends BaseConfig
     @Setting(value = "debug-mode", comment = "If true a message will be output to console every time players are updated or checked.")
     public boolean debugMode = false;
 
+    @Setting(value = "track-configs", comment = "This is where all track config names are defined, please be careful here.")
+    public List<String> groupConfigs = Arrays.asList("groups.conf", "patreons.conf");
+
+    @Setting(value = "disabled-groups", comment = "List of disabled groups")
+    public List<String> disabledGroups = Arrays.asList("admin", "mod", "owner");
+
+    @Setting(comment = "This is weird, but basically Luckperms is screwing with something, anyway, please put your BASE group here (luckperms default is \"default\"")
+    public String defaultGroup = "default";
+
+    @Setting(comment = "setting for \"days\" output in time desc")
+    public String daysDisplay = "day(s)";
+
+    @Setting(comment = "setting for \"hours\" output in time desc")
+    public String hoursDisplay = "hour(s)";
+
+    @Setting(comment = "setting for \"minutes\" output in time desc")
+    public String minutesDisplay = "minute(s)";
+
     @Setting(value = "check-message", comment = "This is the template for the /ru check command, accepted entries are: \n"
                                                   + "{player}        - The Player's name (the one being checked)\n"
                                                   + "{rank}          - The current rank of the player\n"
@@ -43,10 +61,12 @@ public class CoreConfig extends BaseConfig
                                                   + "{economy-bal}   - How much money the player has\n"
                                                   + "{economy-next}  - How much money the player needs to join the next group\n"
                                                   + "{joindate}      - The date of when the player joined your server\n"
-                                                  + "{lastjoin}      - When the player last joined the server")
+                                                  + "{lastjoin}      - When the player last joined the server\n"
+                                                  + "{track}         - The current track of the player.")
     public List<String> checkMessageTemplate = Arrays.asList(
       "§6---[§2{player}§6]---",
       "§fRank: {rank}",
+      "§fTrack: {track}",
       "§fPlay time: {timing-time}",
       "§fTime to next group: {timing-next}",
       "§fJoin date: §a{joindate}",

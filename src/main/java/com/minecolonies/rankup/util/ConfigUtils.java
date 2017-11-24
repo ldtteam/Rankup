@@ -18,6 +18,7 @@ import com.minecolonies.rankup.modules.magibridge.config.MagibridgeConfigAdapter
 import com.minecolonies.rankup.modules.timing.TimingModule;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
+import org.spongepowered.api.entity.living.player.Player;
 
 /**
  * Tonnes of config Utils.. holy cow.
@@ -82,8 +83,32 @@ public class ConfigUtils
         return (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
     }
 
-    public GroupsConfig getGroupsConfig()
+    public GroupsConfig getGroupsConfig(Player player)
     {
-        return (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        Integer currentRank = 0;
+        GroupsConfig currentConf = null;
+
+        for (final GroupsConfig groupConf : plugin.getGroupConfigs())
+        {
+            for (final String group : groupConf.groups.keySet())
+            {
+                if (player == null)
+                {
+                    return groupConf;
+                }
+
+                if (plugin.perms.getPlayerGroupIds(player).contains(group) && currentRank <= groupConf.rank)
+                {
+                    currentRank = groupConf.rank;
+                    currentConf = groupConf;
+                }
+            }
+        }
+        if (currentConf == null)
+        {
+            plugin.getLogger().info("Well crap, there's apparently an issue with getting this players group config! \n"
+                                      + "Their groups are: " + plugin.perms.getPlayerGroupIds(player));
+        }
+        return currentConf;
     }
 }
