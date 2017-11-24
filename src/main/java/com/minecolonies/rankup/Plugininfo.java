@@ -11,5 +11,8 @@ public final class Plugininfo
     public static final String DESCRIPTION = "@description@";
     public static final String URL         = "http://github.com/Minecolonies/Rankup";
 
-    private Plugininfo() {}
+    private Plugininfo()
+    {
+        //Private constructor for final class.
+    }
 }

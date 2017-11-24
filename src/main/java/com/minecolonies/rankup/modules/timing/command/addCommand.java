@@ -36,7 +36,8 @@ public class addCommand extends RankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows players with the rankup.timing.base to add time to another players playtime. \n Usage: /ru add [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
+        return Optional.of(Text.of(
+          "Allows players with the rankup.timing.base to add time to another players playtime. \n Usage: /ru add [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
     }
 
     @Override

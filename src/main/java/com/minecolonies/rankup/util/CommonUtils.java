@@ -15,6 +15,11 @@ import java.util.concurrent.TimeUnit;
 
 public class CommonUtils
 {
+    private CommonUtils()
+    {
+        //private constructor to hide the implicit public one.
+    }
+
     public static Text toText(final String string)
     {
         return Text.of(string);
@@ -70,10 +75,11 @@ public class CommonUtils
     public static String dateNow()
     {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date today = Calendar.getInstance().getTime();
+        Date today = Calendar.getInstance().getTime();
         return dateFormat.format(today);
     }
 
+    @SuppressWarnings("squid:S1148")
     public static String dateFormat(final String inputDate)
     {
         final String date = inputDate.replace("/", "-");

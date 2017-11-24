@@ -23,10 +23,12 @@ public class CoreConfig extends BaseConfig
     @Setting(value = "prefix-fallback", comment = "This is the prefix that will be put in place if a player has no prefix, leave \"\" to have no prefix fall-back")
     public String prefixFallback = "Default";
 
-    @Setting(value = "rankup-command", comment = "The command the plugin will execute via console to add a rank to a player, valid entries: " + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + "")
+    @Setting(value = "rankup-command", comment = "The command the plugin will execute via console to add a rank to a player, valid entries: " + Constants.PlayerInfo.PLAYER_NAME
+                                                   + " and " + Constants.PlayerInfo.PLAYER_GROUP + "")
     public String rankupCommand = "luckperms user " + Constants.PlayerInfo.PLAYER_NAME + " parent add " + Constants.PlayerInfo.PLAYER_GROUP + "";
 
-    @Setting(value = "rankdown-command", comment = "the command the plugin will execute via console to remove a rank from a player, valid entries: " + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + "")
+    @Setting(value = "rankdown-command", comment = "the command the plugin will execute via console to remove a rank from a player, valid entries: "
+                                                     + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + "")
     public String rankdownCommand = "luckperms user " + Constants.PlayerInfo.PLAYER_NAME + " parent remove " + Constants.PlayerInfo.PLAYER_GROUP + "";
 
     @Setting(value = "remove-previous-group", comment = "Whether to remove all other player groups from player after rankUp (Using \"rankdown-command\")")

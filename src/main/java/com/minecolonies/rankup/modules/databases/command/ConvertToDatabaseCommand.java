@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class ConvertToDatabaseCommand extends RankupSubcommand
 {
-    private static final int QUARTER_OF_ONE_HUNDRED = 25;
-    private static final long EXECUTE_TICK_DELAY = 4L;
+    private static final int  QUARTER_OF_ONE_HUNDRED = 25;
+    private static final long EXECUTE_TICK_DELAY     = 4L;
 
     @Override
     protected String[] getAliases()

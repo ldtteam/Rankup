@@ -82,10 +82,10 @@ public abstract class RankupSubcommand implements CommandExecutor
     protected List<String> getModuleData(final User user, final List<String> messages)
     {
         int userMoney;
-        if (getPlugin().econ != null && getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (getPlugin().getEcon() != null && getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
         {
-            UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
+            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
         }
         else
         {

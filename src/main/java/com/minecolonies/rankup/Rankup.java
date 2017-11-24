@@ -70,11 +70,11 @@ public class Rankup
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private final SubInjectorModule subInjectorModule = new SubInjectorModule();
 
-    private PermissionsUtils perms;
-    private ConfigUtils      configUtils;
-    private AccountingUtils  accUtils;
-    public EconomyService   econ;
-    private        Game                                         game;
+    private       PermissionsUtils                             perms;
+    private       ConfigUtils                                  configUtils;
+    private       AccountingUtils                              accUtils;
+    private       EconomyService                               econ;
+    private       Game                                         game;
     private final RankupCommand                                rankupCommand;
     private final Path                                         configDir;
     private       GuiceObjectMapperFactory                     factory;
@@ -345,4 +345,8 @@ public class Rankup
         return game;
     }
 
+    public EconomyService getEcon()
+    {
+        return econ;
+    }
 }

@@ -36,7 +36,8 @@ public class setCommand extends RankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows players with the rankup.timing.base to set another players playtime. \n Usage: /ru set [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
+        return Optional.of(Text.of(
+          "Allows players with the rankup.timing.base to set another players playtime. \n Usage: /ru set [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
     }
 
     @Override

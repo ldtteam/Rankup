@@ -57,10 +57,10 @@ public class RankingUtils
 
         final String nextGroup = plugin.getPerms().getNextGroup(player);
 
-        if (plugin.econ != null && !"".equals(nextGroup) && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
+        if (plugin.getEcon() != null && !"".equals(nextGroup) && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
         {
-            final UniqueAccount acc = plugin.econ.getOrCreateAccount(player.getUniqueId()).get();
-            if (acc.getBalance(plugin.econ.getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
+            final UniqueAccount acc = plugin.getEcon().getOrCreateAccount(player.getUniqueId()).get();
+            if (acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
             {
                 rankUp(player, plugin);
             }
@@ -115,15 +115,15 @@ public class RankingUtils
     private static void rankUp(final Player player, final Rankup plugin)
     {
         final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
-        
+
         final String currentGroup = plugin.getPerms().getPlayerHighestRankingGroup(player);
         final String nextGroup = plugin.getPerms().getNextGroup(player);
-        
+
         if ("".equals(nextGroup))
         {
             return;
         }
-        
+
         RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Sponge.getCauseStackManager().getCurrentCause());
         Sponge.getEventManager().post(rankupEvent);
         if (rankupEvent.isCancelled())
@@ -139,7 +139,7 @@ public class RankingUtils
 
         final String finalCmd = cmd.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
                                   .replace(Constants.PlayerInfo.PLAYER_GROUP, nextGroup);
-        
+
         plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
 
         for (final String command : groupsConfig.groups.get(nextGroup).commands)
@@ -147,7 +147,7 @@ public class RankingUtils
 
             final String finalCommand = command.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
                                           .replace(Constants.PlayerInfo.PLAYER_GROUP, nextGroup);
-            
+
             plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
         }
 
@@ -161,7 +161,7 @@ public class RankingUtils
 
                     final String finalRemCmd = remCmd.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
                                                  .replace(Constants.PlayerInfo.PLAYER_GROUP, group);
-                    
+
                     plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
                 }
             }

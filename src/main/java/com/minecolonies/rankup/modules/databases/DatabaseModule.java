@@ -9,7 +9,10 @@ import uk.co.drnaylor.quickstart.annotations.ModuleData;
 public class DatabaseModule extends ConfigurableModule<DatabaseConfigAdapter>
 {
     public static final String ID = "databases";
-    private SqlService sql;
+
+    public DatabaseModule()
+    {
+    }
 
     @Override
     protected DatabaseConfigAdapter createConfigAdapter()

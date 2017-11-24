@@ -26,11 +26,16 @@ import org.spongepowered.api.entity.living.player.Player;
 public class ConfigUtils
 {
 
-    public Rankup plugin;
+    private Rankup plugin;
 
     public ConfigUtils(Rankup pl)
     {
-        this.plugin = pl;
+        plugin = pl;
+    }
+
+    public Rankup getPlugin()
+    {
+        return plugin;
     }
 
     public CoreConfig getCoreConfig()

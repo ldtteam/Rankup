@@ -108,10 +108,10 @@ public class PermissionsUtils
         final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
 
         int userMoney;
-        if (plugin.econ != null && plugin.econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (plugin.getEcon() != null && plugin.getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
         {
-            UniqueAccount acc = plugin.econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(plugin.econ.getDefaultCurrency()).intValue();
+            UniqueAccount acc = plugin.getEcon().getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue();
         }
         else
         {
@@ -136,7 +136,7 @@ public class PermissionsUtils
         final int nextRank = config.groups.get(currentGroup).rank + 1;
 
         config.groups.forEach((name, conf) ->
-                                      ranksAndGroups.put(conf.rank, name));
+                                ranksAndGroups.put(conf.rank, name));
 
         if (ranksAndGroups.containsKey(nextRank))
         {
