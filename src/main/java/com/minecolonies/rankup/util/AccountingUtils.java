@@ -12,6 +12,7 @@ import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,9 +51,9 @@ public class AccountingUtils extends ConfigUtils
         return sql.getDataSource(jdbcUrl);
     }
 
-    private String getColumn(final String column)
+    private static String getColumn(final String column)
     {
-        switch (column.toUpperCase())
+        switch (column.toUpperCase(Locale.ENGLISH))
         {
             case UUID_COLUMN:
                 return UUID_COLUMN;
@@ -305,7 +306,7 @@ public class AccountingUtils extends ConfigUtils
             {
                 stmt.setInt(1, attribute);
                 stmt.setString(2, uuid.toString());
-                stmt.execute(); // was here, ''TIME_PLAYED' = 0 WHERE UUID = '1af3cf96-5018-4fed-a96f-35eddbe402d7''
+                stmt.execute();
             }
         }
     }
