@@ -121,7 +121,7 @@ public class Rankup
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            logger.warn("Pre Init failed", e);
             onError();
         }
     }
@@ -134,14 +134,11 @@ public class Rankup
         {
             this.container.loadModules(true);
         }
-        catch (QuickStartModuleLoaderException.Construction | QuickStartModuleLoaderException.Enabling construction)
+        catch (QuickStartModuleLoaderException.Construction | QuickStartModuleLoaderException.Enabling e)
         {
-            construction.printStackTrace();
+            logger.warn("Init failed", e);
             onError();
         }
-
-        accUtils.onInit();
-
         Sponge.getCommandManager().register(this, this.rankupCommand, "ru");
     }
 
@@ -169,7 +166,7 @@ public class Rankup
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            logger.warn("Reload Event failed", e);
         }
     }
 
@@ -189,6 +186,7 @@ public class Rankup
      *
      * @throws IOException if the config could not be read.
      */
+    @SuppressWarnings("squid:S3655")
     public void reload() throws IOException
     {
         this.container.reloadSystemConfig();
@@ -276,7 +274,7 @@ public class Rankup
     {
         try
         {
-            if (!Files.exists(file))
+            if (!file.toFile().exists())
             {
                 Files.createFile(file);
             }
@@ -290,7 +288,7 @@ public class Rankup
         }
         catch (IOException | ObjectMappingException | IllegalAccessException | InstantiationException e)
         {
-            e.printStackTrace();
+            logger.warn("Get Config failed", e);
             return null;
         }
     }

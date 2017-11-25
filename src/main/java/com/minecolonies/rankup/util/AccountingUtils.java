@@ -10,10 +10,7 @@ import org.spongepowered.api.service.user.UserStorageService;
 import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +26,8 @@ public class AccountingUtils extends ConfigUtils
     private SqlService sql;
     private Connection conn;
 
-    private              String tableId            = "player_stats";
+    private              String tableId            = TABLE_SUFFIX;
+    private static final String TABLE_SUFFIX       = "player_stats";
     private static final String UUID_COLUMN        = "UUID";
     private static final String PLAYER_NAME_COLUMN = "PLAYER_NAME";
     private static final String JOIN_DATE_COLUMN   = "JOIN_DATE";
@@ -41,19 +39,34 @@ public class AccountingUtils extends ConfigUtils
         super(pl);
     }
 
-    public void onInit()
-    {
-        getConn();
-    }
-
+    @SuppressWarnings("squid:S2259")
     private DataSource getDataSource(String jdbcUrl) throws SQLException
     {
-        tableId = getDatabasesConfig().sqlTablePrefix + "player_stats";
+        tableId = getDatabasesConfig().sqlTablePrefix + TABLE_SUFFIX;
         if (sql == null)
         {
             sql = Sponge.getServiceManager().provide(SqlService.class).orElse(null);
         }
         return sql.getDataSource(jdbcUrl);
+    }
+
+    private String getColumn(final String column)
+    {
+        switch (column.toUpperCase())
+        {
+            case UUID_COLUMN:
+                return UUID_COLUMN;
+            case PLAYER_NAME_COLUMN:
+                return PLAYER_NAME_COLUMN;
+            case JOIN_DATE_COLUMN:
+                return JOIN_DATE_COLUMN;
+            case LAST_JOIN_COLUMN:
+                return LAST_JOIN_COLUMN;
+            case TIME_PLAYED_COLUMN:
+                return TIME_PLAYED_COLUMN;
+            default:
+                return "";
+        }
     }
 
     private String getURI()
@@ -95,9 +108,9 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID) && conn != null)
             {
-                try (final Statement stmt = conn.createStatement())
+                try (final PreparedStatement stmt = conn.prepareStatement(query))
                 {
-                    return stmt.executeQuery(query);
+                    return stmt.executeQuery();
                 }
             }
         }
@@ -122,17 +135,19 @@ public class AccountingUtils extends ConfigUtils
     {
         try
         {
-            Statement stmt = getConn().createStatement();
+            tableId = getDatabasesConfig().sqlTablePrefix + TABLE_SUFFIX;
+            String statement = "CREATE TABLE IF NOT EXISTS " + tableId + "("
+                                 + UUID_COLUMN + " varchar(60) NOT NULL, "
+                                 + PLAYER_NAME_COLUMN + " varchar(40) NOT NULL, "
+                                 + JOIN_DATE_COLUMN + " DATE NOT NULL, "
+                                 + LAST_JOIN_COLUMN + " DATE NOT NULL, "
+                                 + TIME_PLAYED_COLUMN + " int NOT NULL, "
+                                 + "PRIMARY KEY(" + UUID_COLUMN + ") )";
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS " + tableId + "("
-                           + UUID_COLUMN + " varchar(40) NOT NULL, "
-                           + PLAYER_NAME_COLUMN + " varchar(40) NOT NULL, "
-                           + JOIN_DATE_COLUMN + " DATE NOT NULL, "
-                           + LAST_JOIN_COLUMN + " DATE NOT NULL, "
-                           + TIME_PLAYED_COLUMN + " int NOT NULL, "
-                           + "PRIMARY KEY(" + UUID_COLUMN + ") )");
-
-            stmt.close();
+            try (PreparedStatement stmt = getConn().prepareStatement(statement))
+            {
+                stmt.execute();
+            }
         }
         catch (SQLException e)
         {
@@ -242,30 +257,56 @@ public class AccountingUtils extends ConfigUtils
 
     private void updatePlayerAttribute(final UUID uuid, final String column, final String attribute, final boolean isDate) throws SQLException
     {
-        if (conn != null)
+        if (getConn() != null)
         {
-            Statement stmt = conn.createStatement();
+            String statement = UPDATE + " "
+                                 + tableId + " "
+                                 + SET + " "
+                                 + getColumn(column) + " = "
+                                 + "? "
+                                 + WHERE + " "
+                                 + UUID_COLUMN + " = "
+                                 + "?";
 
-            if (isDate)
+            try (PreparedStatement stmt = getConn().prepareStatement(statement))
             {
-                stmt.execute(UPDATE + " " + tableId + " " + SET + " " + column + " = " + toDate(attribute) + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+
+                if (isDate)
+                {
+                    stmt.setDate(1, Date.valueOf(CommonUtils.dateFormat(attribute)));
+                    stmt.setString(2, uuid.toString());
+                    stmt.execute();
+                }
+                else
+                {
+                    stmt.setString(1, attribute);
+                    stmt.setString(2, uuid.toString());
+                    stmt.execute();
+                }
             }
-            else
-            {
-                stmt.execute(UPDATE + " " + tableId + " " + SET + " " + column + " = '" + attribute + "' " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
-            }
-            stmt.close();
         }
     }
 
     private void updatePlayerAttribute(final UUID uuid, final String column, final int attribute) throws SQLException
     {
-        if (conn != null)
+        if (getConn() != null)
         {
-            Statement stmt = conn.createStatement();
 
-            stmt.execute(UPDATE + " " + tableId + " " + SET + " " + column + " = " + attribute + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
-            stmt.close();
+            String statement = UPDATE + " "
+                                 + tableId + " "
+                                 + SET + " "
+                                 + getColumn(column) + " = "
+                                 + "? "
+                                 + WHERE + " "
+                                 + UUID_COLUMN + " = "
+                                 + "?";
+
+            try (PreparedStatement stmt = getConn().prepareStatement(statement))
+            {
+                stmt.setInt(1, attribute);
+                stmt.setString(2, uuid.toString());
+                stmt.execute(); // was here, ''TIME_PLAYED' = 0 WHERE UUID = '1af3cf96-5018-4fed-a96f-35eddbe402d7''
+            }
         }
     }
 
@@ -416,7 +457,7 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                if (conn != null)
+                if (getConn() != null)
                 {
                     final ResultSet results = getQuery(SELECT + " " + PLAYER_NAME_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
 
@@ -451,20 +492,24 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                if (conn != null)
+                if (getConn() != null)
                 {
-                    Statement stmt = conn.createStatement();
+                    String statement = "INSERT INTO " + tableId
+                                         + "(" + UUID_COLUMN + ", " + PLAYER_NAME_COLUMN + ", " + JOIN_DATE_COLUMN + ", " + LAST_JOIN_COLUMN + ", "
+                                         + TIME_PLAYED_COLUMN + ") "
+                                         + "VALUES"
+                                         + "(?,"
+                                         + " ?,"
+                                         + " " + toDate(CommonUtils.dateNow()) + ","
+                                         + " " + toDate(CommonUtils.dateNow()) + ","
+                                         + " 0)";
 
-                    stmt.execute("INSERT INTO " + tableId
-                                   + "(" + UUID_COLUMN + ", " + PLAYER_NAME_COLUMN + ", " + JOIN_DATE_COLUMN + ", " + LAST_JOIN_COLUMN + ", " + TIME_PLAYED_COLUMN + ") "
-                                   + "VALUES"
-                                   + "('" + uuid + "',"
-                                   + " '" + user.getName() + "',"
-                                   + " " + toDate(CommonUtils.dateNow()) + ","
-                                   + " " + toDate(CommonUtils.dateNow()) + ","
-                                   + " 0)");
-
-                    stmt.close();
+                    try (PreparedStatement stmt = getConn().prepareStatement(statement))
+                    {
+                        stmt.setString(1, uuid.toString());
+                        stmt.setString(2, user.getName());
+                        stmt.execute();
+                    }
                 }
             }
             else
