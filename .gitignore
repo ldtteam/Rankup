@@ -13,8 +13,12 @@ hs_err_pid*
 
 OLD/
 
-\.idea/
+workspace.xml
+tasks.xml
+gradle.xml
+\.idea/*
 \.gradle/
 .DS_Store
 \build/
 \libs/
+*.iml
