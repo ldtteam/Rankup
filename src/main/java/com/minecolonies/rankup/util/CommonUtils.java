@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("squid:S1148")
-public class CommonUtils
+public final class CommonUtils
 {
     private CommonUtils()
     {

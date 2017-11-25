@@ -5,14 +5,9 @@ import com.minecolonies.rankup.qsml.modulespec.ConfigurableModule;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 
 @ModuleData(id = DatabaseModule.ID, name = "Databases")
-public class DatabaseModule extends ConfigurableModule<DatabaseConfigAdapter>
+public final class DatabaseModule extends ConfigurableModule<DatabaseConfigAdapter>
 {
     public static final String ID = "databases";
-
-    public DatabaseModule()
-    {
-        //Public constructor to override the implicit one.
-    }
 
     @Override
     protected DatabaseConfigAdapter createConfigAdapter()
