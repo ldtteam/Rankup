@@ -33,7 +33,8 @@ public class GroupsConfig extends BaseConfig
         @Setting(value = "group-enabled", comment = "Whether this group will be part of the RankUp procedures")
         public Boolean enabled = true;
 
-        @Setting(value = "group-rank", comment = "The rank of which the group is, rank one is a starting rank of a player, rank 2 being the next rank they will gain. Set to -1 to ignore")
+        @Setting(value = "group-rank", comment = "The rank of which the group is, rank one is a starting rank of a player, "
+                                                   + "rank 2 being the next rank they will gain. Set to -1 to ignore")
         public int rank = 0;
 
         @Setting(value = "group-commands-on-rankup", comment = "When someone ranks up into this group all these commands are run. \n you may use "
