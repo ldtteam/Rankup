@@ -2,11 +2,9 @@ package com.minecolonies.rankup.internal.command;
 
 import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.util.CommonUtils;
+import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.User;
@@ -40,15 +38,15 @@ public abstract class RankupSubcommand implements CommandExecutor
 
     public CommandElement[] getArguments()
     {
-        return empty;
+        return empty.clone();
     }
 
-    public Text convertToText(final String string)
+    protected Text convertToText(final String string)
     {
         return Text.of(TextSerializers.FORMATTING_CODE.deserialize(string));
     }
 
-    public List<Text> convertToText(final List<String> strings)
+    protected List<Text> convertToText(final List<String> strings)
     {
         List<Text> texts = new ArrayList<>();
 
@@ -60,55 +58,54 @@ public abstract class RankupSubcommand implements CommandExecutor
         return texts;
     }
 
-    public List<String> getPlayerData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
+    protected List<String> getPlayerData(final User user, final List<String> messages)
     {
-        CoreConfig coreConfig = getPlugin().getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = getPlugin().getConfigUtils().getCoreConfig();
 
         final List<String> newMessage = new ArrayList<>();
 
-        for (final String msg : messages)
+        for (String msg : messages)
         {
-            String message = msg;
-            message = msg.replace("{player}", user.getName())
-                        .replace("{rank}", CoreModule.perms.getPlayerHighestRankingGroup(user))
-                        .replace("{prefix}", user.getOption("prefix").orElse(coreConfig.prefixFallback))
-                        .replace("{joindate}", playerConfig.joinDate)
-                        .replace("{lastjoin}", playerConfig.lastVisit);
+            msg = msg.replace(Constants.PlayerInfo.PLAYER_NAME, user.getName())
+                    .replace(Constants.PlayerInfo.PLAYER_RANK, plugin.getPerms().getPlayerHighestRankingGroup(user))
+                    .replace(Constants.PlayerInfo.PLAYER_PREFIX, user.getOption("prefix").orElse(coreConfig.prefixFallback))
+                    .replace(Constants.PlayerInfo.PLAYER_JOIN, plugin.getAccUtils().getPlayerJoinDate(user.getUniqueId()))
+                    .replace(Constants.PlayerInfo.PLAYER_LAST, plugin.getAccUtils().getPlayerLastDate(user.getUniqueId()))
+                    .replace(Constants.PlayerInfo.PLAYER_TRACK, plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null)).name);
 
-            newMessage.add(message);
+            newMessage.add(msg);
         }
 
         return newMessage;
     }
 
-    public List<String> getModuleData(final User user, final List<String> messages, final AccountConfigData.PlayerConfig playerConfig)
+    protected List<String> getModuleData(final User user, final List<String> messages)
     {
         int userMoney;
-        if (getPlugin().econ != null && getPlugin().econ.getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (getPlugin().getEcon() != null && getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
         {
-            UniqueAccount acc = getPlugin().econ.getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(getPlugin().econ.getDefaultCurrency()).intValue();
+            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).get();
+            userMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
         }
         else
         {
             userMoney = 0;
         }
 
-        final String playTime = CommonUtils.timeDescript(playerConfig.timePlayed);
-        final String nextTime = CommonUtils.timeDescript(CoreModule.perms.timeToNextGroup(user));
+        final String playTime = CommonUtils.timeDescript(plugin.getAccUtils().getPlayerTime(user.getUniqueId()), plugin);
+        final String nextTime = CommonUtils.timeDescript(plugin.getPerms().timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
-        final String nextBal = Integer.toString(CoreModule.perms.balanceToNextGroup(user));
+        final String nextBal = Integer.toString(plugin.getPerms().balanceToNextGroup(user));
         final List<String> newMessage = new ArrayList<>();
 
-        for (final String msg : messages)
+        for (String msg : messages)
         {
-            String message = msg;
-            message = msg.replace("{timing-time}", playTime)
-                        .replace("{timing-next}", nextTime)
-                        .replace("{economy-bal}", balance)
-                        .replace("{economy-next}", nextBal);
+            msg = msg.replace(Constants.ModuleInfo.TIMING_TIME, playTime)
+                    .replace(Constants.ModuleInfo.TIMING_NEXT, nextTime)
+                    .replace(Constants.ModuleInfo.ECONOMY_BAL, balance)
+                    .replace(Constants.ModuleInfo.ECONOMY_NEXT, nextBal);
 
-            newMessage.add(message);
+            newMessage.add(msg);
         }
         return newMessage;
     }
