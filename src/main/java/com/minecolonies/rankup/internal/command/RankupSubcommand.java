@@ -82,10 +82,17 @@ public abstract class RankupSubcommand implements CommandExecutor
     protected List<String> getModuleData(final User user, final List<String> messages)
     {
         int userMoney;
-        if (getPlugin().getEcon() != null && getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).isPresent())
+        if (getPlugin().getEcon() != null)
         {
-            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).get();
-            userMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
+            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(user.getUniqueId()).orElse(null);
+            if (acc != null)
+            {
+                userMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
+            }
+            else
+            {
+                userMoney = 0;
+            }
         }
         else
         {
@@ -95,7 +102,13 @@ public abstract class RankupSubcommand implements CommandExecutor
         final String playTime = CommonUtils.timeDescript(plugin.getAccUtils().getPlayerTime(user.getUniqueId()), plugin);
         final String nextTime = CommonUtils.timeDescript(plugin.getPerms().timeToNextGroup(user), plugin);
         final String balance = Integer.toString(userMoney);
-        final String nextBal = Integer.toString(plugin.getPerms().balanceToNextGroup(user));
+        String nextBal = Integer.toString(plugin.getPerms().balanceToNextGroup(user));
+
+        if (Integer.parseInt(nextBal) < 0)
+        {
+            nextBal = "You are able to rankup";
+        }
+
         final List<String> newMessage = new ArrayList<>();
 
         for (String msg : messages)

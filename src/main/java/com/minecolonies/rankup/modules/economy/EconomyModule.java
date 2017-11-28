@@ -8,13 +8,14 @@ import com.minecolonies.rankup.util.RankingUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
+import uk.co.drnaylor.quickstart.enums.LoadingStatus;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Economy Module for the Rankup2 plugin.
  */
-@ModuleData(id = EconomyModule.ID, name = "Economy")
+@ModuleData(id = EconomyModule.ID, name = "Economy", status = LoadingStatus.DISABLED)
 public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
 {
 
@@ -37,7 +38,7 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
     {
         EconomyConfig config = getPlugin().getConfigUtils().getEconomyConfig();
 
-        getPlugin().getLogger().info("checking player balances every " + config.updateInterval + " minute(s)!");
+        getPlugin().getLogger().info("checking player balances every {} minute(s)!", config.updateInterval);
 
         Sponge.getScheduler().createSyncExecutor(getPlugin()).scheduleWithFixedDelay(this::playerCheckBalances, config.updateInterval, config.updateInterval, TimeUnit.MINUTES);
     }
@@ -53,7 +54,7 @@ public class EconomyModule extends ConfigurableModule<EconomyConfigAdapter>
 
         if (coreConfig.debugMode)
         {
-            getPlugin().getLogger().info("Balances checked for " + Sponge.getServer().getOnlinePlayers().size() + " player(s)");
+            getPlugin().getLogger().info("Balances checked for {} player(s)", Sponge.getServer().getOnlinePlayers().size());
         }
     }
 }
