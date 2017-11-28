@@ -103,16 +103,15 @@ public class AccountingUtils extends ConfigUtils
         return conn;
     }
 
+    @SuppressWarnings("squid:S2095")
     private ResultSet getQuery(final String query)
     {
         try
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID) && conn != null)
             {
-                try (final PreparedStatement stmt = conn.prepareStatement(query))
-                {
-                    return stmt.executeQuery();
-                }
+                final PreparedStatement stmt = conn.prepareStatement(query);
+                return stmt.executeQuery();
             }
         }
         catch (NoModuleException | SQLException e)
@@ -166,7 +165,9 @@ public class AccountingUtils extends ConfigUtils
 
                 if (results != null && results.next())
                 {
-                    return results.getString(PLAYER_NAME_COLUMN);
+                    final String result = results.getString(PLAYER_NAME_COLUMN);
+                    results.close();
+                    return result;
                 }
             }
             else
@@ -191,7 +192,9 @@ public class AccountingUtils extends ConfigUtils
 
                 if (results != null && results.next())
                 {
-                    return results.getDate(JOIN_DATE_COLUMN).toString();
+                    final String result = results.getDate(JOIN_DATE_COLUMN).toString();
+                    results.close();
+                    return result;
                 }
             }
             else
@@ -216,7 +219,9 @@ public class AccountingUtils extends ConfigUtils
 
                 if (results != null && results.next())
                 {
-                    return results.getDate(LAST_JOIN_COLUMN).toString();
+                    final String result = results.getDate(LAST_JOIN_COLUMN).toString();
+                    results.close();
+                    return result;
                 }
             }
             else
@@ -241,7 +246,9 @@ public class AccountingUtils extends ConfigUtils
 
                 if (results != null && results.next())
                 {
-                    return results.getInt(TIME_PLAYED_COLUMN);
+                    final Integer result = results.getInt(TIME_PLAYED_COLUMN);
+                    results.close();
+                    return result;
                 }
             }
             else
@@ -435,6 +442,10 @@ public class AccountingUtils extends ConfigUtils
                     final UUID uuid = UUID.fromString(results.getString(UUID_COLUMN));
                     uuids.put(uuid, getPlayerTime(uuid));
                 }
+                if (results != null)
+                {
+                    results.close();
+                }
             }
             else
             {
@@ -464,7 +475,9 @@ public class AccountingUtils extends ConfigUtils
 
                     if (results != null)
                     {
-                        return results.next();
+                        final Boolean hasNext = results.next();
+                        results.close();
+                        return hasNext;
                     }
                 }
             }
