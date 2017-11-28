@@ -1,7 +1,7 @@
 package com.minecolonies.rankup.modules.timing.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
+import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -36,7 +36,8 @@ public class setCommand extends RankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows players with the rankup.timing.base to set another players playtime. \n Usage: /ru set [time] {player}"));
+        return Optional.of(Text.of(
+          "Allows players with the rankup.timing.base to set another players playtime. \n Usage: /ru set [time] " + Constants.PlayerInfo.PLAYER_NAME + ""));
     }
 
     @Override
@@ -70,20 +71,15 @@ public class setCommand extends RankupSubcommand
 
     private void addTime(final CommandSource src, final User user, final Integer time)
     {
-        AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
 
-        final AccountConfigData.PlayerConfig playerConfig = playerData.playerData.get(user.getUniqueId());
-
-        if (playerConfig == null)
+        if (!getPlugin().getAccUtils().doesPlayerExist(user.getUniqueId()))
         {
-            src.sendMessage(Text.of(TextColors.DARK_RED, "User must have been online at least once since server restart (Sorry)"));
+            src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid User"));
             return;
         }
 
-        playerConfig.timePlayed = time;
+        getPlugin().getAccUtils().updatePlayerTime(user.getUniqueId(), time);
 
-        playerData.save();
-
-        src.sendMessage(Text.of(user.getName() + "(s) new playTime is: " + playerConfig.timePlayed));
+        src.sendMessage(Text.of(user.getName() + "(s) new playTime is: " + getPlugin().getAccUtils().getPlayerTime(user.getUniqueId())));
     }
 }

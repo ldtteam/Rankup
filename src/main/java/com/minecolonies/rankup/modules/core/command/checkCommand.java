@@ -1,10 +1,8 @@
 package com.minecolonies.rankup.modules.core.command;
 
 import com.minecolonies.rankup.internal.command.RankupSubcommand;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -39,7 +37,7 @@ public class checkCommand extends RankupSubcommand
     @Override
     public Optional<Text> getDescription()
     {
-        return Optional.of(Text.of("Allows a player to see their (Or another players) RankUp stats. \n Usage: /ru check {player}"));
+        return Optional.of(Text.of("Allows a player to see their (Or another players) RankUp stats. \n Usage: /ru check " + Constants.PlayerInfo.PLAYER_NAME + ""));
     }
 
     @Override
@@ -71,23 +69,22 @@ public class checkCommand extends RankupSubcommand
 
     private void sendCheck(final CommandSource src, final User user)
     {
-        CoreConfig coreConfig = getPlugin().getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
-        AccountConfigData playerData = (AccountConfigData) getPlugin().getAllConfigs().get(AccountConfigData.class);
-        final AccountConfigData.PlayerConfig playerConf = playerData.playerData.get(user.getUniqueId());
+        CoreConfig coreConfig = getPlugin().getAccUtils().getCoreConfig();
 
-        if (playerConf == null)
+        if (getPlugin().getAccUtils().doesPlayerExist(user.getUniqueId()))
         {
-            src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid user"));
-            return;
+            final List<String> message = getModuleData(user, getPlayerData(user, coreConfig.checkMessageTemplate));
+
+            final List<Text> finalMessage = convertToText(message);
+
+            for (final Text text : finalMessage)
+            {
+                src.sendMessage(text);
+            }
         }
-
-        final List<String> message = getModuleData(user, getPlayerData(user, coreConfig.checkMessageTemplate, playerConf), playerConf);
-
-        final List<Text> finalMessage = convertToText(message);
-
-        for (final Text text : finalMessage)
+        else
         {
-            src.sendMessage(text);
+            src.sendMessage(Text.of(TextColors.DARK_RED, "Invalid User - (Probably hasn't been online since last restart)"));
         }
     }
 }

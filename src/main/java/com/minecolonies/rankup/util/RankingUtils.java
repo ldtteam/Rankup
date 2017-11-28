@@ -2,20 +2,13 @@ package com.minecolonies.rankup.util;
 
 import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.internal.events.RURankupEvent;
-import com.minecolonies.rankup.modules.core.CoreModule;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
-import com.minecolonies.rankup.modules.core.config.CoreConfigAdapter;
 import com.minecolonies.rankup.modules.core.config.GroupsConfig;
-import com.minecolonies.rankup.modules.timing.TimingModule;
-import com.minecolonies.rankup.modules.timing.config.TimingConfig;
-import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.service.permission.Subject;
 
 import java.util.List;
 
@@ -24,28 +17,24 @@ public class RankingUtils
 
     public static void timeUp(final Player player, final Rankup plugin)
     {
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = plugin.getPerms().getPlayerGroupIds(player);
 
         //Check if player is in disabled group.
-        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : plugin.getPerms().getDisabledGroups())
         {
-            if (playerGroups.contains(subject.getIdentifier()))
+            if (playerGroups.contains(subject))
             {
-                return; //IF the player is withing a disabled group, stop here.
+                //IF the player is withing a disabled group, stop here.
+                return;
             }
         }
 
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
-        final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-        final TimingConfig timeConfig = plugin.getConfigAdapter(TimingModule.ID, TimingConfigAdapter.class).get().getNodeOrDefault();
-        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
+        final String nextGroup = plugin.getPerms().getNextGroup(player);
 
-        final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
+        final Integer playerTime = plugin.getAccUtils().getPlayerTime(player.getUniqueId());
 
-        final Integer playerTime = playerData.playerData.get(player.getUniqueId()).timePlayed;
-
-        if (!nextGroup.equals("") && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
+        if (!"".equals(nextGroup) && playerTime > groupsConfig.groups.get(nextGroup).timingTime)
         {
             rankUp(player, plugin);
         }
@@ -53,26 +42,27 @@ public class RankingUtils
 
     public static void balanceCheck(final Player player, final Rankup plugin)
     {
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = plugin.getPerms().getPlayerGroupIds(player);
+
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
 
         //Check if player is in disabled group.
-        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : plugin.getPerms().getDisabledGroups())
         {
-            if (playerGroups.contains(subject.getIdentifier()))
+            if (playerGroups.contains(subject))
             {
-                return; //IF the player is withing a disabled group, stop here.
+                plugin.getLogger().info("disabled group: " + subject);
+                //IF the player is withing a disabled group, stop here.
+                return;
             }
         }
 
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final String nextGroup = plugin.getPerms().getNextGroup(player);
 
-        final String highestGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String nextGroup = CoreModule.perms.getNextGroup(groupsConfig.groups.get(highestGroup).rank);
-
-        if (plugin.econ != null && !nextGroup.equals("") && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
+        if (plugin.getEcon() != null && !"".equals(nextGroup) && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
         {
-            final UniqueAccount acc = plugin.econ.getOrCreateAccount(player.getUniqueId()).get();
-            if (acc.getBalance(plugin.econ.getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
+            final UniqueAccount acc = plugin.getEcon().getOrCreateAccount(player.getUniqueId()).get();
+            if (acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
             {
                 rankUp(player, plugin);
             }
@@ -81,85 +71,86 @@ public class RankingUtils
 
     public static void timeDown(Player player, Rankup plugin)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
-        final AccountConfigData playerData = (AccountConfigData) plugin.getAllConfigs().get(AccountConfigData.class);
-
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
+        final List<String> playerGroups = plugin.getPerms().getPlayerGroupIds(player);
 
         //Check if player is in disabled group.
-        for (final Subject subject : CoreModule.perms.getDisabledGroups())
+        for (final String subject : plugin.getPerms().getDisabledGroups())
         {
-            if (playerGroups.contains(subject.getIdentifier()))
+            if (playerGroups.contains(subject))
             {
-                return; //IF the player is withing a disabled group, stop here.
+                //IF the player is withing a disabled group, stop here.
+                return;
             }
         }
 
-        for (final String group : CoreModule.perms.getPlayerGroupIds(player))
+        for (final String group : plugin.getPerms().getPlayerGroupIds(player))
         {
-            final Integer time = playerData.playerData.get(player.getUniqueId()).timePlayed;
-
-            if (groupsConfig.groups.get(group).timingRankDown && groupsConfig.groups.get(group).timingTime > time)
+            if (groupsConfig.groups.containsKey(group))
             {
-                rankDown(player, plugin);
+                final Integer time = plugin.getAccUtils().getPlayerTime(player.getUniqueId());
+
+                if (groupsConfig.groups.get(group).timingRankDown && groupsConfig.groups.get(group).timingTime > time)
+                {
+                    rankDown(player, plugin);
+                }
             }
         }
     }
 
     private static void rankDown(final Player player, final Rankup plugin)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
 
-        final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String previousGroup = CoreModule.perms.getPreviousGroup(groupsConfig.groups.get(currentGroup).rank);
+        final String currentGroup = plugin.getPerms().getPlayerHighestRankingGroup(player);
+        final String previousGroup = plugin.getPerms().getPreviousGroup(player, groupsConfig.groups.get(currentGroup).rank);
 
-        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = plugin.getConfigUtils().getCoreConfig();
 
         final String remCmd = coreConfig.rankdownCommand;
+        final String finalRemCmd = remCmd.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
+                                     .replace(Constants.PlayerInfo.PLAYER_GROUP, previousGroup);
 
-        final String finalRemCmd = remCmd.replace("{player}", player.getName())
-                                     .replace("{group}", previousGroup);
-
-        plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
+        plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
     }
 
     private static void rankUp(final Player player, final Rankup plugin)
     {
-        final GroupsConfig groupsConfig = (GroupsConfig) plugin.getAllConfigs().get(GroupsConfig.class);
+        final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
 
-        final String currentGroup = CoreModule.perms.getPlayerHighestRankingGroup(player);
-        final String nextGroup = CoreModule.perms.getNextGroup(currentGroup);
+        final String currentGroup = plugin.getPerms().getPlayerHighestRankingGroup(player);
+        final String nextGroup = plugin.getPerms().getNextGroup(player);
 
-        if (nextGroup == "")
+        if ("".equals(nextGroup))
         {
             return;
         }
 
-        RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Cause.of(NamedCause.source(Rankup.getInstance())));
+        RURankupEvent rankupEvent = new RURankupEvent(player, currentGroup, nextGroup, Cause.of(NamedCause.source(plugin)));
         Sponge.getEventManager().post(rankupEvent);
         if (rankupEvent.isCancelled())
         {
             return;
         }
 
-        final CoreConfig coreConfig = plugin.getConfigAdapter(CoreModule.ID, CoreConfigAdapter.class).get().getNodeOrDefault();
+        CoreConfig coreConfig = plugin.getConfigUtils().getCoreConfig();
 
-        final List<String> playerGroups = CoreModule.perms.getPlayerGroupIds(player);
+        final List<String> playerGroups = plugin.getPerms().getPlayerGroupIds(player);
 
         final String cmd = coreConfig.rankupCommand;
 
-        final String finalCmd = cmd.replace("{player}", player.getName())
-                                  .replace("{group}", nextGroup);
+        final String finalCmd = cmd.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
+                                  .replace(Constants.PlayerInfo.PLAYER_GROUP, nextGroup);
 
-        plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
+        plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCmd);
 
         for (final String command : groupsConfig.groups.get(nextGroup).commands)
         {
 
-            final String finalCommand = command.replace("{player}", player.getName())
-                                          .replace("{group}", nextGroup);
+            final String finalCommand = command.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
+                                          .replace(Constants.PlayerInfo.PLAYER_GROUP, nextGroup);
 
-            plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
+            plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalCommand);
         }
 
         if (coreConfig.removeOtherGroups)
@@ -170,10 +161,10 @@ public class RankingUtils
                 {
                     final String remCmd = coreConfig.rankdownCommand;
 
-                    final String finalRemCmd = remCmd.replace("{player}", player.getName())
-                                                 .replace("{group}", group);
+                    final String finalRemCmd = remCmd.replace(Constants.PlayerInfo.PLAYER_NAME, player.getName())
+                                                 .replace(Constants.PlayerInfo.PLAYER_GROUP, group);
 
-                    plugin.game.getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
+                    plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
                 }
             }
         }
