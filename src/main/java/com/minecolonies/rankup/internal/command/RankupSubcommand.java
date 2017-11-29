@@ -43,7 +43,7 @@ public abstract class RankupSubcommand implements CommandExecutor
 
     protected Text convertToText(final String string)
     {
-        return Text.of(TextSerializers.FORMATTING_CODE.deserialize(string));
+        return TextSerializers.FORMATTING_CODE.deserialize(string);
     }
 
     protected List<Text> convertToText(final List<String> strings)

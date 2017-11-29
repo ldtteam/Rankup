@@ -49,6 +49,11 @@ public class BuyCommand extends RankupSubcommand
         {
             final Player player = (Player) src;
 
+            if ("".equals(getPlugin().getPerms().getNextGroup(player)))
+            {
+                src.sendMessage(Text.of(Color.RED, "You are in the highest group possible already."));
+            }
+
             UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(player.getUniqueId()).orElse(null);
 
             if (acc == null)

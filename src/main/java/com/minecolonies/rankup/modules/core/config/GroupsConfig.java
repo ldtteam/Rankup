@@ -37,7 +37,8 @@ public class GroupsConfig extends BaseConfig
         public int rank = 0;
 
         @Setting(value = "group-commands-on-rankup", comment = "When someone ranks up into this group all these commands are run. \n you may use "
-                                                                 + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + " attributes")
+                                                                 + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + " attributes\n"
+                                                                 + "These commands are EXTRA, the rankup commands are in rankup.conf only.")
         public List<String> commands = Arrays.asList("say " + Constants.PlayerInfo.PLAYER_NAME + " joined group " + Constants.PlayerInfo.PLAYER_GROUP + "",
           "give " + Constants.PlayerInfo.PLAYER_NAME + " minecraft:dirt");
 
