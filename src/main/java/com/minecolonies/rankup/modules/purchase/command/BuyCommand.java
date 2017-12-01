@@ -61,10 +61,6 @@ public class BuyCommand extends RankupSubcommand
                 return CommandResult.success();
             }
 
-            getPlugin().getLogger().info("Buy Group Config Utils: {}", getPlugin().getConfigUtils());
-            getPlugin().getLogger().info("Buy Group Config: {}", getPlugin().getConfigUtils().getGroupsConfig(player).name);
-            getPlugin().getLogger().info("Buy next Group: {}", getPlugin().getPerms().getNextGroup(player));
-
             final int playerMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
             final int moneyNeeded = getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded;
 
