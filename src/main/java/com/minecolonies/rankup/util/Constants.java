@@ -33,7 +33,7 @@ public final class Constants
         public static final String TIMING_NEXT     = "{timing-next}";
         public static final String ECONOMY_BAL     = "{economy-bal}";
         public static final String ECONOMY_NEXT    = "{economy-next}";
-        public static final String MAGIBRIDGE_CURR = "{magibridge-currant}";
+        public static final String MAGIBRIDGE_CURR = "{magibridge-current}";
         public static final String MAGIBRIDGE_NEXT = "{magibridge-next}";
 
         private ModuleInfo()
