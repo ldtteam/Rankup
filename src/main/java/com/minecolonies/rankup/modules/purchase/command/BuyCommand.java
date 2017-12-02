@@ -51,7 +51,8 @@ public class BuyCommand extends RankupSubcommand
 
             if ("".equals(getPlugin().getPerms().getNextGroup(player)))
             {
-                src.sendMessage(Text.of(Color.RED, "You are in the highest group possible already."));
+                src.sendMessage(Text.of("You are in the highest group possible already."));
+                return CommandResult.success();
             }
 
             UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(player.getUniqueId()).orElse(null);
@@ -60,14 +61,6 @@ public class BuyCommand extends RankupSubcommand
             {
                 return CommandResult.success();
             }
-
-            getPlugin().getLogger().info("BUY: {}", (getPlugin() == null));
-            getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils() == null));
-            getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils().getGroupsConfig(player) == null));
-            getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils().getGroupsConfig(player).groups == null));
-            getPlugin().getLogger().info("BUY: {}", (getPlugin().getPerms() == null));
-            getPlugin().getLogger().info("BUY: {}", (getPlugin().getPerms().getNextGroup(player) == null));
-            getPlugin().getLogger().info("BUY: {}", getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded);
 
             final int playerMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
             final int moneyNeeded = getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded;
