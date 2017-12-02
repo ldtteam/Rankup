@@ -65,6 +65,7 @@ public class BuyCommand extends RankupSubcommand
             getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils() == null));
             getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils().getGroupsConfig(player) == null));
             getPlugin().getLogger().info("BUY: {}", (getPlugin().getConfigUtils().getGroupsConfig(player).groups == null));
+            getPlugin().getLogger().info("BUY: {}", (getPlugin().getPerms() == null));
             getPlugin().getLogger().info("BUY: {}", (getPlugin().getPerms().getNextGroup(player) == null));
             getPlugin().getLogger().info("BUY: {}", getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded);
 
