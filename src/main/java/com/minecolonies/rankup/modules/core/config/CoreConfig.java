@@ -57,14 +57,17 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "check-message", comment = "This is the template for the /ru check command, accepted entries are: \n"
                                                   + Constants.PlayerInfo.PLAYER_NAME + "        - The Player's name (the one being checked)\n"
+                                                  + Constants.PlayerInfo.PLAYER_NEXT + "        - The Player's next rank\n"
                                                   + Constants.PlayerInfo.PLAYER_RANK + "          - The current rank of the player\n"
                                                   + Constants.PlayerInfo.PLAYER_PREFIX + "        - The prefix of the player's current group\n"
                                                   + Constants.ModuleInfo.TIMING_TIME + "   - How much time the player has been playing \n"
                                                   + Constants.ModuleInfo.TIMING_NEXT + "   - How much time until the player joins the next group \n"
                                                   + Constants.ModuleInfo.ECONOMY_BAL + "   - How much money the player has\n"
                                                   + Constants.ModuleInfo.ECONOMY_NEXT + "  - How much money the player needs to join the next group\n"
+                                                  + Constants.ModuleInfo.PURCHASE_LEFT + "  - How much money will be left after rank purchase\n"
                                                   + Constants.PlayerInfo.PLAYER_JOIN + "      - The date of when the player joined your server\n"
                                                   + Constants.PlayerInfo.PLAYER_LAST + "      - When the player last joined the server\n"
+                                                  +  Constants.ModuleInfo.PURCHASE_BUTTON + "      - button used to purchase the next rank (needs purchase module)\n"
                                                   + Constants.PlayerInfo.PLAYER_TRACK + "         - The current track of the player.")
     public List<String> checkMessageTemplate = Arrays.asList(
       "§6---[§2" + Constants.PlayerInfo.PLAYER_NAME + "§6]---",

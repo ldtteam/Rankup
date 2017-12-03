@@ -6,15 +6,21 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.args.CommandElement;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.Color;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,6 +29,8 @@ import java.util.Optional;
 @NonnullByDefault
 public class BuyCommand extends RankupSubcommand
 {
+    private static final Text ACCEPT_KEY = Text.of("accept");
+
     @Override
     protected String[] getAliases()
     {
@@ -42,6 +50,14 @@ public class BuyCommand extends RankupSubcommand
     }
 
     @Override
+    public CommandElement[] getArguments()
+    {
+        return new CommandElement[] {
+          GenericArguments.optionalWeak(GenericArguments.bool(ACCEPT_KEY))
+        };
+    }
+
+    @Override
     public CommandResult execute(final CommandSource src, final CommandContext args) throws CommandException
     {
 
@@ -55,25 +71,37 @@ public class BuyCommand extends RankupSubcommand
                 return CommandResult.success();
             }
 
-            UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(player.getUniqueId()).orElse(null);
-
-            if (acc == null)
+            if (args.<Boolean>getOne(ACCEPT_KEY).orElse(false))
             {
-                return CommandResult.success();
-            }
+                UniqueAccount acc = getPlugin().getEcon().getOrCreateAccount(player.getUniqueId()).orElse(null);
 
-            final int playerMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
-            final int moneyNeeded = getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded;
+                if (acc == null)
+                {
+                    return CommandResult.success();
+                }
 
-            if (playerMoney >= moneyNeeded)
-            {
-                acc.withdraw(getPlugin().getEcon().getDefaultCurrency(), BigDecimal.valueOf(moneyNeeded), Cause.of(EventContext.empty(), "Rankup purchase"));
-                src.sendMessage(Text.of("Ranking up! New Balance: " + acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue()));
-                RankingUtils.rankUp(player, getPlugin());
+                final int playerMoney = acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue();
+                final int moneyNeeded = getPlugin().getConfigUtils().getGroupsConfig(player).groups.get(getPlugin().getPerms().getNextGroup(player)).moneyNeeded;
+
+                if (playerMoney >= moneyNeeded)
+                {
+                    acc.withdraw(getPlugin().getEcon().getDefaultCurrency(), BigDecimal.valueOf(moneyNeeded), Cause.of(EventContext.empty(), "Rankup purchase"));
+                    src.sendMessage(Text.of("Ranking up! New Balance: " + acc.getBalance(getPlugin().getEcon().getDefaultCurrency()).intValue()));
+                    RankingUtils.rankUp(player, getPlugin());
+                }
+                else
+                {
+                    src.sendMessage(Text.of(Color.RED, "You do not have enough money, please us /ru check to see requirements."));
+                }
             }
             else
             {
-                src.sendMessage(Text.of(Color.RED, "You do not have enough money, please us /ru check to see requirements."));
+                final List<String> message = getModuleData(player, getPlayerData(player, getPlugin().getConfigUtils().getPurchaseConfig().purchaseMessageTemplate));
+
+                for (final Text text : convertToText(message))
+                {
+                    src.sendMessage(text);
+                }
             }
         }
 

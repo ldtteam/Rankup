@@ -15,6 +15,9 @@ import com.minecolonies.rankup.modules.economy.config.EconomyConfigAdapter;
 import com.minecolonies.rankup.modules.magibridge.MagibridgeModule;
 import com.minecolonies.rankup.modules.magibridge.config.MagibridgeConfig;
 import com.minecolonies.rankup.modules.magibridge.config.MagibridgeConfigAdapter;
+import com.minecolonies.rankup.modules.purchase.PurchaseModule;
+import com.minecolonies.rankup.modules.purchase.config.PurchaseConfig;
+import com.minecolonies.rankup.modules.purchase.config.PurchaseConfigAdapter;
 import com.minecolonies.rankup.modules.timing.TimingModule;
 import com.minecolonies.rankup.modules.timing.config.TimingConfig;
 import com.minecolonies.rankup.modules.timing.config.TimingConfigAdapter;
@@ -79,6 +82,15 @@ public class ConfigUtils
         if (plugin.getConfigAdapter(DatabaseModule.ID, DatabaseConfigAdapter.class).isPresent())
         {
             return plugin.getConfigAdapter(DatabaseModule.ID, DatabaseConfigAdapter.class).get().getNodeOrDefault();
+        }
+        return null;
+    }
+
+    public PurchaseConfig getPurchaseConfig()
+    {
+        if (plugin.getConfigAdapter(PurchaseModule.ID, PurchaseConfigAdapter.class).isPresent())
+        {
+            return plugin.getConfigAdapter(PurchaseModule.ID, PurchaseConfigAdapter.class).get().getNodeOrDefault();
         }
         return null;
     }

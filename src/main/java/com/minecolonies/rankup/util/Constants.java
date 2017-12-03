@@ -16,6 +16,7 @@ public final class Constants
         public static final String PLAYER_NAME   = "{player}";
         public static final String PLAYER_GROUP  = "{group}";
         public static final String PLAYER_RANK   = "{rank}";
+        public static final String PLAYER_NEXT   = "{rank-next}";
         public static final String PLAYER_PREFIX = "{prefix}";
         public static final String PLAYER_JOIN   = "{joindate}";
         public static final String PLAYER_LAST   = "{lastjoin}";
@@ -35,6 +36,8 @@ public final class Constants
         public static final String ECONOMY_NEXT    = "{economy-next}";
         public static final String MAGIBRIDGE_CURR = "{magibridge-current}";
         public static final String MAGIBRIDGE_NEXT = "{magibridge-next}";
+        public static final String PURCHASE_BUTTON = "{purchase-button}";
+        public static final String PURCHASE_LEFT   = "{purchase-left}";
 
         private ModuleInfo()
         {
