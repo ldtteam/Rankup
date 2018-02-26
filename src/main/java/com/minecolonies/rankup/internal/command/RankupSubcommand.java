@@ -3,6 +3,7 @@ package com.minecolonies.rankup.internal.command;
 import com.google.inject.Inject;
 import com.minecolonies.rankup.Rankup;
 import com.minecolonies.rankup.modules.core.config.CoreConfig;
+import com.minecolonies.rankup.modules.core.config.GroupsConfig;
 import com.minecolonies.rankup.util.CommonUtils;
 import com.minecolonies.rankup.util.Constants;
 import org.spongepowered.api.command.args.CommandElement;
@@ -83,6 +84,10 @@ public abstract class RankupSubcommand implements CommandExecutor
         {
             nextRank = "You are at max rank";
         }
+        
+        final GroupsConfig groupConfig = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
+
+        final String trackName = groupConfig == null ? "" : groupConfig.name;
 
         for (String msg : messages)
         {
@@ -92,7 +97,7 @@ public abstract class RankupSubcommand implements CommandExecutor
                     .replace(Constants.PlayerInfo.PLAYER_PREFIX, user.getOption("prefix").orElse(coreConfig.prefixFallback))
                     .replace(Constants.PlayerInfo.PLAYER_JOIN, plugin.getAccUtils().getPlayerJoinDate(user.getUniqueId()))
                     .replace(Constants.PlayerInfo.PLAYER_LAST, plugin.getAccUtils().getPlayerLastDate(user.getUniqueId()))
-                    .replace(Constants.PlayerInfo.PLAYER_TRACK, plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null)).name);
+                    .replace(Constants.PlayerInfo.PLAYER_TRACK, trackName);
 
             newMessage.add(msg);
         }

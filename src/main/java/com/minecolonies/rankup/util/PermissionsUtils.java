@@ -45,6 +45,11 @@ public class PermissionsUtils
     {
         final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(player);
 
+        if (config == null)
+        {
+            return "";
+        }
+
         String currentGroup = "";
         Integer currentRank = -1;
 
@@ -68,6 +73,11 @@ public class PermissionsUtils
     public String getPlayerHighestRankingGroup(final User user)
     {
         final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
+
+        if (config == null)
+        {
+            return "";
+        }
 
         String currentGroup = "";
         Integer currentRank = -1;
