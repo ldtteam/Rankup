@@ -54,7 +54,10 @@ public class RankingUtils
         {
             if (playerGroups.contains(subject))
             {
-                plugin.getLogger().info("disabled group: {}", subject);
+                if (plugin.getConfigUtils().getCoreConfig().debugMode)
+                {
+                    plugin.getLogger().info("Player {} is in disabled group!", player.getName());
+                }
                 //IF the player is withing a disabled group, stop here.
                 return;
             }
