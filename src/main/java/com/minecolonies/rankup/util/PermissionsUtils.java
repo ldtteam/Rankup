@@ -139,6 +139,11 @@ public class PermissionsUtils
     {
         final String currentGroup = getPlayerHighestRankingGroup(player);
 
+        if ("".equals(currentGroup))
+        {
+            return "";
+        }
+
         final GroupsConfig config = plugin.getConfigUtils().getGroupsConfig(player);
 
         final Map<Integer, String> ranksAndGroups = new HashMap<>();

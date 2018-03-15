@@ -37,17 +37,19 @@ public class GroupsConfig extends BaseConfig
         public int rank = 0;
 
         @Setting(value = "group-commands-on-rankup", comment = "When someone ranks up into this group all these commands are run. \n you may use "
-                                                                 + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + " attributes")
+                                                                 + Constants.PlayerInfo.PLAYER_NAME + " and " + Constants.PlayerInfo.PLAYER_GROUP + " attributes\n"
+                                                                 + "These commands are EXTRA, the rankup commands are in rankup.conf only.")
         public List<String> commands = Arrays.asList("say " + Constants.PlayerInfo.PLAYER_NAME + " joined group " + Constants.PlayerInfo.PLAYER_GROUP + "",
           "give " + Constants.PlayerInfo.PLAYER_NAME + " minecraft:dirt");
 
         @Setting(value = "timing-time", comment = "The amount of time played required to enter this group")
         public int timingTime = 0;
 
-        @Setting(value = "timing-rankdown", comment = "If this value is true, if a player is within this group and they DO NOT have the require play time, they will be ranked down")
+        @Setting(value = "timing-rankdown", comment = "If this value is true, if a player is within this "
+                                                        + "group and they DO NOT have the require play time, they will be ranked down")
         public boolean timingRankDown = false;
 
-        @Setting(value = "economy-money-needed", comment = "If Economy module is enabled players will rankup into this group when they reach the following account balance")
+        @Setting(value = "economy-money-needed", comment = "Used by money related modules. The amount of money needed to rankup/buy into this group")
         public int moneyNeeded = 0;
     }
 }

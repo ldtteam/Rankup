@@ -10,8 +10,13 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 
 import java.util.List;
 
-public class RankingUtils
+public final class RankingUtils
 {
+
+    private RankingUtils()
+    {
+        //Private constructor to hide implicit public constructor
+    }
 
     public static void timeUp(final Player player, final Rankup plugin)
     {
@@ -49,7 +54,10 @@ public class RankingUtils
         {
             if (playerGroups.contains(subject))
             {
-                plugin.getLogger().info("disabled group: " + subject);
+                if (plugin.getConfigUtils().getCoreConfig().debugMode)
+                {
+                    plugin.getLogger().info("Player {} is in disabled group!", player.getName());
+                }
                 //IF the player is withing a disabled group, stop here.
                 return;
             }
@@ -59,8 +67,8 @@ public class RankingUtils
 
         if (plugin.getEcon() != null && !"".equals(nextGroup) && groupsConfig.groups.get(nextGroup).moneyNeeded != 0)
         {
-            final UniqueAccount acc = plugin.getEcon().getOrCreateAccount(player.getUniqueId()).get();
-            if (acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
+            final UniqueAccount acc = plugin.getEcon().getOrCreateAccount(player.getUniqueId()).orElse(null);
+            if (acc != null && acc.getBalance(plugin.getEcon().getDefaultCurrency()).intValue() >= groupsConfig.groups.get(nextGroup).moneyNeeded)
             {
                 rankUp(player, plugin);
             }
@@ -112,7 +120,7 @@ public class RankingUtils
         plugin.getGame().getCommandManager().process(Sponge.getServer().getConsole(), finalRemCmd);
     }
 
-    private static void rankUp(final Player player, final Rankup plugin)
+    public static void rankUp(final Player player, final Rankup plugin)
     {
         final GroupsConfig groupsConfig = plugin.getConfigUtils().getGroupsConfig(player);
 
