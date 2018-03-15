@@ -10,7 +10,7 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 
 import java.util.List;
 
-public class RankingUtils
+public final class RankingUtils
 {
 
     private RankingUtils()

@@ -84,7 +84,7 @@ public abstract class RankupSubcommand implements CommandExecutor
         {
             nextRank = "You are at max rank";
         }
-        
+
         final GroupsConfig groupConfig = plugin.getConfigUtils().getGroupsConfig(user.getPlayer().orElse(null));
 
         final String trackName = groupConfig == null ? "" : groupConfig.name;

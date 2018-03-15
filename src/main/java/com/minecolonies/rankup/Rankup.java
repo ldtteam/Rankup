@@ -88,8 +88,8 @@ public class Rankup
 
     @Inject
     public Rankup(
-                   Logger logger, @DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> loader,
-                   @ConfigDir(sharedRoot = false) Path configDir, GuiceObjectMapperFactory factory)
+      Logger logger, @DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> loader,
+      @ConfigDir(sharedRoot = false) Path configDir, GuiceObjectMapperFactory factory)
     {
         this.logger = logger;
         this.loader = loader;

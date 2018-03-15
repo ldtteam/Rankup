@@ -14,7 +14,7 @@ import java.util.List;
 public class PurchaseConfig
 {
     @Setting(value = "purchase-message", comment = "This is the template for the /ru buy command (before actually buying), accepted entries are same as /ru check\n"
-                                                  + "Make sure you add " + Constants.ModuleInfo.PURCHASE_BUTTON + " button!")
+                                                     + "Make sure you add " + Constants.ModuleInfo.PURCHASE_BUTTON + " button!")
     public List<String> purchaseMessageTemplate = Arrays.asList(
       "&6---[&2Rankup Purchase&6]---",
       "&fCurrent Rank: " + Constants.PlayerInfo.PLAYER_RANK,
@@ -22,5 +22,4 @@ public class PurchaseConfig
       "&fMoney For Next: " + Constants.ModuleInfo.ECONOMY_NEXT,
       "&fMoney Left After Purchase: " + Constants.ModuleInfo.PURCHASE_LEFT,
       "&6---[ " + Constants.ModuleInfo.PURCHASE_BUTTON + " &6]--------");
-
 }

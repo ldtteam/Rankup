@@ -67,7 +67,7 @@ public class CoreConfig extends BaseConfig
                                                   + Constants.ModuleInfo.PURCHASE_LEFT + "  - How much money will be left after rank purchase\n"
                                                   + Constants.PlayerInfo.PLAYER_JOIN + "      - The date of when the player joined your server\n"
                                                   + Constants.PlayerInfo.PLAYER_LAST + "      - When the player last joined the server\n"
-                                                  +  Constants.ModuleInfo.PURCHASE_BUTTON + "      - button used to purchase the next rank (needs purchase module)\n"
+                                                  + Constants.ModuleInfo.PURCHASE_BUTTON + "      - button used to purchase the next rank (needs purchase module)\n"
                                                   + Constants.PlayerInfo.PLAYER_TRACK + "         - The current track of the player.")
     public List<String> checkMessageTemplate = Arrays.asList(
       "§6---[§2" + Constants.PlayerInfo.PLAYER_NAME + "§6]---",

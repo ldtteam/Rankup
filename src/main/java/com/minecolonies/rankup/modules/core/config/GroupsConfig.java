@@ -45,7 +45,8 @@ public class GroupsConfig extends BaseConfig
         @Setting(value = "timing-time", comment = "The amount of time played required to enter this group")
         public int timingTime = 0;
 
-        @Setting(value = "timing-rankdown", comment = "If this value is true, if a player is within this group and they DO NOT have the require play time, they will be ranked down")
+        @Setting(value = "timing-rankdown", comment = "If this value is true, if a player is within this "
+                                                        + "group and they DO NOT have the require play time, they will be ranked down")
         public boolean timingRankDown = false;
 
         @Setting(value = "economy-money-needed", comment = "Used by money related modules. The amount of money needed to rankup/buy into this group")
