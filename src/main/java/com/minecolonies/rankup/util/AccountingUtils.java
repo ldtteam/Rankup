@@ -83,7 +83,7 @@ public class AccountingUtils extends ConfigUtils
                      + "/"
                      + getDatabasesConfig().sqlDatabase;
         }
-        return "jdbc:h2:" + getPlugin().getConfigDir() + "/h2/playerstats";
+        return "jdbc:h2:" + getPlugin().getConfigDir() + "/h2/playerstats;DB_CLOSE_ON_EXIT=FALSE";
     }
 
     private Connection getConn()
