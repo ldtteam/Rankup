@@ -88,17 +88,25 @@ public class AccountingUtils extends ConfigUtils
 
     private Connection getConn()
     {
-        if (conn == null)
+        try 
         {
-            String uri = getURI();
-            try
+            if (conn == null || conn.isClosed())
             {
-                conn = getDataSource(uri).getConnection();
+                String uri = getURI();
+                
+                try
+                {
+                    conn = getDataSource(uri).getConnection();
+                }
+                catch (SQLException e)
+                {
+                    getPlugin().getLogger().warn("Could not get Connection", e);
+                }
             }
-            catch (SQLException e)
-            {
-                getPlugin().getLogger().warn("Could not get Connection", e);
-            }
+        } 
+        catch (SQLException e) 
+        {
+            getPlugin().getLogger().warn("Connection closed", e);
         }
         return conn;
     }
@@ -144,9 +152,18 @@ public class AccountingUtils extends ConfigUtils
                                  + TIME_PLAYED_COLUMN + " int NOT NULL, "
                                  + "PRIMARY KEY(" + UUID_COLUMN + ") )";
 
-            try (PreparedStatement stmt = getConn().prepareStatement(statement))
+            PreparedStatement stmt = getConn().prepareStatement(statement);
+
+            try 
             {
+                stmt.closeOnCompletion();
                 stmt.execute();
+            }
+
+            finally 
+            {
+                stmt.close();
+                getConn().close();
             }
         }
         catch (SQLException e)
