@@ -88,10 +88,12 @@ public class AccountingUtils extends ConfigUtils
 
     private Connection getConn()
     {
-        try {
+        try 
+        {
             if (conn == null || conn.isClosed())
             {
                 String uri = getURI();
+                
                 try
                 {
                     conn = getDataSource(uri).getConnection();
@@ -101,7 +103,9 @@ public class AccountingUtils extends ConfigUtils
                     getPlugin().getLogger().warn("Could not get Connection", e);
                 }
             }
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             getPlugin().getLogger().warn("Connection closed", e);
         }
         return conn;
@@ -150,12 +154,14 @@ public class AccountingUtils extends ConfigUtils
 
             PreparedStatement stmt = getConn().prepareStatement(statement);
 
-            try {
+            try 
+            {
                 stmt.closeOnCompletion();
                 stmt.execute();
             }
 
-            finally {
+            finally 
+            {
                 stmt.close();
                 getConn().close();
             }
