@@ -1,8 +1,8 @@
-package com.minecolonies.rankup.util;
+package com.ldt.rankup.util;
 
-import com.minecolonies.rankup.Rankup;
-import com.minecolonies.rankup.modules.core.config.AccountConfigData;
-import com.minecolonies.rankup.modules.databases.DatabaseModule;
+import com.ldt.rankup.Rankup;
+import com.ldt.rankup.modules.core.config.AccountConfigData;
+import com.ldt.rankup.modules.databases.DatabaseModule;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.sql.SqlService;
@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.minecolonies.rankup.util.Constants.SQL.*;
 
 /**
  * Lots of accounts based utils (Used for database / file config adaption)
@@ -88,12 +86,12 @@ public class AccountingUtils extends ConfigUtils
 
     private Connection getConn()
     {
-        try 
+        try
         {
             if (conn == null || conn.isClosed())
             {
                 String uri = getURI();
-                
+
                 try
                 {
                     conn = getDataSource(uri).getConnection();
@@ -103,8 +101,8 @@ public class AccountingUtils extends ConfigUtils
                     getPlugin().getLogger().warn("Could not get Connection", e);
                 }
             }
-        } 
-        catch (SQLException e) 
+        }
+        catch (SQLException e)
         {
             getPlugin().getLogger().warn("Connection closed", e);
         }
@@ -154,12 +152,7 @@ public class AccountingUtils extends ConfigUtils
 
             try (PreparedStatement stmt = getConn().prepareStatement(statement))
             {
-                stmt.closeOnCompletion();
                 stmt.execute();
-            }
-            finally
-            {
-                getConn().close();
             }
         }
         catch (SQLException e)
@@ -174,7 +167,8 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery(SELECT + " " + PLAYER_NAME_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery(
+                  Constants.SQL.SELECT + " " + PLAYER_NAME_COLUMN + " " + Constants.SQL.FROM + " " + tableId + " " + Constants.SQL.WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -201,7 +195,8 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery(SELECT + " " + JOIN_DATE_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery(
+                  Constants.SQL.SELECT + " " + JOIN_DATE_COLUMN + " " + Constants.SQL.FROM + " " + tableId + " " + Constants.SQL.WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -228,7 +223,8 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery(SELECT + " " + LAST_JOIN_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery(
+                  Constants.SQL.SELECT + " " + LAST_JOIN_COLUMN + " " + Constants.SQL.FROM + " " + tableId + " " + Constants.SQL.WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -255,7 +251,8 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery(SELECT + " " + TIME_PLAYED_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+                final ResultSet results = getQuery(
+                  Constants.SQL.SELECT + " " + TIME_PLAYED_COLUMN + " " + Constants.SQL.FROM + " " + tableId + " " + Constants.SQL.WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
 
                 if (results != null && results.next())
                 {
@@ -280,12 +277,12 @@ public class AccountingUtils extends ConfigUtils
     {
         if (getConn() != null)
         {
-            String statement = UPDATE + " "
+            String statement = Constants.SQL.UPDATE + " "
                                  + tableId + " "
-                                 + SET + " "
+                                 + Constants.SQL.SET + " "
                                  + getColumn(column) + " = "
                                  + "? "
-                                 + WHERE + " "
+                                 + Constants.SQL.WHERE + " "
                                  + UUID_COLUMN + " = "
                                  + "?";
 
@@ -313,12 +310,12 @@ public class AccountingUtils extends ConfigUtils
         if (getConn() != null)
         {
 
-            String statement = UPDATE + " "
+            String statement = Constants.SQL.UPDATE + " "
                                  + tableId + " "
-                                 + SET + " "
+                                 + Constants.SQL.SET + " "
                                  + getColumn(column) + " = "
                                  + "? "
-                                 + WHERE + " "
+                                 + Constants.SQL.WHERE + " "
                                  + UUID_COLUMN + " = "
                                  + "?";
 
@@ -449,7 +446,7 @@ public class AccountingUtils extends ConfigUtils
         {
             if (getPlugin().getModuleContainer().isModuleLoaded(DatabaseModule.ID))
             {
-                final ResultSet results = getQuery(SELECT + " " + UUID_COLUMN + " from " + tableId);
+                final ResultSet results = getQuery(Constants.SQL.SELECT + " " + UUID_COLUMN + " from " + tableId);
                 while (results != null && results.next())
                 {
                     final UUID uuid = UUID.fromString(results.getString(UUID_COLUMN));
@@ -484,7 +481,9 @@ public class AccountingUtils extends ConfigUtils
             {
                 if (getConn() != null)
                 {
-                    final ResultSet results = getQuery(SELECT + " " + PLAYER_NAME_COLUMN + " " + FROM + " " + tableId + " " + WHERE + " " + UUID_COLUMN + " = '" + uuid + "'");
+                    final ResultSet results = getQuery(
+                      Constants.SQL.SELECT + " " + PLAYER_NAME_COLUMN + " " + Constants.SQL.FROM + " " + tableId + " " + Constants.SQL.WHERE + " " + UUID_COLUMN + " = '" + uuid
+                        + "'");
 
                     if (results != null)
                     {
