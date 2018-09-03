@@ -152,17 +152,13 @@ public class AccountingUtils extends ConfigUtils
                                  + TIME_PLAYED_COLUMN + " int NOT NULL, "
                                  + "PRIMARY KEY(" + UUID_COLUMN + ") )";
 
-            PreparedStatement stmt = getConn().prepareStatement(statement);
-
-            try 
+            try (PreparedStatement stmt = getConn().prepareStatement(statement))
             {
                 stmt.closeOnCompletion();
                 stmt.execute();
             }
-
-            finally 
+            finally
             {
-                stmt.close();
                 getConn().close();
             }
         }
