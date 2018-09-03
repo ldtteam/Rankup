@@ -17,10 +17,10 @@ plugins {
 
 apply plugin: org.spongepowered.gradle.ore.OreDeployPlugin
 
-group = 'com.minecolonies.rankup'
+group = 'com.ldt.rankup'
 version = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 description = 'A simple plugin for increasing player ranks based on time'
-mainClassName = 'com.minecolonies.rankup.Rankup'
+mainClassName = 'com.ldt.rankup.Rankup'
 compileJava.options.encoding = 'UTF-8'
 ext.url = 'http://github.com/Minecolonies/rankup'
 
